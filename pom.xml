@@ -10,6 +10,15 @@
     <name>ThucTapLTW</name>
     <packaging>war</packaging>
 
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.target>21</maven.compiler.target>
@@ -104,4 +113,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>
