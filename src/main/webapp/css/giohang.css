@@ -1,0 +1,196 @@
+.card {
+    padding: 40px 40px;
+}
+
+.card .container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 32px;
+}
+
+.title {
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+    padding: 14px 50px;
+    width: 100%;
+}
+
+.title span {
+    color: #4b0000;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+.card-content-left {
+    flex: 2;
+    display: flex;
+    justify-content: center;
+}
+
+.cart-table-wrapper {
+    width: 100%;
+    max-width: 820px;
+}
+
+.cart-table,
+.card-content-left table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.cart-table thead th,
+.card-content-left table thead th {
+    font-size: 13px;
+    text-transform: uppercase;
+    color: #222222;
+    border-bottom: 1px solid #222222;
+    padding-bottom: 16px;
+    text-align: center;
+}
+
+.cart-table td,
+.card-content-left table td {
+    font-size: 13px;
+    padding: 12px 6px;
+    border-bottom: 1px solid #222222;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.card-content-left table td:nth-child(2),
+.card-content-left table td:nth-child(3) {
+    text-align: center;
+}
+
+.card-content-left table td:nth-child(5) {
+    text-align: center;
+    color: #ee4d2d;
+    font-weight: 600;
+}
+
+
+.card-content-left table td img {
+    width: 70px;
+    height: auto;
+    border-radius: 6px;
+}
+
+.item-check {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.qty-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3px;
+}
+
+.qty-form button {
+    width: 26px;
+    height: 26px;
+    border: 1px solid #222222;
+    background: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.qty-form button:hover {
+    background: #f2f2f2;
+}
+
+.qty-display {
+    width: 36px;
+    height: 26px;
+    border: 1px solid #222222;
+    text-align: center;
+    font-size: 13px;
+    border-radius: 4px;
+}
+
+.card-content-left table button {
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: #666;
+    font-size: 16px;
+}
+
+.card-content-left table button:hover {
+    color: #e53935;
+}
+
+#checkAll {
+    transform: scale(1.1);
+}
+
+.card-content-right {
+    flex: 1;
+    max-width: 360px;
+    border-left: 2px solid #eee;
+    padding-left: 24px;
+}
+
+.card-content-right table {
+    width: 100%;
+}
+
+.card-content-right table th {
+    font-size: 14px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #ddd;
+    text-align: center;
+}
+
+.card-content-right table td {
+    font-size: 13px;
+    padding: 10px 0;
+}
+
+.card-content-right tr td:last-child {
+    text-align: right;
+}
+
+.card-content-right table tr:nth-child(4) td {
+    border-bottom: 2px solid #ddd;
+    font-weight: 600;
+}
+
+.card-content-right-button {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#ttms {
+    height: 36px;
+    padding: 0 24px;
+    border-radius: 30px;
+    border: 1px solid #222222;
+    background: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#ttms:hover {
+    background: #f0f0f0;
+}
+
+#tt {
+    height: 36px;
+    padding: 0 28px;
+    border-radius: 30px;
+    border: none;
+    background: #ee4d2d;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#tt:hover {
+    background: #d8432a;
+}
