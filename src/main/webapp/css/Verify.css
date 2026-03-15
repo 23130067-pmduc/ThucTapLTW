@@ -1,0 +1,110 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
+}
+
+.main{
+    min-height: calc(100vh - 64px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #fafafa;
+}
+
+.card{
+    width: 420px;
+    background-color: #f8f3e8;
+    padding: 40px 50px;
+    border-radius: 10px;
+    border: 1px solid #5B3A29;
+    box-shadow: 0 0 10px #00000019;
+    text-align: center;
+    position: relative;
+}
+
+.card .back-btn{
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    text-decoration: none;
+    font-size: 22px;
+    color: #333333;
+    font-family: initial;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.back-btn:hover{
+    color: red;
+}
+
+.card h2{
+    font-size: 22px;
+    margin-bottom: 15px;
+    color: black;
+}
+
+.desc{
+    font-size: 14px;
+    color: #333333;
+    margin-bottom: 30px;
+}
+
+.otp-line{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.otp-line input{
+    width: 45px;
+    height: 40px;
+    border: none;
+    border-bottom: 2px solid #999999;
+    background: transparent;
+    text-align: center;
+    font-size: 18px;
+    outline: none;
+}
+
+.otp-line input:focus{
+    border-bottom-color: black;
+}
+
+.resend{
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+.resend a{
+    color: blue;
+    text-decoration: none;
+}
+
+.resend a:hover{
+    text-decoration: underline;
+}
+
+.btn-primary{
+    width: 100%;
+    padding: 12px;
+    background-color: black;
+    border: none;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 25px;
+}
+
+.btn-primary:hover{
+    opacity: 0.9;
+}

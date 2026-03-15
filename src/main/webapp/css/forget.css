@@ -1,0 +1,106 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.forget-container{
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+.forget-box {
+    position: relative;
+    background-color: #f8f3e8;
+    padding: 45px 60px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #1E1F22FF;
+    width: 380px;
+    text-align: center;
+    border: 1px solid #5B3A29;
+}
+.forget-box .back-btn{
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    text-decoration: none;
+    font-size: 22px;
+    color: #333;
+    font-family: initial;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.back-btn:hover{
+    color: red;
+}
+
+.quenMatKhau{
+    font-size: 28px;
+    font-weight: 600;
+    color: black;
+    margin-bottom: 25px;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.input-group label{
+    display: block;
+    font-weight: 600;
+    color: black;
+    margin-bottom: 6px;
+    font-size: 15px;
+    padding: 5px;
+}
+.input-group input {
+    width: 100%;
+    padding: 11px;
+    border-radius: 20px;
+    border: none;
+    background-color: #d6cfc2;
+    font-size: 15px;
+    color: #333333;
+    box-shadow: inset 2px 2px 4px #00000026;
+    outline: none;
+    transition: 0.3s;
+}
+.btn-primary {
+    width: 100%;
+    background-color: black;
+    color: #ffffff;
+    border: none;
+    padding: 12px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 10px;
+}
+.btn-primary:hover {
+    background-color: #333333;
+}
+
+.links{
+    text-align: center;
+    margin-top: 15px;
+}
+.links a{
+    text-decoration: none;
+    color: blue;
+}
+.links a:hover {
+    text-decoration: underline;
+}
