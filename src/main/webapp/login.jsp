@@ -33,7 +33,7 @@
         <h2 class="dangNhap" >Đăng nhập</h2>
         <form id="loginForm" action="login" method="post">
             <div class="input-group">
-                <span style="color: red; width:100%; text-align:center; display:block; margin-bottom:5px;"><%=error%></span>
+                <span style="   color: red; width:100%; text-align:center; display:block; margin-bottom:5px;"><%=error%></span>
                 <label for="username">Email/Tên đăng nhập</label>
                 <input type="text" id="username" name="username" placeholder="Nhập email/Tên tài khoản" required value="<%=username%>">
             </div>
@@ -64,6 +64,5 @@
     <p>© 2025 SunnyBear. All rights reserved.</p>
 </footer>
 
-<script src="./javaScript/login.js"></script>
 </body>
 </html>
