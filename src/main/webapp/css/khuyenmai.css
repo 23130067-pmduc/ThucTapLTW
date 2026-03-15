@@ -1,0 +1,416 @@
+/* ========== HERO BANNER ========== */
+.hero-banner {
+    background: linear-gradient(135deg, #FFA07A 0%, #FF6347 100%);
+    padding: 80px 20px;
+    text-align: center;
+    color: white;
+}
+
+.hero-content h1 {
+    font-size: 48px;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    font-weight: 800;
+}
+
+.hero-content p {
+    font-size: 20px;
+    margin-bottom: 30px;
+    opacity: 0.95;
+}
+
+.btn-hero {
+    display: inline-block;
+    background: white;
+    color: #FF6347;
+    padding: 15px 40px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 18px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.btn-hero:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* ========== FLASH SALE ========== */
+.flash-sale {
+    background: white;
+    padding: 40px 50px;
+    margin: 30px 50px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.flash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.flash-header h2 {
+    font-size: 32px;
+    color: #FF4500;
+    font-weight: 800;
+}
+
+.flash-products {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+/* ========== PRODUCT CARD ========== */
+.product-card {
+    position: relative;
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
+}
+
+/* khung ảnh giống vibe trang sản phẩm */
+.product-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 260px;
+    background: #f3f3f3;
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 10px 0 16px;
+    text-decoration: none;
+}
+
+.product-image img {
+    max-width: 68%;
+    max-height: 82%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+}
+
+/* fallback nếu còn img nào không nằm trong .product-image */
+.product-card img {
+    display: block;
+}
+
+.product-card h3 {
+    font-size: 16px;
+    line-height: 1.4;
+    margin: 12px 0;
+    min-height: 46px;
+    color: #333;
+}
+
+.product-card h3 a {
+    color: #1f2937;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.product-card h3 a:hover {
+    color: #dc2626;
+}
+
+.badge {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    padding: 9px 16px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    z-index: 10;
+}
+
+.badge.flash {
+    background: linear-gradient(135deg, #FF4500, #FF6347);
+    animation: pulse 1.5s infinite;
+}
+
+.badge.hot {
+    background: linear-gradient(135deg, #FF1744, #F50057);
+}
+
+.badge.sale {
+    background: linear-gradient(135deg, #00C853, #64DD17);
+}
+
+.price {
+    display: flex;
+    justify-content: center;
+    align-items: baseline;
+    gap: 10px;
+    margin: 14px 0 18px;
+    flex-wrap: wrap;
+}
+
+.price::before {
+    content: "Giá:";
+    color: #666666;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.new-price {
+    font-size: 17px;
+    font-weight: 700;
+    color: #dc2626;
+}
+
+.old-price {
+    font-size: 15px;
+    color: #888;
+    text-decoration: line-through;
+}
+
+.btn-add {
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    background: #A9C87D;
+    color: white;
+    border: none;
+    padding: 14px 16px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    z-index: 10;
+    text-decoration: none;
+    text-align: center;
+}
+
+.btn-add:hover {
+    background: #8FB265;
+    transform: scale(1.02);
+}
+
+/* ========== PRODUCTS GRID ========== */
+.products {
+    padding: 40px 50px;
+    margin: 30px 50px;
+    background: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.products h2 {
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 35px;
+    color: #333;
+    font-weight: 700;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 25px;
+}
+
+/* ========== TITLE ========== */
+.title {
+    background-color: #f8f8f8;
+    border: 1px solid #eee;
+    padding: 15px 50px;
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.title span {
+    color: #4b0000;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+/* ===== LOAD MORE ===== */
+.load-more-wrapper {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.btn-load-more {
+    display: inline-block;
+    margin: 60px auto 0;
+    background-color: #ffffff;
+    color: #666666;
+    text-decoration: none;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-size: 15px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    width: fit-content;
+    position: relative;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-load-more::before,
+.btn-load-more::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 220px;
+    height: 2px;
+    background-color: #C89F7B;
+    transform: translateY(-50%);
+}
+
+.btn-load-more::before {
+    left: -240px;
+}
+
+.btn-load-more::after {
+    right: -240px;
+}
+
+.btn-load-more:hover {
+    background-color: #5B3A29;
+    color: #FFF8E7;
+    transform: scale(1.05);
+}
+
+/* ===== ẨN SẢN PHẨM ===== */
+.product-card.hidden {
+    display: none !important;
+}
+
+/* ===== TOAST ===== */
+#toast {
+    visibility: hidden;
+    min-width: 300px;
+    background-color: #4CAF50;
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+    padding: 16px;
+    position: fixed;
+    z-index: 9999;
+    right: 30px;
+    bottom: 30px;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+#toast.show {
+    visibility: visible;
+    animation: slideInRight 0.5s, fadeout 0.5s 2.5s;
+}
+
+#toast.error {
+    background-color: #f44336;
+}
+
+@keyframes slideInRight {
+    from {
+        right: -350px;
+        opacity: 0;
+    }
+    to {
+        right: 30px;
+        opacity: 1;
+    }
+}
+
+@keyframes fadeout {
+    from {
+        right: 30px;
+        opacity: 1;
+    }
+    to {
+        right: -350px;
+        opacity: 0;
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.08);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes cartBounce {
+    0% {
+        transform: scale(1);
+    }
+    30% {
+        transform: scale(1.25);
+    }
+    60% {
+        transform: scale(0.9);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+    .flash-products,
+    .product-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .flash-sale,
+    .products {
+        margin: 20px;
+        padding: 25px 20px;
+    }
+
+    .flash-products,
+    .product-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .hero-content h1 {
+        font-size: 32px;
+    }
+
+    .hero-content p {
+        font-size: 16px;
+    }
+
+    .flash-header h2,
+    .products h2 {
+        font-size: 24px;
+    }
+
+    .btn-load-more::before,
+    .btn-load-more::after {
+        display: none;
+    }
+
+    .product-image {
+        height: 220px;
+    }
+}
