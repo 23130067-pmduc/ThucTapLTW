@@ -100,7 +100,7 @@ public class ContactAdminController extends HttpServlet {
             contact.setMessage(request.getParameter("message"));
 
             contactService.updateContact(contact);
-            response.sendRedirect("contact-admin");
+            response.sendRedirect("contact-admin?mode=view&id=" + id );
             return;
         }
 
