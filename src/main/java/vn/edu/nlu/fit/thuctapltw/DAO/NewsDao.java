@@ -15,13 +15,15 @@ public class NewsDao extends BaseDao {
         );
     }
 
-    public Optional<News> getNewsById(int id) {
-        return getJdbi().withHandle(handle ->
-                handle.createQuery("SELECT * FROM news WHERE id = :id")
-                        .bind("id", id)
-                        .mapToBean(News.class)
-                        .findFirst()
-        );
+    public News getNewsById(int id) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                    SELECT * 
+                    FROM news 
+                    WHERE id = :id
+                """).bind("id", id)
+                .mapToBean(News.class)
+                .findOne()
+                .orElse(null));
     }
 
     public Optional<News> getNewsBySlug(String slug) {

@@ -33,4 +33,27 @@ public class NewsService {
     public List<News> getRelated(int currentId, int limit) {
         return newsDao.getRelatedNews(currentId, limit);
     }
+
+    public void deleteNews(int id) {
+        newsDao.deleteNews(id);
+    }
+
+
+    public News getNewsById(int id) {
+        return newsDao.getNewsById(id);
+    }
+
+    public List<News> getAllNews() {
+        return newsDao.getAllNews();
+    }
+
+    public void createNews(News news) {
+        news.setSlug(newsDao.generateSlug(news.getTitle()));
+        newsDao.createNews(news);
+    }
+
+    public void updateNews(News news) {
+        news.setSlug(newsDao.generateSlug(news.getTitle()));
+        newsDao.updateNews(news);
+    }
 }
