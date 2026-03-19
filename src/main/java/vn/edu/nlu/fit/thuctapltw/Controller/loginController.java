@@ -1,35 +1,37 @@
 package vn.edu.nlu.fit.thuctapltw.Controller;
 
-import java.io.IOException;
-
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import jakarta.servlet.annotation.*;
+import vn.edu.nlu.fit.thuctapltw.DAO.CartDao;
+import vn.edu.nlu.fit.thuctapltw.DAO.CartItemDao;
 import vn.edu.nlu.fit.thuctapltw.Service.UserService;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
-@WebServlet(name = "loginController", value = "/login")
-public class loginController extends HttpServlet {
+import java.io.IOException;
 
+@WebServlet(name = "logoutController", value = "/login")
+public class loginController extends HttpServlet {
     private UserService userService;
+    private CartDao cartDao;
 
     @Override
     public void init() {
         userService = new UserService();
+        cartDao = new CartDao();
     }
-
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/login.jsp").forward(request, response);
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+
+        response.sendRedirect(request.getContextPath() + "/trang-chu");
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -41,7 +43,6 @@ public class loginController extends HttpServlet {
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;
         }
-
         User user = userService.login(username, password);
 
         if (user == null) {
@@ -78,6 +79,12 @@ public class loginController extends HttpServlet {
         HttpSession session = request.getSession(true);
         session.setAttribute("userId", user.getId());
         session.setAttribute("userlogin", user);
+
+        Integer cartId = cartDao.findCartIdByUser(user.getId());
+        if (cartId == null) {cartId = cartDao.createCart(user.getId());}
+        session.setAttribute("cartId", cartId);
+        int cartSize = new CartItemDao().countTotalQuantity(cartId);
+        session.setAttribute("cartSize", cartSize);
 
         if ("admin".equalsIgnoreCase(user.getRole())) {
             response.sendRedirect(request.getContextPath() + "/dashboard");
