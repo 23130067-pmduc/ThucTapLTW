@@ -12,7 +12,6 @@
 
 <%@include file="header.jsp"%>
 
-<!-- ========== PROFILE ========== -->
 <section class="profile-container">
     <div class="profile-sidebar">
         <div class="user-info">
@@ -109,6 +108,5 @@
         </form>
     </div>
 </section>
-<!-- ========== FOOTER ========== -->
 
 <%@include file="footer.jsp"%>
