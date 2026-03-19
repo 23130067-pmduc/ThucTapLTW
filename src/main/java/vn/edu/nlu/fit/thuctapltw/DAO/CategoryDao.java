@@ -42,4 +42,64 @@ public class CategoryDao extends BaseDao {
         String sql = "SELECT * FROM category_product WHERE name LIKE :keyword ORDER BY id";
         return getJdbi().withHandle(handle -> handle.createQuery(sql).bind("keyword", "%" + keyword + "%").mapToBean(Category.class).list());
     }
+
+    public int getCategoryActive() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM category_product
+                WHERE status = 1""")
+                .mapTo(Integer.class)
+                .one());
+    }
+
+    public List<Category> findAllWithCountProduct() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT c.id, c.name, c.description, c.status, COUNT(p.id) AS countProduct
+                FROM category_product c
+                LEFT JOIN products p ON p.category_id = c.id
+                GROUP BY c.id, c.name, c.description, c.status
+                """)
+                .mapToBean(Category.class)
+                .list());
+    }
+
+    public void updateCategory(Category category) {
+        getJdbi().withHandle(handle ->
+                handle.createUpdate("""
+                UPDATE category_product
+                SET name = :name,
+                    description = :description,
+                    status = :status
+                WHERE id = :id
+                """)
+                .bind("id", category.getId())
+                .bind("name", category.getName())
+                .bind("description", category.getDescription())
+                .bind("status", category.getStatus())
+                .execute()
+        );
+    }
+
+    public void create(Category category) {
+        getJdbi().withHandle(handle ->
+                handle.createUpdate("""
+                INSERT INTO category_product(name, description, status)
+                VALUES (:name, :description, :status)
+                """)
+                .bind("name", category.getName())
+                .bind("description", category.getDescription())
+                .bind("status", category.getStatus())
+                .execute()
+        );
+    }
+
+    public void deleteCategory(int id) {
+        getJdbi().withHandle(handle -> handle.createUpdate("""
+                UPDATE category_product 
+                SET status = 0
+                WHERE id = :id
+                """)
+                .bind("id", id)
+                .execute());
+    }
 }
