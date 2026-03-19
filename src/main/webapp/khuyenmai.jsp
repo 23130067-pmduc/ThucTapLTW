@@ -12,7 +12,6 @@
 
 <div class="title"></div>
 
-<!-- HERO -->
 <section class="hero-banner">
     <div class="hero-content">
         <h1><i class="fas fa-fire"></i> KHUYẾN MÃI ĐẶC BIỆT</h1>
@@ -21,7 +20,6 @@
     </div>
 </section>
 
-<!-- FLASH SALE -->
 <section class="flash-sale">
     <div class="flash-header">
         <h2><i class="fas fa-fire"></i> FLASH SALE - SỐC HÔM NAY</h2>
@@ -74,7 +72,6 @@
     </div>
 </section>
 
-<!-- TẤT CẢ SẢN PHẨM GIẢM GIÁ -->
 <section class="products">
     <h2>TẤT CẢ SẢN PHẨM GIẢM GIÁ</h2>
 

@@ -49,9 +49,7 @@
 </footer>
 <p class="copyright">© 2025 SunnyBear. All rights reserved.</p>
 
-<!-- Global utility functions -->
 <script>
-    // ===== GLOBAL UPDATE CART BADGE =====
     window.updateCartBadge = function(count) {
         console.log("[global] updateCartBadge called with count: " + count);
 

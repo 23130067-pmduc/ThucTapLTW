@@ -9,15 +9,12 @@
 %>
 <body>
 
-<!-- HEADER -->
 <%@include file="header.jsp"%>
 
-<!-- TITLE -->
 <div class="title">
     <span>TIN TỨC</span>
 </div>
 
-<!-- MAIN -->
 <main class="container">
     <div class="newsContainer">
 
@@ -56,7 +53,6 @@
 
     </div>
 
-    <!-- PAGINATION -->
     <c:if test="${totalPages > 1}">
         <div class="pagination">
             <c:forEach begin="1" end="${totalPages}" var="pageNum">
@@ -70,7 +66,6 @@
 
 </main>
 
-<!-- FOOTER -->
 <jsp:include page="footer.jsp"/>
 
 <script src="${pageContext.request.contextPath}/javaScript/header.js"></script>
