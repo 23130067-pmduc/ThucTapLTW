@@ -27,25 +27,43 @@ public class OrderAdminController extends HttpServlet {
         String mode = req.getParameter("mode");
 
         if (mode == null) {
-            var orders = orderService.getAllOrders();
+            String keyword = req.getParameter("keyword");
+            String status = req.getParameter("status");
+
+            if (keyword != null) keyword = keyword.trim();
+            if (status != null) status = status.trim();
+
+            var orders = ((keyword != null && !keyword.isEmpty()) ||
+                    (status != null && !status.isEmpty()))
+                    ? orderService.searchOrders(keyword, status)
+                    : orderService.getAllOrders();
 
             long pending = orders.stream()
                     .filter(o -> "PENDING".equals(o.getOrderStatus()))
+                    .count();
+
+            long shipping = orders.stream()
+                    .filter(o -> "SHIPPING".equals(o.getOrderStatus()))
                     .count();
 
             long completed = orders.stream()
                     .filter(o -> "COMPLETED".equals(o.getOrderStatus()))
                     .count();
 
+            long cancelled = orders.stream()
+                    .filter(o -> "CANCELLED".equals(o.getOrderStatus()))
+                    .count();
+
             req.setAttribute("orders", orders);
             req.setAttribute("total", orders.size());
             req.setAttribute("countPending", pending);
+            req.setAttribute("countShipping", shipping);
             req.setAttribute("countCompleted", completed);
+            req.setAttribute("countCancelled", cancelled);
 
             req.getRequestDispatcher("/orderAdmin.jsp").forward(req, resp);
             return;
         }
-
 
         if ("view".equals(mode)) {
             int id = Integer.parseInt(req.getParameter("id"));
@@ -84,9 +102,9 @@ public class OrderAdminController extends HttpServlet {
         }
 
         orderService.updateStatus(id, newStatus);
+
         String userEmail = orderService.getUserEmailByOrderId(id);
-        
-        // Chuyển đổi trạng thái sang tiếng Việt
+
         String statusInVietnamese;
         switch (newStatus) {
             case "PENDING":
@@ -104,8 +122,7 @@ public class OrderAdminController extends HttpServlet {
             default:
                 statusInVietnamese = newStatus;
         }
-        
-        // 5. Gửi mail cho user
+
         EmailService.sendEmail(
                 userEmail,
                 "Cập nhật trạng thái đơn hàng #" + id,
@@ -114,5 +131,4 @@ public class OrderAdminController extends HttpServlet {
 
         resp.sendRedirect("order-admin?mode=view&id=" + id);
     }
-
 }
