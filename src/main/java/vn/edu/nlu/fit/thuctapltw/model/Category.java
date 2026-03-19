@@ -9,6 +9,9 @@ public class Category implements Serializable {
     private int status;
     private String image;
 
+
+    private int countProduct;
+
     public Category() {
     }
 
@@ -17,6 +20,23 @@ public class Category implements Serializable {
         this.name = name;
         this.description = description;
         this.status = status;
+    }
+
+    public Category(int id, String name, String description, int status, String image, int countProduct) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.image = image;
+        this.countProduct = countProduct;
+    }
+
+    public int getCountProduct() {
+        return countProduct;
+    }
+
+    public void setCountProduct(int countProduct) {
+        this.countProduct = countProduct;
     }
 
     public int getId() {
