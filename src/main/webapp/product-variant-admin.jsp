@@ -62,7 +62,7 @@
             </section>
 
             <section class="variants-toolbar">
-                <a href="product-variant-admin?mode=add&productId=${productId}" class="btn-add">
+                <a href="product-variant-admin?mode=add&amp;productId=${productId}" class="btn-add">
                     <i class="fa fa-plus"></i>
                     <span>Thêm biến thể</span>
                 </a>
@@ -82,104 +82,65 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach items="${variants}" var="variant">
-                        <tr>
-                            <td>${variant.id}</td>
-                            <td>${variant.sizeName}</td>
-                            <td>${variant.colorName}</td>
-                            <td><fmt:formatNumber value="${variant.price}" type="number"/> ₫</td>
-                            <td><fmt:formatNumber value="${variant.salePrice}" type="number"/> ₫</td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${variant.stock == 0}">
-                                        <span class="status status-out">Hết hàng</span>
-                                    </c:when>
-                                    <c:when test="${variant.stock < 10}">
-                                        <span class="status status-low">Sắp hết (${variant.stock})</span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <span class="status status-instock">${variant.stock}</span>
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <div class="table-actions">
-                                    <button type="button"
-                                            class="icon-btn view js-open-view-modal"
-                                            title="Xem chi tiết"
-                                            data-id="${variant.id}"
-                                            data-size="${variant.sizeName}"
-                                            data-color="${variant.colorName}"
-                                            data-price="${variant.price}"
-                                            data-sale-price="${variant.salePrice}"
-                                            data-stock="${variant.stock}">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </button>
+                    <c:choose>
+                        <c:when test="${not empty variants}">
+                            <c:forEach items="${variants}" var="variant">
+                                <tr>
+                                    <td>${variant.id}</td>
+                                    <td>${variant.sizeName}</td>
+                                    <td>${variant.colorName}</td>
+                                    <td><fmt:formatNumber value="${variant.price}" type="number"/> ₫</td>
+                                    <td><fmt:formatNumber value="${variant.salePrice}" type="number"/> ₫</td>
+                                    <td>
+                                        <c:choose>
+                                            <c:when test="${variant.stock == 0}">
+                                                <span class="status status-out">Hết hàng</span>
+                                            </c:when>
+                                            <c:when test="${variant.stock < 10}">
+                                                <span class="status status-low">Sắp hết (${variant.stock})</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="status status-instock">${variant.stock}</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
+                                        <div class="table-actions">
+                                            <a href="product-variant-admin?mode=view&amp;id=${variant.id}&amp;productId=${productId}"
+                                               class="icon-btn view"
+                                               title="Xem chi tiết">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
 
-                                    <a href="product-variant-admin?mode=edit&id=${variant.id}&productId=${productId}"
-                                       class="icon-btn edit"
-                                       title="Chỉnh sửa">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
+                                            <a href="product-variant-admin?mode=edit&amp;id=${variant.id}&amp;productId=${productId}"
+                                               class="icon-btn edit"
+                                               title="Chỉnh sửa">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </a>
 
-                                    <button type="button"
-                                            class="icon-btn delete js-open-delete-modal"
-                                            title="Xóa"
-                                            data-id="${variant.id}"
-                                            data-name="${variant.sizeName} - ${variant.colorName}">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-                    </c:forEach>
+                                            <button type="button"
+                                                    class="icon-btn delete js-open-delete-modal"
+                                                    title="Xóa"
+                                                    data-id="${variant.id}"
+                                                    data-name="${variant.sizeName} - ${variant.colorName}">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                        </c:when>
+                        <c:otherwise>
+                            <tr>
+                                <td colspan="7" class="empty-state">Chưa có biến thể nào cho sản phẩm này.</td>
+                            </tr>
+                        </c:otherwise>
+                    </c:choose>
                     </tbody>
                 </table>
             </section>
         </main>
     </section>
-</div>
-
-<div id="viewModal" class="modal-overlay" aria-hidden="true">
-    <div class="modal modal-detail" role="dialog" aria-modal="true" aria-labelledby="viewModalTitle">
-        <div class="modal-header">
-            <h3 id="viewModalTitle">Chi tiết biến thể</h3>
-            <button type="button" class="modal-close js-close-view-modal" aria-label="Đóng">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-        </div>
-
-        <div class="detail-list">
-            <div class="detail-item">
-                <span class="detail-label">ID</span>
-                <span class="detail-value" id="viewVariantId"></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Size</span>
-                <span class="detail-value" id="viewVariantSize"></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Màu sắc</span>
-                <span class="detail-value" id="viewVariantColor"></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Giá gốc</span>
-                <span class="detail-value" id="viewVariantPrice"></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Giá sale</span>
-                <span class="detail-value" id="viewVariantSalePrice"></span>
-            </div>
-            <div class="detail-item">
-                <span class="detail-label">Tồn kho</span>
-                <span class="detail-value" id="viewVariantStock"></span>
-            </div>
-        </div>
-
-        <div class="modal-actions">
-            <button type="button" class="btn-secondary js-close-view-modal">Đóng</button>
-        </div>
-    </div>
 </div>
 
 <div id="deleteModal" class="modal-overlay" aria-hidden="true">
