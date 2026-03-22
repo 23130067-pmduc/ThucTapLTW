@@ -142,7 +142,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showToast(message) {
-        const toast = document.getElementById("toast");
+        let toast = document.getElementById("toast");
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "toast";
+            document.body.appendChild(toast);
+        }
         toast.textContent = message;
         toast.className = "show";
 
@@ -185,17 +190,22 @@ document.addEventListener("DOMContentLoaded", () => {
                 variantId: variant.id,
                 quantity: quantity
             })
-        })
-            .then(res => res.json())
-            .then(data => {
+        }).then(res => {if(!res.ok) throw new Error("HTTP error " + res.status);
+            return res.json();}).then(data => {console.log("Add cart response:", data);
                 if (data.success) {
                     showToast("Đã thêm vào giỏ hàng!");
                     if (window.updateCartBadge) {
-                        updateCartBadge(data.totalQuantity);
+                        console.log("Calling window.updateCartBadge with quantity:", data.totalQuantity);
+                        window.updateCartBadge(data.totalQuantity);
+                    } else {
+                        console.log("window.updateCartBadge is undefined!");
                     }
-                }
-            })
-            .catch(() => showToast("Lỗi kết nối"));
+                } else {
+                    showToast(data.message || "Lỗi khi thêm giỏ hàng");
+                }}).catch(err => {
+                console.error("Fetch error:", err);
+                showToast("Lỗi kết nối hoặc lỗi máy chủ");
+            });
     });
 
 
