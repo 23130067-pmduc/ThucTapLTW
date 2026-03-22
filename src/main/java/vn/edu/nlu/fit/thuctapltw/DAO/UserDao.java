@@ -2,6 +2,7 @@ package vn.edu.nlu.fit.thuctapltw.DAO;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
 public class UserDao extends BaseDao {
@@ -281,5 +282,33 @@ public class UserDao extends BaseDao {
         ) > 0;
     }
 
+    public User findByEmail(String email) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT *
+                FROM users
+                WHERE email = :email
+                LIMIT 1
+                """)
+                .bind("email", email)
+                .registerRowMapper(BeanMapper.factory(User.class))
+                .mapTo(User.class)
+                .findOne()
+                .orElse(null));
+    }
+
+    public int createGoogleUser(User user) {
+        return  getJdbi().withHandle(handle -> handle.createUpdate("""
+                INSERT INTO users (email, full_name, role, status, is_active)
+                VALUES (:email, :fullName, :role, :status, :isActive)
+                """)
+                .bind("email", user.getEmail())
+                .bind("fullName", user.getFullName())
+                .bind("role", user.getRole())
+                .bind("status", user.getStatus())
+                .bind("isActive", user.getIsActive())
+                .executeAndReturnGeneratedKeys("id")
+                .mapTo(Integer.class)
+                .one());
+    }
 }
 

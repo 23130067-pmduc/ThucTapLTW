@@ -106,6 +106,7 @@ body{
     font-size: 16px;
     cursor: pointer;
     transition: background 0.3s ease;
+    margin-bottom: 15px;
 }
 .btn-primary:hover{
     background: #333;
@@ -129,3 +130,4 @@ body{
 .footer{
     display: none;
 }
+

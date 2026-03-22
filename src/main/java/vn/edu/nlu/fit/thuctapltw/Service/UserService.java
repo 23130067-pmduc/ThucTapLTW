@@ -182,4 +182,12 @@ public class UserService {
     public void blockUser(int id) {
         userDao.blockUser(id , "BLOCKED");
     }
+
+    public User findByEmail(String email) {
+        return userDao.findByEmail(email);
+    }
+
+    public int createGoogleUser(User user) {
+        return userDao.createGoogleUser(user);
+    }
 }

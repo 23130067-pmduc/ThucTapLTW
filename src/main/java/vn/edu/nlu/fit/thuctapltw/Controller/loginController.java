@@ -1,5 +1,9 @@
 package vn.edu.nlu.fit.thuctapltw.Controller;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
@@ -9,11 +13,15 @@ import vn.edu.nlu.fit.thuctapltw.Service.UserService;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
 
 @WebServlet(name = "logoutController", value = "/login")
 public class loginController extends HttpServlet {
     private UserService userService;
     private CartDao cartDao;
+    private static final String CLIENT_ID =
+            "1001120059484-ffncp4n4pvstlq3v1q4gtlu0hprkcedd.apps.googleusercontent.com";
 
     @Override
     public void init() {
@@ -27,6 +35,16 @@ public class loginController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        String credential = request.getParameter("credential");
+
+        if (credential != null && !credential.trim().isEmpty()) {
+            handleGoogleLogin(request, response, credential);
+            return;
+        }
+
+
+
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
@@ -66,6 +84,16 @@ public class loginController extends HttpServlet {
             return;
         }
 
+        createUserSession(request, user);
+
+        if ("admin".equalsIgnoreCase(user.getRole())) {
+            response.sendRedirect(request.getContextPath() + "/dashboard");
+        } else {
+            response.sendRedirect(request.getContextPath() + "/trang-chu");
+        }
+    }
+
+    private void createUserSession(HttpServletRequest request, User user){
         HttpSession oldSession = request.getSession(false);
         if (oldSession != null) {
             oldSession.invalidate();
@@ -80,11 +108,75 @@ public class loginController extends HttpServlet {
         session.setAttribute("cartId", cartId);
         int cartSize = new CartItemDao().countTotalQuantity(cartId);
         session.setAttribute("cartSize", cartSize);
+    }
 
-        if ("admin".equalsIgnoreCase(user.getRole())) {
-            response.sendRedirect(request.getContextPath() + "/dashboard");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/trang-chu");
+    private void handleGoogleLogin(HttpServletRequest request, HttpServletResponse response, String credential)
+            throws ServletException, IOException {
+        try {
+            GoogleIdTokenVerifier verifier = new GoogleIdTokenVerifier.Builder(
+                    new NetHttpTransport(),
+                    GsonFactory.getDefaultInstance()
+            ).setAudience(Collections.singletonList(CLIENT_ID)).build();
+
+            GoogleIdToken idToken = verifier.verify(credential);
+
+            if (idToken == null) {
+                request.setAttribute("error", "Đăng nhập Google thất bại");
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+                return;
+            }
+
+            GoogleIdToken.Payload payload = idToken.getPayload();
+
+            String email = payload.getEmail();
+            String name = (String) payload.get("name");
+
+
+            User user = userService.findByEmail(email);
+
+
+            if (user == null) {
+                user = new User();
+                user.setEmail(email);
+                user.setFullName(name);
+                user.setRole("user");
+                user.setStatus("ACTIVE");
+                user.setIsActive(1);
+
+
+                int newUserId = userService.createGoogleUser(user);
+
+                user = userService.findById(newUserId);
+            }
+
+            if (user.getStatus() == null) {
+                request.setAttribute("error", "Tài khoản chưa được kích hoạt");
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+                return;
+            }
+
+            if ("BLOCKED".equalsIgnoreCase(user.getStatus())) {
+                request.setAttribute("error", "Tài khoản Google này đã bị khóa");
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+                return;
+            }
+
+            if (user.getIsActive() == 0) {
+                request.setAttribute("error", "Tài khoản chưa xác nhận kích hoạt");
+                request.getRequestDispatcher("/login.jsp").forward(request, response);
+                return;
+            }
+
+            createUserSession(request, user);
+
+            if ("admin".equalsIgnoreCase(user.getRole())) {
+                response.sendRedirect(request.getContextPath() + "/dashboard");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/trang-chu");
+            }
+
+        } catch (GeneralSecurityException e) {
+            throw new ServletException("Lỗi xác thực Google token", e);
         }
     }
 }
