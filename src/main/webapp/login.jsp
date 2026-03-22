@@ -8,6 +8,7 @@
     <title>Đăng nhập</title>
     <link rel="stylesheet" href="./css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body class="login-page">
 
@@ -47,15 +48,39 @@
             <div class="remember-forgot">
                 <a href="./forget.jsp">Quên mật khẩu?</a>
             </div>
+
+
             <button type="submit" class="btn-primary">Đăng nhập</button>
 
 
+            <div class="google-login-wrap">
+                <div id="g_id_onload"
+                     data-client_id="1001120059484-ffncp4n4pvstlq3v1q4gtlu0hprkcedd.apps.googleusercontent.com"
+                     data-callback="handleCredentialResponse">
+                </div>
+
+                <div class="g_id_signin"
+                     data-type="standard"
+                     data-size="large"
+                     data-theme="outline"
+                     data-text="signin_with"
+                     data-shape="rectangular"
+                     data-logo_alignment="left"
+                     data-width="100%">
+                </div>
+            </div>
 
             <div class="form-links">
 
                 <p class="notAccount">Chưa có tài khoản? <a href="./register.jsp">Đăng ký ngay</a></p>
             </div>
         </form>
+
+
+        <form id="googleLoginForm" action="login" method="post">
+            <input type="hidden" name="credential" id="googleCredential">
+        </form>
+
     </div>
 </section>
 
@@ -63,6 +88,11 @@
 <footer class="footer">
     <p>© 2025 SunnyBear. All rights reserved.</p>
 </footer>
-
+<script>
+    function handleCredentialResponse(response) {
+        document.getElementById("googleCredential").value = response.credential;
+        document.getElementById("googleLoginForm").submit();
+    }
+</script>
 </body>
 </html>
