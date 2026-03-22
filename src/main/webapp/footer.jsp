@@ -47,6 +47,7 @@
         </div>
     </section>
 </footer>
+<div id="toast"></div>
 <p class="copyright">© 2025 SunnyBear. All rights reserved.</p>
 
 <script>
