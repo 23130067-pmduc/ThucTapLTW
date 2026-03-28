@@ -14,21 +14,12 @@
 
 <section class="profile-container">
     <div class="profile-sidebar">
-        <div class="user-info">
-            <div class="avatar">
-                <img src="./img/aochuV.png" alt="Avatar">
-            </div>
-            <h3>${user.fullName}</h3>
-            <p>Thành viên từ: ${createdAtFormatted}</p>
-
-        </div>
-
         <nav class="profile-menu">
             <ul>
                 <li class="active"><a href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
                 <li><a href="dia-chi"><i class="fas fa-map-marker-alt"></i> Địa chỉ của tôi</a></li>
                 <li><a href="don-mua"><i class="fas fa-clipboard-list"></i> Đơn hàng của tôi</a></li>
-                <li><a href="doi-mat-khau"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
+                <li><a href="forget"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
                 <li><a href="trang-chu"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>
             </ul>
         </nav>

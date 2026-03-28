@@ -176,6 +176,6 @@
     </c:choose>
 </div>
 
-<script src="js/product-variant-form.js"></script>
+<script src="javaScript/product-variant-form.js"></script>
 </body>
 </html>

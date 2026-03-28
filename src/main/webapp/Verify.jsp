@@ -12,7 +12,7 @@
 <main class="main">
     <div class="card">
 
-        <a href="forget.jsp">
+        <a href="forget">
             <button class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
         </a>
         <h2>Nhập mã xác nhận</h2>

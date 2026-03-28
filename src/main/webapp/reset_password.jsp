@@ -12,7 +12,7 @@
 <main class="main">
     <div class="forget-box">
 
-        <a href="Verify.jsp">
+        <a href="Verify">
             <button class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
         </a>
 
@@ -42,5 +42,5 @@
 </main>
 
 </body>
-<script src="./javaScript/reset_pass.js"></script>
+<script src="javaScript/reset_pass.js"></script>
 </html>

@@ -20,7 +20,7 @@
         String username = request.getParameter("username");
         if(username==null) username="";
     %>
-    <a href="trangchu.jsp">
+    <a href="trang-chu">
         <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
     </a>
     <h2 class="dangKy">Đăng ký tài khoản</h2>
@@ -53,7 +53,7 @@
         <button type="submit" class="btn">Đăng ký</button>
 
         <div class="links">
-            <a href="login.jsp">Đã có tài khoản? Đăng nhập</a>
+            <a href="login">Đã có tài khoản? Đăng nhập</a>
         </div>
     </form>
 

@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Đăng nhập</title>
-    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
@@ -28,7 +28,7 @@
         if(username == null) username = "";
     %>
     <div class="login-box">
-        <a href="trangchu.jsp">
+        <a href="trang-chu">
             <button class="close-btn"><i class="fa-solid fa-xmark"></i></button>
         </a>
         <h2 class="dangNhap" >Đăng nhập</h2>
@@ -46,7 +46,7 @@
 
 
             <div class="remember-forgot">
-                <a href="./forget.jsp">Quên mật khẩu?</a>
+                <a href="forget">Quên mật khẩu?</a>
             </div>
 
 

@@ -17,19 +17,23 @@ public class ResetPasswordController extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
+        request.getRequestDispatcher("/reset_password.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
         String email = request.getParameter("email");
         String otp = request.getParameter("otp");
         String password = request.getParameter("password");
 
         try {
             userService.resetPassword(email, otp, password);
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login");
         } catch (RuntimeException e) {
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("/reset_password.jsp").forward(request, response);
