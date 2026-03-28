@@ -27,7 +27,7 @@
             <a href="order-admin" class="nav-item active">Đơn hàng</a>
             <a href="user-admin" class="nav-item">Người dùng</a>
             <a href="banner-admin" class="nav-item">Banner</a>
-            <a href="tin-tuc" class="nav-item">Tin tức</a>
+            <a href="news-admin" class="nav-item">Tin tức</a>
             <a href="contact-admin" class="nav-item">Liên hệ</a>
         </div>
     </aside>
