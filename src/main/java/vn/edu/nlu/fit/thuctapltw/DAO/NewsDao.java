@@ -15,15 +15,13 @@ public class NewsDao extends BaseDao {
         );
     }
 
-    public News getNewsById(int id) {
-        return getJdbi().withHandle(handle -> handle.createQuery("""
-                    SELECT * 
-                    FROM news 
-                    WHERE id = :id
-                """).bind("id", id)
-                .mapToBean(News.class)
-                .findOne()
-                .orElse(null));
+    public Optional<News> getNewsById(int id) {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT * FROM news WHERE id = :id")
+                        .bind("id", id)
+                        .mapToBean(News.class)
+                        .findFirst()
+        );
     }
 
     public Optional<News> getNewsBySlug(String slug) {
@@ -73,6 +71,16 @@ public class NewsDao extends BaseDao {
         );
     }
 
+    public List<News> searchAllNews(String keyword) {
+        String pattern = "%" + keyword + "%";
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT * FROM news WHERE title LIKE :keyword OR short_description LIKE :keyword ORDER BY created_at DESC")
+                        .bind("keyword", pattern)
+                        .mapToBean(News.class)
+                        .list()
+        );
+    }
+
     public List<News> getNewsByAuthor(int authorId) {
         return getJdbi().withHandle(handle ->
                 handle.createQuery("SELECT * FROM news WHERE author_id = :authorId AND status = 1 ORDER BY created_at DESC")
@@ -94,7 +102,7 @@ public class NewsDao extends BaseDao {
 
     public int createNews(News news) {
         return getJdbi().withHandle(handle ->
-                handle.createUpdate("INSERT INTO news (title, slug, thumbnail, short_description, content, author_id, status, created_at) VALUES (:title, :slug, :thumbnail, :shortDescription, :content, :authorId, :status, NOW())")
+                handle.createUpdate("INSERT INTO news (title, slug, thumbnail, short_description, content, author_id, status, created_at, updated_at) VALUES (:title, :slug, :thumbnail, :shortDescription, :content, :authorId, :status, NOW(), NOW())")
                         .bind("title", news.getTitle())
                         .bind("slug", news.getSlug())
                         .bind("thumbnail", news.getThumbnail())
@@ -160,21 +168,33 @@ public class NewsDao extends BaseDao {
         return count > 0;
     }
 
-    public String generateSlug(String title) {
-        String slug = title.toLowerCase()
-                .replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a")
-                .replaceAll("[èéẹẻẽêềếệểễ]", "e")
-                .replaceAll("[ìíịỉĩ]", "i")
-                .replaceAll("[òóọỏõôồốộổỗơờớợởỡ]", "o")
-                .replaceAll("[ùúụủũưừứựửữ]", "u")
-                .replaceAll("[ỳýỵỷỹ]", "y")
-                .replaceAll("[đ]", "d")
-                .replaceAll("[^a-z0-9]+", "-")
-                .replaceAll("^-|-$", "");
+    public boolean isSlugExistsExceptId(String slug, int id) {
+        Integer count = getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM news WHERE slug = :slug AND id <> :id")
+                        .bind("slug", slug)
+                        .bind("id", id)
+                        .mapTo(Integer.class)
+                        .one()
+        );
+        return count > 0;
+    }
 
+    public String generateSlug(String title) {
+        String slug = normalizeSlug(title);
         int counter = 1;
         String finalSlug = slug;
         while (isSlugExists(finalSlug)) {
+            finalSlug = slug + "-" + counter;
+            counter++;
+        }
+        return finalSlug;
+    }
+
+    public String generateSlugForUpdate(String title, int id) {
+        String slug = normalizeSlug(title);
+        int counter = 1;
+        String finalSlug = slug;
+        while (isSlugExistsExceptId(finalSlug, id)) {
             finalSlug = slug + "-" + counter;
             counter++;
         }
@@ -185,10 +205,48 @@ public class NewsDao extends BaseDao {
         int total = getTotalNewsCount();
         return (int) Math.ceil((double) total / pageSize);
     }
+
     public List<News> getAllNews() {
         return getJdbi().withHandle(h ->
                 h.createQuery("SELECT * FROM news ORDER BY created_at DESC").mapToBean(News.class).list()
         );
     }
 
+    public int countAllNews() {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM news")
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+
+    public int countNewsByStatus(int status) {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM news WHERE status = :status")
+                        .bind("status", status)
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+
+    public int countNewsCreatedInLast7Days() {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM news WHERE created_at >= DATE_SUB(NOW(), INTERVAL 7 DAY)")
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+
+    private String normalizeSlug(String title) {
+        return title.toLowerCase()
+                .replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a")
+                .replaceAll("[èéẹẻẽêềếệểễ]", "e")
+                .replaceAll("[ìíịỉĩ]", "i")
+                .replaceAll("[òóọỏõôồốộổỗơờớợởỡ]", "o")
+                .replaceAll("[ùúụủũưừứựửữ]", "u")
+                .replaceAll("[ỳýỵỷỹ]", "y")
+                .replaceAll("[đ]", "d")
+                .replaceAll("[^a-z0-9]+", "-")
+                .replaceAll("^-|-$", "");
+    }
 }
