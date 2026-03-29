@@ -107,3 +107,39 @@
     gap: 12px;
     align-items: center;
 }
+
+.order-page .order-date {
+    white-space: nowrap;
+}
+
+.order-page .order-empty {
+    text-align: center;
+}
+
+.order-page .admin-actions .icon-btn {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    background: transparent;
+}
+
+.order-page .admin-actions .icon-btn i {
+    font-size: 17px;
+}
+
+.order-page .admin-actions .icon-btn.view {
+    color: #228be6;
+}
+
+.order-page .admin-actions .icon-btn.edit {
+    color: #2f9e44;
+}
+
+.order-page .admin-actions .icon-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}

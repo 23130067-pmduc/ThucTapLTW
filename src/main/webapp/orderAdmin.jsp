@@ -44,26 +44,11 @@
             <section id="dashboard" class="page active">
 
                 <div class="cards">
-                    <div class="card">
-                        Tổng đơn
-                        <span>${total}</span>
-                    </div>
-                    <div class="card">
-                        Chờ xử lý
-                        <span>${countPending}</span>
-                    </div>
-                    <div class="card">
-                        Đang giao
-                        <span>${countShipping}</span>
-                    </div>
-                    <div class="card">
-                        Hoàn thành
-                        <span>${countCompleted}</span>
-                    </div>
-                    <div class="card">
-                        Đã hủy
-                        <span>${countCancelled}</span>
-                    </div>
+                    <div class="card">Tổng đơn <span>${total}</span></div>
+                    <div class="card">Chờ xử lý <span>${countPending}</span></div>
+                    <div class="card">Đang giao <span>${countShipping}</span></div>
+                    <div class="card">Hoàn thành <span>${countCompleted}</span></div>
+                    <div class="card">Đã hủy <span>${countCancelled}</span></div>
                 </div>
 
                 <div class="order-toolbar">
@@ -84,10 +69,7 @@
                             <i class="fa fa-search"></i> Tìm
                         </button>
 
-                        <button type="button" class="btn-reset"
-                                onclick="window.location.href='order-admin'">
-                            Làm mới
-                        </button>
+                        <a class="btn-reset" href="order-admin">Làm mới</a>
                     </form>
                 </div>
 
@@ -106,7 +88,7 @@
                         <tbody>
                         <c:if test="${empty orders}">
                             <tr>
-                                <td colspan="6" style="text-align: center;">Chưa có đơn hàng</td>
+                                <td colspan="6" class="order-empty">Chưa có đơn hàng</td>
                             </tr>
                         </c:if>
 
@@ -116,21 +98,16 @@
                                 <td>${o.receiverName}</td>
                                 <td><fmt:formatNumber value="${o.finalAmount}" pattern="#,##0" /> đ</td>
                                 <td>
-                                    <span class="order-status ${o.orderStatus}">
-                                        <c:choose>
-                                            <c:when test="${o.orderStatus == 'PENDING'}">Chờ xử lý</c:when>
-                                            <c:when test="${o.orderStatus == 'SHIPPING'}">Đang giao</c:when>
-                                            <c:when test="${o.orderStatus == 'COMPLETED'}">Hoàn thành</c:when>
-                                            <c:when test="${o.orderStatus == 'CANCELLED'}">Đã hủy</c:when>
-                                            <c:otherwise>${o.orderStatus}</c:otherwise>
-                                        </c:choose>
-                                    </span>
+                                    <span class="order-status ${o.orderStatus}">${o.orderStatusLabel}</span>
                                 </td>
-                                <td>${o.createdAtFormatted}</td>
+                                <td class="order-date">${o.createdDateOnly}</td>
                                 <td>
-                                    <div class="order-actions">
-                                        <a href="order-admin?mode=view&id=${o.id}" class="icon-btn view">
+                                    <div class="order-actions admin-actions">
+                                        <a href="order-admin?mode=view&id=${o.id}" class="icon-btn view" title="Xem chi tiết">
                                             <i class="fa fa-eye"></i>
+                                        </a>
+                                        <a href="order-admin?mode=view&id=${o.id}" class="icon-btn edit" title="Cập nhật trạng thái">
+                                            <i class="fa fa-pen"></i>
                                         </a>
                                     </div>
                                 </td>

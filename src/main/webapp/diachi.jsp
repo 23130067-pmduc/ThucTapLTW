@@ -10,23 +10,6 @@
 
 <section class="address-container">
     <aside class="address-sidebar">
-        <div class="user-info">
-            <div class="avatar">
-                <img src="${pageContext.request.contextPath}/img/aochuV.png" alt="Avatar">
-                <button class="change-avatar-btn" type="button">Đổi ảnh</button>
-            </div>
-
-            <h3>
-                <c:choose>
-                    <c:when test="${not empty sessionScope.userlogin}">
-                        ${sessionScope.userlogin.fullName}
-                    </c:when>
-                    <c:otherwise>Khách hàng</c:otherwise>
-                </c:choose>
-            </h3>
-            <p>Thông tin cá nhân</p>
-        </div>
-
         <nav class="profile-menu">
             <ul>
                 <li>
@@ -45,7 +28,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/doi-mat-khau">
+                    <a href="${pageContext.request.contextPath}/forget">
                         <i class="fas fa-lock"></i> Đổi mật khẩu
                     </a>
                 </li>

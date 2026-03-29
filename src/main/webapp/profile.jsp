@@ -11,14 +11,6 @@
 
 <section class="profile-container">
     <div class="profile-sidebar">
-        <div class="user-info">
-            <div class="avatar">
-                <img src="${pageContext.request.contextPath}/img/aochuV.jpg" alt="Avatar">
-            </div>
-            <h3>${user.fullName}</h3>
-            <p>Thành viên từ: ${createdAtFormatted}</p>
-        </div>
-
         <nav class="profile-menu">
             <ul>
                 <li class="active"><a href="${pageContext.request.contextPath}/profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
@@ -32,7 +24,6 @@
 
     <div class="profile-content">
         <h2>Thông tin cá nhân</h2>
-
         <form class="profile-form" method="post" action="${pageContext.request.contextPath}/profile" onsubmit="syncBirthday()">
             <div class="form-row">
                 <div class="form-group">

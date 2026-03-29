@@ -32,4 +32,37 @@ public class OrderService {
     public List<Order> searchOrders(String keyword, String status) {
         return dao.searchOrders(keyword, status);
     }
+
+    public List<Order> getOrdersByUser(int userId, String status) {
+        List<Order> orders = "all".equalsIgnoreCase(status)
+                ? dao.getByUserId(userId)
+                : dao.getByUserIdAndStatus(userId, status);
+
+        for (Order order : orders) {
+            order.setItems(dao.getItems(order.getId()));
+        }
+        return orders;
+    }
+
+    public void cancelOrder(int orderId, int userId) {
+        Order order = dao.findByIdAndUserId(orderId, userId);
+        if (order == null) {
+            throw new RuntimeException("Không tìm thấy đơn hàng");
+        }
+        if (!"PENDING".equals(order.getOrderStatus())) {
+            throw new RuntimeException("Chỉ có thể huỷ đơn đang chờ xác nhận");
+        }
+        dao.updateStatusByUser(orderId, userId, "CANCELLED");
+    }
+
+    public void confirmReceived(int orderId, int userId) {
+        Order order = dao.findByIdAndUserId(orderId, userId);
+        if (order == null) {
+            throw new RuntimeException("Không tìm thấy đơn hàng");
+        }
+        if (!"SHIPPING".equals(order.getOrderStatus())) {
+            throw new RuntimeException("Chỉ xác nhận nhận hàng với đơn đang giao");
+        }
+        dao.updateStatusByUser(orderId, userId, "COMPLETED");
+    }
 }

@@ -38,21 +38,10 @@ public class OrderAdminController extends HttpServlet {
                     ? orderService.searchOrders(keyword, status)
                     : orderService.getAllOrders();
 
-            long pending = orders.stream()
-                    .filter(o -> "PENDING".equals(o.getOrderStatus()))
-                    .count();
-
-            long shipping = orders.stream()
-                    .filter(o -> "SHIPPING".equals(o.getOrderStatus()))
-                    .count();
-
-            long completed = orders.stream()
-                    .filter(o -> "COMPLETED".equals(o.getOrderStatus()))
-                    .count();
-
-            long cancelled = orders.stream()
-                    .filter(o -> "CANCELLED".equals(o.getOrderStatus()))
-                    .count();
+            long pending = orders.stream().filter(o -> "PENDING".equals(o.getOrderStatus())).count();
+            long shipping = orders.stream().filter(o -> "SHIPPING".equals(o.getOrderStatus())).count();
+            long completed = orders.stream().filter(o -> "COMPLETED".equals(o.getOrderStatus())).count();
+            long cancelled = orders.stream().filter(o -> "CANCELLED".equals(o.getOrderStatus())).count();
 
             req.setAttribute("orders", orders);
             req.setAttribute("total", orders.size());
@@ -85,19 +74,19 @@ public class OrderAdminController extends HttpServlet {
 
         var order = orderService.findById(id);
         if (order == null) {
-            resp.sendRedirect("order-admin");
+            resp.sendRedirect(req.getContextPath() + "/order-admin");
             return;
         }
 
         String currentStatus = order.getOrderStatus();
 
         if ("COMPLETED".equals(currentStatus) || "CANCELLED".equals(currentStatus)) {
-            resp.sendRedirect("order-admin?mode=view&id=" + id);
+            resp.sendRedirect(req.getContextPath() + "/order-admin?mode=view&id=" + id);
             return;
         }
 
         if ("PENDING".equals(currentStatus) && "COMPLETED".equals(newStatus)) {
-            resp.sendRedirect("order-admin?mode=view&id=" + id);
+            resp.sendRedirect(req.getContextPath() + "/order-admin?mode=view&id=" + id);
             return;
         }
 
@@ -105,30 +94,28 @@ public class OrderAdminController extends HttpServlet {
 
         String userEmail = orderService.getUserEmailByOrderId(id);
 
-        String statusInVietnamese;
-        switch (newStatus) {
-            case "PENDING":
-                statusInVietnamese = "Chờ xử lý";
-                break;
-            case "SHIPPING":
-                statusInVietnamese = "Đang giao";
-                break;
-            case "COMPLETED":
-                statusInVietnamese = "Hoàn thành";
-                break;
-            case "CANCELLED":
-                statusInVietnamese = "Đã hủy";
-                break;
-            default:
-                statusInVietnamese = newStatus;
+        String statusInVietnamese = switch (newStatus) {
+            case "PENDING" -> "Chờ xử lý";
+            case "SHIPPING" -> "Đang giao";
+            case "COMPLETED" -> "Hoàn thành";
+            case "CANCELLED" -> "Đã hủy";
+            default -> newStatus;
+        };
+
+        String subject = "Cập nhật trạng thái đơn hàng #" + id;
+        String html = """
+                <div style="font-family:Arial,sans-serif;font-size:14px;color:#333">
+                    <p>Xin chào,</p>
+                    <p>Đơn hàng <strong>#%d</strong> của bạn vừa được cập nhật trạng thái thành:
+                    <strong style="color:#0b74de;">%s</strong>.</p>
+                    <p>Cảm ơn bạn đã mua sắm tại SunnyBear!</p>
+                </div>
+                """.formatted(id, statusInVietnamese);
+
+        if (userEmail != null && !userEmail.isBlank()) {
+            EmailService.sendEmail(userEmail, subject, html);
         }
 
-        EmailService.sendEmail(
-                userEmail,
-                "Cập nhật trạng thái đơn hàng #" + id,
-                "Đơn hàng của bạn đã chuyển sang trạng thái: " + statusInVietnamese
-        );
-
-        resp.sendRedirect("order-admin?mode=view&id=" + id);
+        resp.sendRedirect(req.getContextPath() + "/order-admin?mode=view&id=" + id);
     }
 }
