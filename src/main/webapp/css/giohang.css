@@ -33,6 +33,26 @@
     max-width: 820px;
 }
 
+.cart-alert {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.cart-alert-success {
+    background: #edf8ee;
+    color: #256d2d;
+    border: 1px solid #bfe2c4;
+}
+
+.cart-alert-error {
+    background: #fdeeee;
+    color: #c0392b;
+    border: 1px solid #f0c2bc;
+}
+
 .cart-table,
 .card-content-left table {
     width: 100%;
@@ -68,7 +88,6 @@
     color: #ee4d2d;
     font-weight: 600;
 }
-
 
 .card-content-left table td img {
     width: 70px;

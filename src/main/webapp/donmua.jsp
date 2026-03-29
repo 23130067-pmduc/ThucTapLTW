@@ -11,12 +11,22 @@
 
 <section class="profile-container order-page">
     <div class="profile-sidebar">
+        <div class="user-info">
+            <div class="avatar">
+                <img src="${pageContext.request.contextPath}/img/aochuV.jpg" alt="Avatar">
+                <button class="change-avatar-btn" type="button">Đổi ảnh</button>
+            </div>
+
+            <h3>${sessionScope.userlogin.fullName}</h3>
+            <p>Thành viên</p>
+        </div>
+
         <nav class="profile-menu">
             <ul>
                 <li><a href="${pageContext.request.contextPath}/profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
                 <li><a href="${pageContext.request.contextPath}/dia-chi"><i class="fas fa-map-marker-alt"></i> Địa chỉ của tôi</a></li>
                 <li class="active"><a href="${pageContext.request.contextPath}/don-mua"><i class="fas fa-clipboard-list"></i> Đơn hàng của tôi</a></li>
-                <li><a href="${pageContext.request.contextPath}/forget"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
+                <li><a href="${pageContext.request.contextPath}/doi-mat-khau"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
                 <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>
             </ul>
         </nav>
@@ -118,10 +128,18 @@
                                     </c:when>
                                     <c:when test="${o.orderStatus == 'COMPLETED'}">
                                         <button type="button" class="order-action-btn btn-warm">Đánh giá</button>
-                                        <button type="button" class="order-action-btn btn-warm">Mua lại</button>
+                                        <form action="${pageContext.request.contextPath}/mua-lai-don" method="post">
+                                            <input type="hidden" name="orderId" value="${o.id}">
+                                            <input type="hidden" name="currentStatus" value="${currentStatus}">
+                                            <button type="submit" class="order-action-btn btn-warm">Mua lại</button>
+                                        </form>
                                     </c:when>
                                     <c:when test="${o.orderStatus == 'CANCELLED'}">
-                                        <button type="button" class="order-action-btn btn-warm">Mua lại</button>
+                                        <form action="${pageContext.request.contextPath}/mua-lai-don" method="post">
+                                            <input type="hidden" name="orderId" value="${o.id}">
+                                            <input type="hidden" name="currentStatus" value="${currentStatus}">
+                                            <button type="submit" class="order-action-btn btn-warm">Mua lại</button>
+                                        </form>
                                     </c:when>
                                 </c:choose>
                             </div>
