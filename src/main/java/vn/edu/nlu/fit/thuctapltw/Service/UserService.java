@@ -49,11 +49,9 @@ public class UserService {
 
     public void registerSendOtp(String username, String email, String password) {
 
-        // 1. Check username
         if (userDao.existsByUsername(username)) {
             throw new RuntimeException("Tên đăng nhập đã tồn tại");
         }
-        // 2. Check password
         String passwordError = checkPasswordStrength(password);
         if (passwordError != null) {
             throw new RuntimeException(passwordError);
@@ -63,21 +61,16 @@ public class UserService {
         String otp = String.format("%06d", new Random().nextInt(1_000_000));
         LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(5);
 
-        // 3. Check email
         User existing = userDao.finduser(email);
 
         if (existing == null) {
-            // chưa tồn tại → insert pending
             userDao.insertPendingUser(username, email, hashedPassword, otp, expiredAt);
         } else if (existing.getIsActive() == 0) {
-            // đã đăng ký nhưng chưa xác nhận → gửi lại OTP
             userDao.updateOtp(email, otp, expiredAt);
         } else {
-            // đã active
             throw new RuntimeException("Email đã được đăng ký");
         }
 
-        // 4. Send mail
         EmailService.sendEmail(
                 email,
                 "OTP xác nhận đăng ký",

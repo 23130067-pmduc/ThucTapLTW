@@ -36,7 +36,6 @@ public class ProfileController extends HttpServlet {
 
         request.setAttribute("user", fullUser);
 
-        // Để chuyển ngày thành dạng bth VN.
         if (fullUser.getBirthday() != null) {
             request.setAttribute(
                     "birthdayDate",
@@ -44,7 +43,6 @@ public class ProfileController extends HttpServlet {
             );
         }
 
-        // format ngày tạo tài khoản
         if (fullUser.getCreatedAt() != null) {
             DateTimeFormatter formatter =
                     DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -70,10 +68,8 @@ public class ProfileController extends HttpServlet {
             return;
         }
 
-        // Lấy user đang đăng nhập
         User userSession = (User) session.getAttribute("userlogin");
 
-        // Lấy dữ liệu từ form (name phải khớp JSP)
         String fullName = request.getParameter("fullname");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
@@ -82,10 +78,8 @@ public class ProfileController extends HttpServlet {
 
         String gender = request.getParameter("gender");
 
-        // Lấy user đầy đủ từ DB
         User user = userService.findById(userSession.getId());
 
-        // Set lại thông tin
         user.setFullName(fullName);
         user.setPhone(phone);
         user.setEmail(email);
@@ -94,18 +88,14 @@ public class ProfileController extends HttpServlet {
 
         user.setGender(gender);
 
-        // Parse ngày sinh
         if (birthdayStr != null && !birthdayStr.isEmpty()) {
             user.setBirthday(java.time.LocalDate.parse(birthdayStr));
         }
 
-        // Update DB
         userService.update(user);
 
-        // Update lại session (QUAN TRỌNG)
         session.setAttribute("userlogin", user);
 
-        // Quay lại trang profile
         response.sendRedirect("profile");
     }
 

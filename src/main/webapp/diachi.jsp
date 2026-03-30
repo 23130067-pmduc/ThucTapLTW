@@ -28,7 +28,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="${pageContext.request.contextPath}/forget">
+                    <a href="${pageContext.request.contextPath}/doi-mat-khau">
                         <i class="fas fa-lock"></i> Đổi mật khẩu
                     </a>
                 </li>
