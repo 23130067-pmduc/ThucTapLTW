@@ -298,9 +298,10 @@ public class UserDao extends BaseDao {
 
     public int createGoogleUser(User user) {
         return  getJdbi().withHandle(handle -> handle.createUpdate("""
-                INSERT INTO users (email, full_name, role, status, is_active)
-                VALUES (:email, :fullName, :role, :status, :isActive)
+                INSERT INTO users (username, email, full_name, role, status, is_active)
+                VALUES (:username, :email, :fullName, :role, :status, :isActive)
                 """)
+                .bind("username", user.getUsername())
                 .bind("email", user.getEmail())
                 .bind("fullName", user.getFullName())
                 .bind("role", user.getRole())
