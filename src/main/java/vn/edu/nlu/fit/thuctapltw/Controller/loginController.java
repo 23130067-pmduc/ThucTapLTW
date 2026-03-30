@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
 
-@WebServlet(name = "logoutController", value = "/login")
+@WebServlet(name = "loginController", value = "/login")
 public class loginController extends HttpServlet {
     private UserService userService;
     private CartDao cartDao;

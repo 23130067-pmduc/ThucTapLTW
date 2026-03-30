@@ -1,43 +1,30 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ page contentType="text/html; charset=UTF-8"
-         pageEncoding="UTF-8" %>
-
-
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%
     request.setAttribute("pageCss", "profile.css");
-    request.setAttribute("pageTitle" , "Profile");
+    request.setAttribute("pageTitle", "Profile");
 %>
 
 <%@include file="header.jsp"%>
 
 <section class="profile-container">
     <div class="profile-sidebar">
-        <div class="user-info">
-            <div class="avatar">
-                <img src="./img/aochuV.png" alt="Avatar">
-            </div>
-            <h3>${user.fullName}</h3>
-            <p>Thành viên từ: ${createdAtFormatted}</p>
-
-        </div>
-
         <nav class="profile-menu">
             <ul>
-                <li class="active"><a href="profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
-                <li><a href="dia-chi"><i class="fas fa-map-marker-alt"></i> Địa chỉ của tôi</a></li>
-                <li><a href="don-mua"><i class="fas fa-clipboard-list"></i> Đơn hàng của tôi</a></li>
-                <li><a href="doi-mat-khau"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
-                <li><a href="trang-chu"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>
+                <li class="active"><a href="${pageContext.request.contextPath}/profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
+                <li><a href="${pageContext.request.contextPath}/dia-chi"><i class="fas fa-map-marker-alt"></i> Địa chỉ của tôi</a></li>
+                <li><a href="${pageContext.request.contextPath}/don-mua"><i class="fas fa-clipboard-list"></i> Đơn hàng của tôi</a></li>
+                <li><a href="${pageContext.request.contextPath}/doi-mat-khau"><i class="fas fa-lock"></i> Đổi mật khẩu</a></li>
+                <li><a href="${pageContext.request.contextPath}/logout"><i class="fa fa-sign-out"></i> Đăng xuất</a></li>
             </ul>
         </nav>
     </div>
 
     <div class="profile-content">
         <h2>Thông tin cá nhân</h2>
-
-        <form class="profile-form" method="post" action="profile" onsubmit="syncBirthday()">
+        <form class="profile-form" method="post" action="${pageContext.request.contextPath}/profile" onsubmit="syncBirthday()">
             <div class="form-row">
                 <div class="form-group">
                     <label for="fullname">Họ và tên</label>
@@ -56,14 +43,8 @@
                 </div>
                 <div class="form-group">
                     <label for="birthday">Ngày sinh</label>
-                    <input type="text" id="birthdayDisplay"
-                           value="<fmt:formatDate value='${birthdayDate}' pattern='dd-MM-yyyy'/>" disabled>
-
-
-                    <input type="hidden"
-                           id="birthday"
-                           name="birthday"
-                           value="<fmt:formatDate value='${birthdayDate}' pattern='yyyy-MM-dd'/>">
+                    <input type="text" id="birthdayDisplay" value="<fmt:formatDate value='${birthdayDate}' pattern='dd-MM-yyyy'/>" disabled>
+                    <input type="hidden" id="birthday" name="birthday" value="<fmt:formatDate value='${birthdayDate}' pattern='yyyy-MM-dd'/>">
                 </div>
             </div>
 
@@ -79,23 +60,17 @@
                     <label>Giới tính</label>
                     <div class="radio-group">
                         <label>
-                            <input type="radio" name="gender" value="male"
-                            ${user.gender == 'male' ? 'checked' : ''} disabled>
+                            <input type="radio" name="gender" value="male" ${user.gender == 'male' ? 'checked' : ''} disabled>
                             Nam
                         </label>
-
                         <label>
-                            <input type="radio" name="gender" value="female"
-                            ${user.gender == 'female' ? 'checked' : ''} disabled>
+                            <input type="radio" name="gender" value="female" ${user.gender == 'female' ? 'checked' : ''} disabled>
                             Nữ
                         </label>
-
                         <label>
-                            <input type="radio" name="gender" value="other"
-                            ${user.gender == 'other' ? 'checked' : ''} disabled>
+                            <input type="radio" name="gender" value="other" ${user.gender == 'other' ? 'checked' : ''} disabled>
                             Khác
                         </label>
-
                     </div>
                 </div>
             </div>

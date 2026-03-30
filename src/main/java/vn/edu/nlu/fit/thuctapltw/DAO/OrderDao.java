@@ -25,9 +25,28 @@ public class OrderDao extends BaseDao {
         );
     }
 
+    public Order findByIdAndUserId(int orderId, int userId) {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT * FROM orders WHERE id = :orderId AND user_id = :userId")
+                        .bind("orderId", orderId)
+                        .bind("userId", userId)
+                        .mapToBean(Order.class)
+                        .findOne()
+                        .orElse(null)
+        );
+    }
+
     public List<OrderItem> getItems(int orderId) {
         return getJdbi().withHandle(handle ->
-                handle.createQuery("SELECT * FROM order_items WHERE order_id = :orderId")
+                handle.createQuery("""
+                        SELECT oi.id, oi.order_id, oi.variant_id, oi.quantity, oi.price, oi.total,
+                               oi.product_name, oi.size, oi.color, p.thumbnail
+                        FROM order_items oi
+                        LEFT JOIN product_variants pv ON oi.variant_id = pv.id
+                        LEFT JOIN products p ON pv.product_id = p.id
+                        WHERE oi.order_id = :orderId
+                        ORDER BY oi.id ASC
+                        """)
                         .bind("orderId", orderId)
                         .mapToBean(OrderItem.class)
                         .list()
@@ -39,6 +58,16 @@ public class OrderDao extends BaseDao {
                 handle.createUpdate("UPDATE orders SET order_status = :status WHERE id = :id")
                         .bind("status", status)
                         .bind("id", id)
+                        .execute()
+        );
+    }
+
+    public void updateStatusByUser(int orderId, int userId, String status) {
+        getJdbi().useHandle(handle ->
+                handle.createUpdate("UPDATE orders SET order_status = :status WHERE id = :orderId AND user_id = :userId")
+                        .bind("status", status)
+                        .bind("orderId", orderId)
+                        .bind("userId", userId)
                         .execute()
         );
     }
@@ -95,6 +124,25 @@ public class OrderDao extends BaseDao {
         });
     }
 
+    public List<Order> getByUserId(int userId) {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT * FROM orders WHERE user_id = :userId ORDER BY created_at DESC")
+                        .bind("userId", userId)
+                        .mapToBean(Order.class)
+                        .list()
+        );
+    }
+
+    public List<Order> getByUserIdAndStatus(int userId, String status) {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT * FROM orders WHERE user_id = :userId AND order_status = :status ORDER BY created_at DESC")
+                        .bind("userId", userId)
+                        .bind("status", status)
+                        .mapToBean(Order.class)
+                        .list()
+        );
+    }
+
     public int createOrder(int userId, String receiver, String phone, String address, String note, String paymentMethod, double totalPrice) {
         return getJdbi().withHandle(h -> h.createUpdate("""
             INSERT INTO orders( user_id, receiver_name, phone, shipping_address, note,total_price, discount, shipping_fee, final_amount,payment_methods, payment_statuses, order_status, created_at)
@@ -103,7 +151,6 @@ public class OrderDao extends BaseDao {
     }
 
     public Order getById(int orderId) {
-
         String sql = """
         SELECT id, user_id, receiver_name, phone, shipping_address, total_price, discount, shipping_fee, note, final_amount, payment_methods, payment_statuses, order_status, created_at
         FROM orders
@@ -116,7 +163,8 @@ public class OrderDao extends BaseDao {
             o.setReceiverName(rs.getString("receiver_name"));
             o.setPhone(rs.getString("phone"));
             o.setShippingAddress(rs.getString("shipping_address"));
-            o.setNote(rs.getString("note"));o.setTotalPrice(rs.getDouble("total_price"));
+            o.setNote(rs.getString("note"));
+            o.setTotalPrice(rs.getDouble("total_price"));
             o.setDiscount(rs.getDouble("discount"));
             o.setShippingFee(rs.getDouble("shipping_fee"));
             o.setFinalAmount(rs.getDouble("final_amount"));
@@ -127,5 +175,4 @@ public class OrderDao extends BaseDao {
             return o;}).findOne().orElse(null)
         );
     }
-
 }

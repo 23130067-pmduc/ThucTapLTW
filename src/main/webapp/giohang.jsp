@@ -17,77 +17,84 @@
 
     <div class="container">
         <div class="card-content-left">
-            <c:choose>
-                <c:when test="${empty cartItems}">
-                    <p style="text-align:center; padding:40px; font-size:18px;">
-                        🛒 Giỏ hàng của bạn đang trống
-                    </p>
-                </c:when>
+            <div class="cart-table-wrapper">
+                <c:if test="${not empty param.success}">
+                    <div class="cart-alert cart-alert-success">${param.success}</div>
+                </c:if>
+                <c:if test="${not empty param.error}">
+                    <div class="cart-alert cart-alert-error">${param.error}</div>
+                </c:if>
 
-                <c:otherwise>
-                    <table border="1" cellpadding="10" cellspacing="0" width="100%">
-                        <thead>
-                        <tr>
-                            <th>Sản phẩm</th>
-                            <th>Phân loại</th>
-                            <th>Số lượng</th>
-                            <th>Thành tiền</th>
-                            <th>Xóa</th>
-                        </tr>
-                        </thead>
+                <c:choose>
+                    <c:when test="${empty cartItems}">
+                        <p style="text-align:center; padding:40px; font-size:18px;">
+                            🛒 Giỏ hàng của bạn đang trống
+                        </p>
+                    </c:when>
 
-                        <tbody>
-                        <c:set var="count" value="1"/>
-                        <c:forEach var="item" items="${cartItems}">
-                            <tr data-price="${item.price}">
-                                <td>
-                                    <img src="${item.product.thumbnail}" width="60">
-                                    <br>
-                                        ${item.product.name}
-                                </td>
-
-                                <td>
-                                    Size: <b>${item.size}</b><br>
-                                    Màu: <b>${item.color}</b>
-                                </td>
-
-                                <td>
-                                    <form action="update-cart"
-                                          method="post"
-                                          class="qty-form"
-                                          style="display:flex; justify-content:center; align-items:center; gap:6px;">
-
-                                        <input type="hidden" name="variantId" value="${item.variantId}">
-
-                                        <button type="button" class="btn-minus">−</button>
-
-                                        <input type="text"
-                                               name="quantity"
-                                               class="qty-display"
-                                               value="${item.quantity}"
-                                               readonly
-                                               style="width:40px; text-align:center;">
-
-                                        <button type="button" class="btn-plus">+</button>
-                                    </form>
-                                </td>
-                                <td>
-                                    <fmt:formatNumber value="${item.price * item.quantity}" type="number"/> ₫
-                                </td>
-
-                                </td>
-                                <td>
-                                    <form action="del-item" method="post">
-                                        <input type="hidden" name="variantId" value="${item.variantId}">
-                                        <button type="submit"> <i class="fa fa-trash"></i></button>
-                                    </form>
-                                </td>
+                    <c:otherwise>
+                        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+                            <thead>
+                            <tr>
+                                <th>Sản phẩm</th>
+                                <th>Phân loại</th>
+                                <th>Số lượng</th>
+                                <th>Thành tiền</th>
+                                <th>Xóa</th>
                             </tr>
-                        </c:forEach>
-                        </tbody>
-                    </table>
-                </c:otherwise>
-            </c:choose>
+                            </thead>
+
+                            <tbody>
+                            <c:forEach var="item" items="${cartItems}">
+                                <tr data-price="${item.price}">
+                                    <td>
+                                        <img src="${item.product.thumbnail}" width="60">
+                                        <br>
+                                            ${item.product.name}
+                                    </td>
+
+                                    <td>
+                                        Size: <b>${item.size}</b><br>
+                                        Màu: <b>${item.color}</b>
+                                    </td>
+
+                                    <td>
+                                        <form action="update-cart"
+                                              method="post"
+                                              class="qty-form"
+                                              style="display:flex; justify-content:center; align-items:center; gap:6px;">
+
+                                            <input type="hidden" name="variantId" value="${item.variantId}">
+
+                                            <button type="button" class="btn-minus">−</button>
+
+                                            <input type="text"
+                                                   name="quantity"
+                                                   class="qty-display"
+                                                   value="${item.quantity}"
+                                                   readonly
+                                                   style="width:40px; text-align:center;">
+
+                                            <button type="button" class="btn-plus">+</button>
+                                        </form>
+                                    </td>
+                                    <td>
+                                        <fmt:formatNumber value="${item.price * item.quantity}" type="number"/> ₫
+                                    </td>
+
+                                    <td>
+                                        <form action="del-item" method="post">
+                                            <input type="hidden" name="variantId" value="${item.variantId}">
+                                            <button type="submit"> <i class="fa fa-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </c:forEach>
+                            </tbody>
+                        </table>
+                    </c:otherwise>
+                </c:choose>
+            </div>
 
         </div>
         <div class="card-content-right">

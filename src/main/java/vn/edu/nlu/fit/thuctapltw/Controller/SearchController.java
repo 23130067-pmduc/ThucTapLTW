@@ -24,7 +24,7 @@ public class SearchController extends HttpServlet {
         List<Category> danhMuc = cd.findAll();
 
         request.setAttribute("danhMuc", danhMuc);
-        request.getRequestDispatcher("/search.jsp").forward(request, response);
+        request.getRequestDispatcher("/Search.jsp").forward(request, response);
     }
 
     @Override

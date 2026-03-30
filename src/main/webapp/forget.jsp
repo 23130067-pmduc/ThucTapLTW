@@ -13,7 +13,7 @@
 
 <main class="forgot-container">
     <div class="forget-box">
-        <a href="trangchu.jsp">
+        <a href="trang-chu">
             <button class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
         </a>
 
@@ -30,7 +30,7 @@
             <button type="submit" class="btn-primary">Tiếp theo</button>
         </form>
         <div class="links">
-            <a href="login.jsp">Quay lại đăng nhập</a>
+            <a href="login">Quay lại đăng nhập</a>
         </div>
     </div>
 </main>

@@ -161,6 +161,6 @@
     </div>
 </div>
 
-<script src="js/product-variant-admin.js"></script>
+<script src="javaScript/product-variant-admin.js"></script>
 </body>
 </html>

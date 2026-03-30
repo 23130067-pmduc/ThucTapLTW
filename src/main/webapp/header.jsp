@@ -59,16 +59,8 @@
 
         <div class="actions">
             <a href="#" class="iconSearch"><i class="fa-solid fa-magnifying-glass"></i></a>
-            <%--                <div class="user-menu">--%>
-            <%--                    <a href="#" class="iconUser"><i class="fa-regular fa-user"></i>${sessionScope.userlogin.username}</a>--%>
-            <%--                    <ul class="user-dropdown">--%>
-            <%--                        <li><a href="login">Đăng nhập</a></li>--%>
-            <%--                        <li><a href="register">Đăng ký</a></li>--%>
-            <%--                    </ul>--%>
-            <%--                </div>--%>
             <c:choose>
                 <c:when test="${not empty sessionScope.userlogin}">
-                    <!-- ĐÃ LOGIN -->
                     <div class="user-menu">
                         <a href="#" class="iconUser">
                             <i class="fa-regular fa-user"></i>
@@ -83,7 +75,6 @@
                 </c:when>
 
                 <c:otherwise>
-                    <!-- CHƯA LOGIN -->
                     <div class="user-menu">
                         <a href="#" class="iconUser">
                             <i class="fa-regular fa-user"></i>
