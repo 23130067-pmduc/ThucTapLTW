@@ -64,7 +64,7 @@
                      data-size="large"
                      data-theme="outline"
                      data-text="signin_with"
-                     data-shape="rectangular"
+                     data-shape="pill"
                      data-logo_alignment="left"
                      data-width="100%">
                 </div>
