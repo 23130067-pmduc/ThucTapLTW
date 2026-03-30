@@ -45,13 +45,8 @@
                     </label>
 
                     <label>
-                        <input type="radio" name="paymentMethod" value="MOMO">
-                        Ví điện tử MOMO
-                    </label>
-
-                    <label>
-                        <input type="radio" name="paymentMethod" value="ONEPAY">
-                        Thẻ ATM / Visa (OnePay)
+                        <input type="radio" name="paymentMethod" value="VNPAY">
+                        Thanh toán qua VNPay
                     </label>
                 </div>
             </div>

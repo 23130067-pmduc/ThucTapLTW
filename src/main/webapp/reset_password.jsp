@@ -12,7 +12,7 @@
 <main class="main">
     <div class="forget-box">
 
-        <a href="Verify">
+        <a href="Verify.jsp">
             <button class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
         </a>
 

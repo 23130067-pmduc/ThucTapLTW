@@ -57,4 +57,5 @@
 </main>
 
 </body>
+<script src="./javaScript/otp.js"></script>
 </html>
