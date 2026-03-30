@@ -18,6 +18,12 @@ public class OtpController extends HttpServlet {
     private UserService userService;
 
     @Override
+    public void init() {
+        userService = new UserService();
+    }
+
+
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/otplogin.jsp").forward(request, response);
     }
