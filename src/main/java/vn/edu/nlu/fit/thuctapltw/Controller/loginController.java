@@ -136,7 +136,10 @@ public class loginController extends HttpServlet {
 
 
             if (user == null) {
+
+                String userName = email.split("@")[0];
                 user = new User();
+                user.setUsername(userName);
                 user.setEmail(email);
                 user.setFullName(name);
                 user.setRole("user");
