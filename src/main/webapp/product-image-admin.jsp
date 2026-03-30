@@ -13,7 +13,7 @@
 <body>
 <div class="user">
     <aside class="sidebar">
-        <img src="${pageContext.request.contextPath}/img/quanao/gau.png" alt="Logo">
+        <img src="${pageContext.request.contextPath}/img/gau.png" alt="Logo">
         <p>ADMIN</p>
 
         <div class="nav" id="menu">

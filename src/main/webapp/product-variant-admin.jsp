@@ -14,7 +14,7 @@
 <body>
 <div class="admin-layout">
     <aside class="sidebar">
-        <img src="img/quanao/gau.png" alt="Logo quản trị">
+        <img src="img/gau.png" alt="Logo quản trị">
         <p>ADMIN</p>
 
         <nav class="nav">

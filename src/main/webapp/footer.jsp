@@ -38,7 +38,7 @@
 
             <div class="social-icons">
                 <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#."><img src="${pageContext.request.contextPath}/image/zalo.webp" alt="Zalo"></a>
+                <a href="#."><img src="${pageContext.request.contextPath}/img/zalo.png" alt="Zalo"></a>
                 <a href="#"><i class="fa-brands fa-twitter"></i></a>
                 <a href="#"><i class="fa-brands fa-instagram"></i></a>
                 <a href="#"><i class="fa-brands fa-tiktok"></i></a>
