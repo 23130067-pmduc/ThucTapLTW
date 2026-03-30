@@ -43,7 +43,7 @@
 
     <div class="address-panel">
         <div class="address-page-header">
-            <h2><i class="fas fa-map-marker-alt"></i> Địa chỉ của tôi</h2>
+            <h2> Địa chỉ của tôi</h2>
             <button class="btn-add-address" id="btnOpenModal" type="button">
                 <i class="fas fa-plus"></i> Thêm địa chỉ mới
             </button>

@@ -102,10 +102,21 @@
     padding: 30px;
 }
 
+.order-page-header  {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #5B3A29;
+}
+
 .order-page-header h2 {
-    color: #222;
-    font-size: 40px;
-    margin-bottom: 18px;
+    color: #333;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .order-tabs {
@@ -415,68 +426,4 @@
 .btn-received:hover {
     background: #4caf50;
     color: #fff;
-}
-
-@media (max-width: 1200px) {
-    .profile-container {
-        width: 100%;
-        padding: 0 16px;
-        gap: 20px;
-    }
-}
-
-@media (max-width: 992px) {
-    .profile-container {
-        flex-direction: column;
-    }
-
-    .profile-sidebar {
-        flex: none;
-    }
-
-    .order-info-footer {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .order-summary-box {
-        text-align: left;
-        min-width: 0;
-    }
-}
-
-@media (max-width: 768px) {
-    .profile-content {
-        padding: 20px;
-    }
-
-    .order-page-header h2 {
-        font-size: 32px;
-    }
-
-    .order-card-header,
-    .order-products-wrapper,
-    .order-info-footer,
-    .order-actions-row {
-        padding-left: 16px;
-        padding-right: 16px;
-    }
-
-    .order-card-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .order-product-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .order-product-price {
-        align-self: flex-end;
-    }
-
-    .summary-total {
-        font-size: 26px;
-    }
 }

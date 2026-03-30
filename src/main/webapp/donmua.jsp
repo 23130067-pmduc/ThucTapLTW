@@ -11,16 +11,6 @@
 
 <section class="profile-container order-page">
     <div class="profile-sidebar">
-        <div class="user-info">
-            <div class="avatar">
-                <img src="${pageContext.request.contextPath}/img/aochuV.jpg" alt="Avatar">
-                <button class="change-avatar-btn" type="button">Đổi ảnh</button>
-            </div>
-
-            <h3>${sessionScope.userlogin.fullName}</h3>
-            <p>Thành viên</p>
-        </div>
-
         <nav class="profile-menu">
             <ul>
                 <li><a href="${pageContext.request.contextPath}/profile"><i class="fas fa-user"></i> Thông tin cá nhân</a></li>
