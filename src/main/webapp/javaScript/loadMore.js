@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const product = document.querySelectorAll(".product-card");
     const loadMoreButton = document.getElementById("load-more");
+    const scrollTopBtn = document.getElementById("scrollTopBtn");
 
     let visibleCount = 16;
     const increment = 8;
@@ -25,4 +26,21 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
+
+    if (scrollTopBtn) {
+        window.addEventListener("scroll", () => {
+            if (window.scrollY > 300) {
+                scrollTopBtn.style.display = "block";
+            } else {
+                scrollTopBtn.style.display = "none";
+            }
+        });
+
+        scrollTopBtn.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    }
 })

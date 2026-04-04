@@ -224,6 +224,12 @@
     <div class="load-more-container">
         <button id="load-more">Xem thêm</button>
     </div>
+
+    <button id="scrollTopBtn" title="Lên đầu trang">
+        <i class="fa-solid fa-arrow-up"></i>
+    </button>
+
 </section>
+
 
 <%@ include file="footer.jsp"%>
