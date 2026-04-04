@@ -10,6 +10,7 @@
 %>
 
 <%@include file="header.jsp"%>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product-card.css">
 
 
 
@@ -176,24 +177,44 @@
 
         <c:forEach var="p" items="${list}" >
 
-
             <div class="product-card">
-                <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover">
-                    <img src="${p.thumbnail}" alt="${p.name}">
-                </a>
-                <h3><a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}">${p.name}</a></h3>
+                <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover"></a>
 
+                <img src="${p.thumbnail}" alt="${p.name}">
+
+                <h3>${p.name}</h3>
 
                 <fmt:setLocale value="vi_VN"/>
                 <p class="price">
-                    Giá: <span class="new-price">
-                    <fmt:formatNumber value="${p.sale_price}" type="number" groupingUsed="true"/>đ
-                </span>
+                    Giá:
+
+                    <c:choose>
+                        <c:when test="${p.price ne p.sale_price}">
+                            <span class="new-price">
+                                <fmt:formatNumber value="${p.sale_price}" type="number" groupingUsed="true"/>đ
+                            </span>
+                                            <span class="old-price">
+                                <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>đ
+                            </span>
+                        </c:when>
+
+                        <c:otherwise>
+                            <span class="new-price">
+                                <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>đ
+                            </span>
+                        </c:otherwise>
+                    </c:choose>
                 </p>
 
-                <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="btn-add">
-                    Thêm vào giỏ
-                </a>
+                <div class="button">
+                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="btn-detail">
+                        Xem chi tiết
+                    </a>
+
+                    <button class="btn-add">
+                        Thêm vào giỏ hàng
+                    </button>
+                </div>
             </div>
 
         </c:forEach>

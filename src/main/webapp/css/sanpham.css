@@ -142,28 +142,6 @@
     display: block;
 }
 
-.link-cover {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    color: #333;
-    text-decoration: none;
-    font-weight: 500;
-    position: relative;
-    transition: color 0.3s ease, transform 0.3s ease;
-}
-
-
-.link-cover::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    bottom: -2px;
-    width: 0;
-    height: 2px;
-    background-color: #C89F7B;
-    transition: width 0.3s ease;
-}
 
 .product-list {
     display: flex;
@@ -173,96 +151,7 @@
     gap: 40px;
 }
 
-.product-card {
-    background-color: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0 4px 10px #666666;
-    width: 280px;
-    padding: 20px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    height: 450px;
-}
 
-.product-card:hover {
-    box-shadow: 0 8px 20px #666666;
-    transform: translateY(-8px);
-}
-
-.product-card img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 15px;
-    margin-bottom: 0;
-    transition: transform 0.3s ease;
-}
-
-
-.product-card h3 {
-    font-size: 18px;
-    color: #333;
-    margin: 10px 0;
-
-    min-height: 48px;
-    line-height: 1.3;
-    text-align: center;
-}
-
-
-.product-card p {
-    color: #666666;
-    font-size: 15px;
-    margin-bottom: 0;
-    font-weight: 500;
-}
-
-
-.product-card .price {
-    font-size: 15px;
-    color: #888;
-    margin: 10px 0;
-}
-
-.product-card .new-price {
-    color: #dc2626;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-
-.btn-add {
-    background-color: #A9C87D;
-    color: #ffffff;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 25px;
-    cursor: pointer;
-    font-size: 15px;
-    transition: all 0.3s ease;
-    display: inline-block;
-    align-self: center;
-    margin: 0;
-}
-
-
-.btn-add:hover {
-    background-color: #C89F7B;
-    transform: scale(1.05);
-}
-
-.product-card a{
-    text-decoration: none;
-
-}
-
-.product-card h3 a{
-    color: inherit;
-}
 
 #load-more {
     display: block;
@@ -311,7 +200,10 @@
     display: none;
 }
 
-/* ==========Khi nhấn thêm vào giỏ hàng ===========*/
+.product-card.hidden{
+    display: none !important;
+}
+
 #toast {
     visibility: hidden;
     min-width: 250px;

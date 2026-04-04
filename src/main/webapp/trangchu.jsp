@@ -10,6 +10,7 @@
 %>
 
 <%@include file="header.jsp"%>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product-card.css">
 
 
 <section class="banner">
@@ -44,17 +45,34 @@
                     <h3>${p.name}</h3>
 
                     <p class="price">
-                        Giá: <span class="new-price">
-                            <fmt:formatNumber value="${p.sale_price}" type="number"/>đ
-                        </span>
-                        <span class="old-price">
-                            <fmt:formatNumber value="${p.price}" type="number"/>đ
-                        </span>
+                        Giá:
+                        <c:choose>
+                            <c:when test="${p.price ne p.sale_price}">
+                                <span class="new-price">
+                                    <fmt:formatNumber value="${p.sale_price}" type="number"/>đ
+                                </span>
+                                <span class="old-price">
+                                    <fmt:formatNumber value="${p.price}" type="number"/>đ
+                                </span>
+                            </c:when>
+
+                            <c:otherwise>
+                                <span class="new-price">
+                                    <fmt:formatNumber value="${p.price}" type="number"/>đ
+                                </span>
+                            </c:otherwise>
+                        </c:choose>
                     </p>
 
-                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1" class="btn-add">
-                        Thêm vào giỏ
-                    </a>
+                    <div class="button">
+                        <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1" class="btn-detail">
+                            Xem chi tiết
+                        </a>
+
+                        <button class="btn-add">
+                            Thêm vào giỏ hàng
+                        </button>
+                    </div>
                 </div>
             </c:forEach>
         </div>
@@ -74,15 +92,37 @@
         <div class="slider-wrapper">
             <div class="category-products" id="boy-slider">
                 <c:forEach var="p" items="${boyProducts}">
-                    <div class="product-mini">
+                    <div class="product-card">
                         <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover"></a>
                         <img src="${p.thumbnail}" alt="${p.name}">
                         <h3>${p.name}</h3>
                         <p class="price">
-                            <span class="new-price"><fmt:formatNumber value="${p.sale_price}" type="number"/>đ</span>
-                            <span class="old-price"><fmt:formatNumber value="${p.price}" type="number"/>đ</span>
+                            <c:choose>
+                                <c:when test="${p.price ne p.sale_price}">
+                                    <span class="new-price">
+                                        <fmt:formatNumber value="${p.sale_price}" type="number"/>đ
+                                    </span>
+                                                            <span class="old-price">
+                                        <fmt:formatNumber value="${p.price}" type="number"/>đ
+                                    </span>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <span class="new-price">
+                                        <fmt:formatNumber value="${p.price}" type="number"/>đ
+                                    </span>
+                                </c:otherwise>
+                            </c:choose>
                         </p>
-                        <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1" class="btn-add">Thêm vào giỏ</a>
+                        <div class="button">
+                            <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1" class="btn-detail">
+                                Xem chi tiết
+                            </a>
+
+                            <button class="btn-add">
+                                Thêm vào giỏ hàng
+                            </button>
+                        </div>
                     </div>
                 </c:forEach>
             </div>
@@ -103,23 +143,39 @@
         <div class="slider-wrapper">
             <div class="category-products" id="girl-slider">
                 <c:forEach var="p" items="${girlProducts}">
-                    <div class="product-mini">
+                    <div class="product-card">
                         <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover"></a>
                         <img src="${p.thumbnail}" alt="${p.name}">
                         <h3>${p.name}</h3>
 
                         <p class="price">
-                        <span class="new-price">
-                            <fmt:formatNumber value="${p.sale_price}" type="number"/>đ
-                        </span>
-                            <span class="old-price">
-                            <fmt:formatNumber value="${p.price}" type="number"/>đ
-                        </span>
+                            <c:choose>
+                                <c:when test="${p.price ne p.sale_price}">
+                                    <span class="new-price">
+                                        <fmt:formatNumber value="${p.sale_price}" type="number"/>đ
+                                    </span>
+                                                            <span class="old-price">
+                                        <fmt:formatNumber value="${p.price}" type="number"/>đ
+                                    </span>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <span class="new-price">
+                                        <fmt:formatNumber value="${p.price}" type="number"/>đ
+                                    </span>
+                                </c:otherwise>
+                            </c:choose>
                         </p>
 
-                        <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1" class="btn-add">
-                            Thêm vào giỏ
-                        </a>
+                        <div class="button">
+                            <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1" class="btn-detail">
+                                Xem chi tiết
+                            </a>
+
+                            <button class="btn-add">
+                                Thêm vào giỏ hàng
+                            </button>
+                        </div>
                     </div>
                 </c:forEach>
             </div>
@@ -141,23 +197,39 @@
         <div class="slider-wrapper">
             <div class="category-products" id="acc-slider">
                 <c:forEach var="p" items="${accessoryProducts}">
-                    <div class="product-mini">
+                    <div class="product-card">
                         <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover"></a>
                         <img src="${p.thumbnail}" alt="${p.name}">
                         <h3>${p.name}</h3>
 
                         <p class="price">
-                        <span class="new-price">
-                            <fmt:formatNumber value="${p.sale_price}" type="number"/>đ
-                        </span>
-                            <span class="old-price">
-                            <fmt:formatNumber value="${p.price}" type="number"/>đ
-                        </span>
+                            <c:choose>
+                                <c:when test="${p.price ne p.sale_price}">
+                                    <span class="new-price">
+                                        <fmt:formatNumber value="${p.sale_price}" type="number"/>đ
+                                    </span>
+                                                            <span class="old-price">
+                                        <fmt:formatNumber value="${p.price}" type="number"/>đ
+                                    </span>
+                                </c:when>
+
+                                <c:otherwise>
+                                    <span class="new-price">
+                                        <fmt:formatNumber value="${p.price}" type="number"/>đ
+                                    </span>
+                                </c:otherwise>
+                            </c:choose>
                         </p>
 
-                        <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1" class="btn-add">
-                            Thêm vào giỏ
-                        </a>
+                        <div class="button">
+                            <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1" class="btn-detail">
+                                Xem chi tiết
+                            </a>
+
+                            <button class="btn-add">
+                                Thêm vào giỏ hàng
+                            </button>
+                        </div>
                     </div>
                 </c:forEach>
             </div>
