@@ -38,7 +38,9 @@
 
     <nav class="navbar">
         <div class="logo">
-            <img src="${pageContext.request.contextPath}/img/gau.png" alt="SunnyBear Logo">
+            <a href="trang-chu">
+                <img src="${pageContext.request.contextPath}/img/gau.png" alt="SunnyBear Logo">
+            </a>
         </div>
 
         <div class="menu">
