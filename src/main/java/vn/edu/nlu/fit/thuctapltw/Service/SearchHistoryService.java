@@ -43,4 +43,10 @@ public class SearchHistoryService {
 
         session.setAttribute("searchHistory", searchHistory);
     }
+    public void clearHistory(HttpSession session, User user) {
+        if (user != null) {
+            searchHistoryDao.deleteAllByUser(user.getId());
+        }
+        session.removeAttribute("searchHistory");
+    }
 }

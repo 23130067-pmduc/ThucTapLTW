@@ -56,4 +56,12 @@ public class SearchHistoryDao extends BaseDao {
     public List<String> getRecentKeywordsByUser(int userId, int limit) {
         return getRecentByUser(userId, limit).stream().map(SearchHistory::getKeyword).collect(Collectors.toList());
     }
+    public void deleteAllByUser(int userId) {
+        String sql = """
+        DELETE FROM search_history
+        WHERE user_id = :userId
+        """;
+        getJdbi().withHandle(handle -> handle.createUpdate(sql).bind("userId", userId).execute()
+        );
+    }
 }
