@@ -9,12 +9,14 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import vn.edu.nlu.fit.thuctapltw.DAO.CartDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.CartItemDao;
+import vn.edu.nlu.fit.thuctapltw.DAO.SearchHistoryDao;
 import vn.edu.nlu.fit.thuctapltw.Service.UserService;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Collections;
+import java.util.List;
 
 @WebServlet(name = "loginController", value = "/login")
 public class loginController extends HttpServlet {
@@ -108,6 +110,8 @@ public class loginController extends HttpServlet {
         session.setAttribute("cartId", cartId);
         int cartSize = new CartItemDao().countTotalQuantity(cartId);
         session.setAttribute("cartSize", cartSize);
+        List<String> dbHistory = new SearchHistoryDao().getRecentKeywordsByUser(user.getId(), 6);
+        session.setAttribute("searchHistory", dbHistory);
     }
 
     private void handleGoogleLogin(HttpServletRequest request, HttpServletResponse response, String credential)

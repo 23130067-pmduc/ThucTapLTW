@@ -115,12 +115,33 @@
     <img class="logo" src="img/gau.png" alt="Logo">
 
     <div class="boxSearch">
-        <form action="SearchController" method="get">
+        <form action="${pageContext.request.contextPath}/SearchController" method="get">
             <input type="text" name="keyword"  value="${param.keyword}" placeholder="Tìm kiếm sản phẩm..." required />
             <button type="submit">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </form>
+        <c:if test="${not empty sessionScope.searchHistory}">
+            <div class="search-history">
+                <div class="history-header">
+                    <p class="history-title">Tìm kiếm gần đây</p>
+                    <a class="clear-history" href="${pageContext.request.contextPath}/clear-search-history">
+                        Xóa tất cả
+                    </a>
+                </div>
+
+                <ul class="history-list">
+                    <c:forEach var="item" items="${sessionScope.searchHistory}">
+                        <li>
+                            <a href="${pageContext.request.contextPath}/SearchController?keyword=${item}">
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                <span>${item}</span>
+                            </a>
+                        </li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </c:if>
     </div>
 
 
