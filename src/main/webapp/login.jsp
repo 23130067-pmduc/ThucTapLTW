@@ -1,16 +1,17 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" %>
+<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Đăng nhập</title>
-    <link rel="stylesheet" href="css/login.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
-</head>
-<body class="login-page">
+
+<%
+    request.setAttribute("pageCss", "login.css");
+    request.setAttribute("pageTitle" , "Đăng nhập");
+%>
+
+<%@include file="header.jsp"%>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 
 <section class="login-container">
     <%
@@ -85,14 +86,11 @@
 </section>
 
 
-<footer class="footer">
-    <p>© 2025 SunnyBear. All rights reserved.</p>
-</footer>
 <script>
     function handleCredentialResponse(response) {
         document.getElementById("googleCredential").value = response.credential;
         document.getElementById("googleLoginForm").submit();
     }
 </script>
-</body>
-</html>
+
+<%@include file="footer.jsp"%>

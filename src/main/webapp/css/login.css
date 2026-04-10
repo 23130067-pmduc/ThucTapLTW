@@ -1,21 +1,29 @@
-*{
+* {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body{
-    min-height: 100vh;
+html, body {
+    min-height: 100%;
+}
+
+
+.login-container {
+    flex: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-
-}
-.login-container{
+    padding: 30px;
     position: relative;
-    width: 380px;
+    background: #f6f1e7;
+}
+
+.login-box {
+    position: relative;
+    width: 100%;
+    max-width: 430px;
     padding: 40px;
     border-radius: 20px;
     backdrop-filter: blur(20px);
@@ -25,12 +33,15 @@ body{
     z-index: 10;
     overflow: hidden;
 }
-.input-group{
+
+.input-group {
     display: flex;
     flex-wrap: wrap;
     gap: 5px;
+    margin-bottom: 20px;
 }
-.dangNhap{
+
+.dangNhap {
     color: black;
     font-size: 28px;
     font-weight: 600;
@@ -39,9 +50,10 @@ body{
     margin-bottom: 40px;
     text-shadow: 0 2px 4px #00000033;
 }
-.login-box .close-btn{
+
+.login-box .close-btn {
     position: absolute;
-    right : 25px;
+    right: 25px;
     top: 20px;
     background: none;
     border: none;
@@ -50,13 +62,12 @@ body{
     color: #333;
     transition: color 0.3s ease;
 }
-.close-btn:hover{
+
+.close-btn:hover {
     color: red;
 }
-.input-group{
-    margin-bottom: 20px;
-}
-.input-group input{
+
+.input-group input {
     width: 100%;
     padding: 15px 20px;
     background: #00000033;
@@ -67,35 +78,38 @@ body{
     color: #fff;
     box-shadow: 2px 2px 5px #00000066;
     transition: all 0.3s ease;
-
 }
-.input-group input::placeholder{
+
+.input-group input::placeholder {
     color: #060707;
 }
-.input-group input:focus{
+
+.input-group input:focus {
     background: rgba(0, 0, 0, 0.3);
     box-shadow: 0 8px 20px #0000001a;
 }
 
-.input-group label{
+.input-group label {
     position: relative;
     left: 10px;
     font-weight: bold;
 }
 
-.remember-forgot{
+.remember-forgot {
     display: flex;
     justify-content: flex-end;
-
 }
-.remember-forgot a{
+
+.remember-forgot a {
     text-decoration: none;
     color: blue;
 }
-.remember-forgot a:hover{
+
+.remember-forgot a:hover {
     text-decoration: underline;
 }
-.btn-primary{
+
+.btn-primary {
     height: 40px;
     background: black;
     color: white;
@@ -108,7 +122,8 @@ body{
     transition: background 0.3s ease;
     margin-bottom: 15px;
 }
-.btn-primary:hover{
+
+.btn-primary:hover {
     background: #333;
 }
 
@@ -125,9 +140,3 @@ body{
 .form-links a:hover {
     text-decoration: underline;
 }
-
-
-.footer{
-    display: none;
-}
-
