@@ -8,10 +8,19 @@ public class NotificationDao extends BaseDao {
 
     public List<Notification> getRecentByUser(int userId, int limit) {
         String sql = """
-            SELECT *
-            FROM notifications
-            WHERE user_id = :userId
-            ORDER BY created_at DESC
+            SELECT 
+                n.id,
+                n.title,
+                n.content,
+                n.type,
+                n.link,
+                n.created_at,
+                COALESCE(un.is_read, 0) AS is_read
+            FROM notifications n
+            LEFT JOIN user_notifications un
+                ON n.id = un.notification_id
+                AND un.user_id = :userId
+            ORDER BY n.created_at DESC
             LIMIT :limit
         """;
 
@@ -27,8 +36,11 @@ public class NotificationDao extends BaseDao {
     public int countUnreadByUser(int userId) {
         String sql = """
             SELECT COUNT(*)
-            FROM notifications
-            WHERE user_id = :userId AND is_read = 0
+            FROM notifications n
+            LEFT JOIN user_notifications un
+                ON n.id = un.notification_id
+                AND un.user_id = :userId
+            WHERE COALESCE(un.is_read, 0) = 0
         """;
 
         return getJdbi().withHandle(handle ->
@@ -41,32 +53,32 @@ public class NotificationDao extends BaseDao {
 
     public void markAsRead(int notificationId, int userId) {
         String sql = """
-            UPDATE notifications
-            SET is_read = 1
-            WHERE id = :notificationId AND user_id = :userId
+            INSERT INTO user_notifications (user_id, notification_id, is_read, read_at)
+            VALUES (:userId, :notificationId, 1, NOW())
+            ON DUPLICATE KEY UPDATE
+                is_read = 1,
+                read_at = NOW()
         """;
 
         getJdbi().withHandle(handle ->
                 handle.createUpdate(sql)
-                        .bind("notificationId", notificationId)
                         .bind("userId", userId)
+                        .bind("notificationId", notificationId)
                         .execute()
         );
     }
 
     public void insert(Notification notification) {
         String sql = """
-            INSERT INTO notifications (user_id, title, content, type, is_read, link)
-            VALUES (:userId, :title, :content, :type, :isRead, :link)
+            INSERT INTO notifications (title, content, type, link)
+            VALUES (:title, :content, :type, :link)
         """;
 
         getJdbi().withHandle(handle ->
                 handle.createUpdate(sql)
-                        .bind("userId", notification.getUser_id())
                         .bind("title", notification.getTitle())
                         .bind("content", notification.getContent())
                         .bind("type", notification.getType())
-                        .bind("isRead", notification.getIs_read())
                         .bind("link", notification.getLink())
                         .execute()
         );

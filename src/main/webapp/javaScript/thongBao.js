@@ -98,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     body: "notificationId=" + encodeURIComponent(id)
                 })
                     .then(response => response.json())
-                    .then(data => {
+                    .then(() => {
                         loadUnreadCount();
                         if (link && link !== "#") {
                             if (link.startsWith("http")) {
