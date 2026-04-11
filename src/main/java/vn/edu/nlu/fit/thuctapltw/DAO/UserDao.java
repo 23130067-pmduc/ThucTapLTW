@@ -108,10 +108,8 @@ public class UserDao extends BaseDao {
                        is_active,
                        created_at,
                        full_name,
-                       birthday,
                        gender,
                        phone,
-                       address,
                        status
                 FROM users
                 WHERE id = :id
@@ -129,17 +127,13 @@ public class UserDao extends BaseDao {
                                     SET full_name = :fullName,
                                         phone = :phone,
                                         email = :email,
-                                        birthday = :birthday,
-                                        gender = :gender,
-                                        address = :address
+                                        gender = :gender
                                     WHERE id = :id
                         """)
                 .bind("fullName", user.getFullName())
                 .bind("phone", user.getPhone())
                 .bind("email", user.getEmail())
-                .bind("birthday", user.getBirthday()) // LocalDate OK
                 .bind("gender", user.getGender())
-                .bind("address", user.getAddress())
                 .bind("id", user.getId())
                 .execute()
         );
@@ -219,10 +213,10 @@ public class UserDao extends BaseDao {
                 handle.createUpdate("""
                 INSERT INTO users
                 (username, email, password, role, status,
-                 full_name, birthday, gender, phone, address, created_at)
+                 full_name,  gender, phone, created_at)
                 VALUES
                 (:username, :email, :password, :role, :status,
-                 :fullName, :birthday, :gender, :phone, :address, NOW())
+                 :fullName, :gender, :phone, NOW())
             """)
                         .bindBean(user)
                         .execute()
@@ -239,10 +233,8 @@ public class UserDao extends BaseDao {
                     role = :role,
                     status = :status,
                     full_name = :fullName,
-                    phone = :phone,
-                    birthday = :birthday,
+                    phone = :phone,      
                     gender = :gender,
-                    address = :address
                 WHERE id = :id
             """)
                         .bindBean(user)
@@ -311,5 +303,7 @@ public class UserDao extends BaseDao {
                 .mapTo(Integer.class)
                 .one());
     }
+
+
 }
 

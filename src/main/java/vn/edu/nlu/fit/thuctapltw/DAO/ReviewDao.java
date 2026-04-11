@@ -58,8 +58,9 @@ public class ReviewDao extends BaseDao {
     public List<Review> findByProductID(int productId) {
         return getJdbi().withHandle(handle -> handle.createQuery(
                         """
-                                SELECT * 
-                                FROM product_reviews
+                                SELECT r.* , u.username
+                                FROM product_reviews r
+                                JOIN users u ON r.user_id = u.id
                                 WHERE product_id = :productId
                                 ORDER BY created_at DESC
                                 """
@@ -90,4 +91,15 @@ public class ReviewDao extends BaseDao {
                 .one());
     }
 
+    public Review getReviewByUserID(int userId, int productId) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT *
+                FROM product_reviews
+                WHERE user_id = :userId AND product_id =:productId""")
+                .bind("userId", userId)
+                .bind("productId", productId)
+                .mapToBean(Review.class)
+                .findOne()
+                .orElse(null));
+    }
 }

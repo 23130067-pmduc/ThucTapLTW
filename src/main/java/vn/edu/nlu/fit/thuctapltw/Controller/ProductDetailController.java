@@ -18,6 +18,7 @@ public class ProductDetailController extends HttpServlet {
     private ColorService colorService;
     private SizeService sizeService;
     private ProductVariantService productVariantService;
+    private UserService userService;
 
     @Override
     public void init()  {
@@ -28,6 +29,7 @@ public class ProductDetailController extends HttpServlet {
         colorService = new ColorService();
         sizeService = new SizeService();
         productVariantService = new ProductVariantService();
+        userService = new UserService();
     }
 
     @Override
@@ -50,6 +52,7 @@ public class ProductDetailController extends HttpServlet {
 
         List<Review> reviews = reviewService.getReviewByProductID(id);
 
+
         List<Product> ralatedProducts = productService.ralatedProduct(id, 4);
 
 
@@ -66,6 +69,14 @@ public class ProductDetailController extends HttpServlet {
 
         List<ProductVariant> listVariant = productVariantService.getVariantByProductId(id);
 
+        User user = (User) request.getSession().getAttribute("userlogin");
+
+        Review myReview = null;
+
+        if(user != null){
+            myReview = reviewService.getReviewByUserID(user.getId(), id);
+        }
+
 
         request.setAttribute("variants", listVariant);
         request.setAttribute("sizes", listSize);
@@ -75,8 +86,11 @@ public class ProductDetailController extends HttpServlet {
         request.setAttribute("totalReviews", totalReviews);
         request.setAttribute("product", product);
         request.setAttribute("reviews",reviews);
+        request.setAttribute("myReview", myReview);
         request.setAttribute("ralatedProducts",ralatedProducts);
         request.getRequestDispatcher("/chitietsanpham.jsp").forward(request, response);
+
+
     }
 
 

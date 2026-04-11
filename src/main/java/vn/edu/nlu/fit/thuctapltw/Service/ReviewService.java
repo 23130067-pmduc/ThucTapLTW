@@ -33,4 +33,8 @@ public class ReviewService {
     public int getTotalReviews(int id) {
         return reviewDao.getTotalReviews(id);
     }
+
+    public Review getReviewByUserID(int userId, int productId) {
+        return reviewDao.getReviewByUserID(userId, productId);
+    }
 }

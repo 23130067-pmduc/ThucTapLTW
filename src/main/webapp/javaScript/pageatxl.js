@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let selectedColorId = null;
     let selectedSizeId = null;
-    let selectedRating = 0;
+    let selectedRating = ratingInput ? parseInt(ratingInput.getAttribute("value")) || 0 : 0;
     let currentStock = 0;
 
 
@@ -119,6 +119,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+
+    if (selectedRating > 0) {
+        stars.forEach(s => s.classList.remove("active"));
+        for (let i = 0; i < selectedRating; i++) {
+            stars[i].classList.add("active");
+        }
+    }
 
     stars.forEach(star => {
         star.addEventListener("click", () => {

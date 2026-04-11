@@ -24,7 +24,7 @@
 
     <div class="profile-content">
         <h2>Thông tin cá nhân</h2>
-        <form class="profile-form" method="post" action="${pageContext.request.contextPath}/profile" onsubmit="syncBirthday()">
+        <form class="profile-form" method="post" action="${pageContext.request.contextPath}/profile">
             <div class="form-row">
                 <div class="form-group">
                     <label for="fullname">Họ và tên</label>
@@ -41,19 +41,8 @@
                     <label for="email">Email</label>
                     <input type="email" id="email" name="email" value="${user.email}" disabled>
                 </div>
-                <div class="form-group">
-                    <label for="birthday">Ngày sinh</label>
-                    <input type="text" id="birthdayDisplay" value="<fmt:formatDate value='${birthdayDate}' pattern='dd-MM-yyyy'/>" disabled>
-                    <input type="hidden" id="birthday" name="birthday" value="<fmt:formatDate value='${birthdayDate}' pattern='yyyy-MM-dd'/>">
-                </div>
             </div>
 
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="address">Địa chỉ</label>
-                    <input type="text" id="address" name="address" value="${user.address}" disabled>
-                </div>
-            </div>
 
             <div class="form-row">
                 <div class="form-group">
@@ -66,10 +55,6 @@
                         <label>
                             <input type="radio" name="gender" value="female" ${user.gender == 'female' ? 'checked' : ''} disabled>
                             Nữ
-                        </label>
-                        <label>
-                            <input type="radio" name="gender" value="other" ${user.gender == 'other' ? 'checked' : ''} disabled>
-                            Khác
                         </label>
                     </div>
                 </div>
