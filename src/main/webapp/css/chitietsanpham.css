@@ -267,7 +267,7 @@ html, body {
 }
 
 
-#submit-review {
+.review-submit-btn {
     display: block;
     margin: 15px auto 25px;
     background-color: #43a047;
@@ -281,8 +281,8 @@ html, body {
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-#submit-review:hover {
-    background-color: #43a047;
+.review-submit-btn:hover {
+    background-color: #388e3c;
 }
 
 .review-list {

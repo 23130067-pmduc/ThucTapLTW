@@ -81,7 +81,7 @@
                 </div>
             </div>
 
-            <!-- NÚT MUA -->
+
             <div class="product-actions">
                 <button class="btn-add-cart">Thêm vào giỏ hàng</button>
             </div>
@@ -99,7 +99,7 @@
     <section class="product-review">
         <form action="review" method="post" class="review-form">
             <input type="hidden" name="product_id" value="${product.id}">
-            <input type="hidden" name="rating" id="rating-value">
+            <input type="hidden" name="rating" id="rating-value" value="${myReview.rating}">
 
             <div class="star-select">
                 <span class="star" data-value="1">★</span>
@@ -109,9 +109,16 @@
                 <span class="star" data-value="5">★</span>
             </div>
 
-            <textarea id="review-text" name="comment" required placeholder="Nhập nhận xét của bạn..."></textarea>
+            <textarea id="review-text" name="comment" required placeholder="Nhập nhận xét của bạn...">${myReview.comment}</textarea>
 
-            <button type="submit" id="submit-review">Gửi đánh giá</button>
+            <c:choose>
+                <c:when test="${myReview != null}">
+                    <button type="submit" class="review-submit-btn">Cập nhật đánh giá</button>
+                </c:when>
+                <c:otherwise>
+                    <button type="submit" class="review-submit-btn">Gửi đánh giá</button>
+                </c:otherwise>
+            </c:choose>
         </form>
 
 
@@ -125,12 +132,12 @@
 
             <c:forEach var="r" items="${reviews}">
                 <div class="review-item">
-                    <strong>User ${r.userId}</strong>
+                    <strong>${r.userName}</strong>
                     <div>
                         <c:forEach begin="1" end="${r.rating}">⭐</c:forEach>
                     </div>
                     <p>${r.comment}</p>
-                    <small>${r.createdAt}</small>
+                    <small>${r.createdAtFormatted}</small>
                 </div>
             </c:forEach>
         </section>

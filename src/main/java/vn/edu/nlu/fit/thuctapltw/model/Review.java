@@ -1,6 +1,7 @@
 package vn.edu.nlu.fit.thuctapltw.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Review {
     private int id;
@@ -9,6 +10,9 @@ public class Review {
     private int rating;
     private String comment;
     private LocalDateTime createdAt;
+
+
+    private String userName;
 
 
     public Review(int id, int productId, int userId, int rating, String comment, LocalDateTime createdAt) {
@@ -21,6 +25,16 @@ public class Review {
     }
 
     public Review() {
+    }
+
+    public Review(int id, int productId, int userId, int rating, String comment, LocalDateTime createdAt, String userName) {
+        this.id = id;
+        this.productId = productId;
+        this.userId = userId;
+        this.rating = rating;
+        this.comment = comment;
+        this.createdAt = createdAt;
+        this.userName = userName;
     }
 
     public int getId() {
@@ -69,5 +83,18 @@ public class Review {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getCreatedAtFormatted() {
+        if (createdAt == null) return "";
+        return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 }
