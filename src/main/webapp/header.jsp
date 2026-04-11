@@ -19,18 +19,21 @@
 
     <nav class="topbar">
         <p id="hotline">Hotline: <b> 0909 999 999</b> (8h30 - 12h) Tất cả các ngày trong tuần | </p>
-        <p id="thongBao">
-            <i class="fa-regular fa-bell"></i>
-            Thông báo của tôi
-        </p>
+        <div class="thong-bao-wrapper">
+            <p id="thongBao" class="thong-bao-trigger">
+                <i class="fa-regular fa-bell"></i>
+                <span class="thong-bao-text">Thông báo của tôi</span>
+                <span id="notification-badge" class="notification-badge" style="display:none;">0</span>
+            </p>
 
-        <div id="notification-box">
-            <ul>
-                <li>Hiện không có thông báo nào.</li>
-                <li>Đăng nhập để được nhận thêm nhiều ưu đãi.</li>
-
-            </ul>
-
+            <div id="notification-box" class="notification-box">
+                <div class="notification-header">
+                    <span>Thông báo</span>
+                </div>
+                <ul id="notification-list" class="notification-list">
+                    <li class="notification-empty">Đang tải thông báo...</li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -149,6 +152,6 @@
 
     <span class="closeSearch" id="closeSearch">&times; </span>
 </div>
-
-<script src="${pageContext.request.contextPath}/javaScript/header.js"></script>
-<script src="${pageContext.request.contextPath}/javaScript/search.js"></script>
+<script>
+    window.ctxPath = '${pageContext.request.contextPath}';
+</script>
