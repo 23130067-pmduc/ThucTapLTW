@@ -14,13 +14,11 @@ public class User {
     private LocalDateTime createdAt;
     private String otpCode;
     private String fullName;
-    private LocalDate birthday;
     private String gender;
     private String phone;
-    private String address;
     private String status;
 
-    public User(int id, String username, String email, String password, String role, int isActive, LocalDateTime createdAt, String otpCode, String fullName, LocalDate birthday, String gender, String phone, String address, String status) {
+    public User(int id, String username, String email, String password, String role, int isActive, LocalDateTime createdAt, String otpCode, String fullName, String gender, String phone, String status) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -30,14 +28,12 @@ public class User {
         this.createdAt = createdAt;
         this.otpCode = otpCode;
         this.fullName = fullName;
-        this.birthday = birthday;
         this.gender = gender;
         this.phone = phone;
-        this.address = address;
         this.status = status;
     }
 
-    public User(int id, String username, String email, String password, String role, int isActive, LocalDateTime createdAt, String otpCode, String fullName, LocalDate birthday, String gender, String phone) {
+    public User(int id, String username, String email, String password, String role, int isActive, LocalDateTime createdAt, String otpCode, String fullName, String gender, String phone) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -47,35 +43,12 @@ public class User {
         this.createdAt = createdAt;
         this.otpCode = otpCode;
         this.fullName = fullName;
-        this.birthday = birthday;
         this.gender = gender;
         this.phone = phone;
 
     }
 
-    public String getAddress() {
-        return address;
-    }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public User(int id, String username, String email, String password, String role, int isActive, LocalDateTime createdAt, String otpCode, String fullName, LocalDate birthday, String gender, String phone, String address) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.isActive = isActive;
-        this.createdAt = createdAt;
-        this.otpCode = otpCode;
-        this.fullName = fullName;
-        this.birthday = birthday;
-        this.gender = gender;
-        this.phone = phone;
-        this.address = address;
-    }
 
     public User() {
     }
@@ -142,14 +115,6 @@ public class User {
 
     public void setGender(String gender) {
         this.gender = gender;
-    }
-
-    public LocalDate getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(LocalDate birthday) {
-        this.birthday = birthday;
     }
 
     public String getFullName() {

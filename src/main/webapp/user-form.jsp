@@ -96,22 +96,10 @@
             <option value="">-- Chọn --</option>
             <option value="male" <c:if test="${user.gender == 'male'}">selected</c:if>>Nam</option>
             <option value="female" <c:if test="${user.gender == 'female'}">selected</c:if>>Nữ</option>
-            <option value="other" <c:if test="${user.gender == 'other'}">selected</c:if>>Khác</option>
           </select>
         </div>
-
-        <div class="col">
-          <label>Ngày sinh</label>
-          <input type="date" name="birthday" value="${user.birthday}">
-        </div>
       </div>
 
-      <div class="row">
-        <div class="col">
-          <label>Địa chỉ</label>
-          <textarea name="address" rows="3">${user.address}</textarea>
-        </div>
-      </div>
     </div>
 
 

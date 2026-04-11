@@ -84,14 +84,6 @@ public class UserAdminController extends HttpServlet {
             user.setGender(request.getParameter("gander"));
 
 
-            String birthdayStr = request.getParameter("birthday");
-
-            if (birthdayStr != null && !birthdayStr.isEmpty()) {
-                user.setBirthday(LocalDate.parse(birthdayStr));
-            }
-
-            user.setAddress(request.getParameter("address"));
-
 
             userService.createUser(user);
 
@@ -114,13 +106,6 @@ public class UserAdminController extends HttpServlet {
             user.setGender(request.getParameter("gender"));
 
 
-            String birthdayStr = request.getParameter("birthday");
-
-            if (birthdayStr != null && !birthdayStr.isEmpty()) {
-                user.setBirthday(LocalDate  .parse(birthdayStr));
-            }
-
-            user.setAddress(request.getParameter("address"));
 
             userService.updateUser(user);
 

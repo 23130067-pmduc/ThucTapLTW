@@ -36,12 +36,6 @@ public class ProfileController extends HttpServlet {
 
         request.setAttribute("user", fullUser);
 
-        if (fullUser.getBirthday() != null) {
-            request.setAttribute(
-                    "birthdayDate",
-                    java.sql.Date.valueOf(fullUser.getBirthday())
-            );
-        }
 
         if (fullUser.getCreatedAt() != null) {
             DateTimeFormatter formatter =
@@ -73,8 +67,6 @@ public class ProfileController extends HttpServlet {
         String fullName = request.getParameter("fullname");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
-        String birthdayStr = request.getParameter("birthday"); // yyyy-MM-dd
-        String address = request.getParameter("address");
 
         String gender = request.getParameter("gender");
 
@@ -83,14 +75,8 @@ public class ProfileController extends HttpServlet {
         user.setFullName(fullName);
         user.setPhone(phone);
         user.setEmail(email);
-        user.setAddress(address);
-
-
         user.setGender(gender);
 
-        if (birthdayStr != null && !birthdayStr.isEmpty()) {
-            user.setBirthday(java.time.LocalDate.parse(birthdayStr));
-        }
 
         userService.update(user);
 
