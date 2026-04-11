@@ -83,20 +83,38 @@ public class ProductDao extends BaseDao {
 
 
     public List<Product> searchByName(String keyword) {
-        String sql = """
-            SELECT p.*, c.name AS categoryName
-            FROM products p
-            JOIN category_product c ON p.category_id = c.id
-            WHERE p.status <> 'Đã xoá'
-            AND p.name LIKE :kw
-        """;
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return java.util.List.of();
+        }
 
-        return getJdbi().withHandle(h ->
-                h.createQuery(sql)
-                        .bind("kw", "%" + keyword + "%")
-                        .mapToBean(Product.class)
-                        .list()
-        );
+        String[] words = keyword.trim().split("\\s+");
+        StringBuilder scoreCalc = new StringBuilder();
+        StringBuilder whereClause = new StringBuilder();
+
+        for (int i = 0; i < words.length; i++) {
+            scoreCalc.append("(CASE WHEN p.name LIKE :w").append(i).append(" THEN 1 ELSE 0 END)");
+            whereClause.append("p.name LIKE :w").append(i);
+
+            if (i < words.length - 1) {
+                scoreCalc.append(" + ");
+                whereClause.append(" OR ");
+            }
+        }
+
+        String sql = "SELECT p.*, c.name AS categoryName, (" + scoreCalc.toString() + ") AS match_score " +
+                "FROM products p " +
+                "JOIN category_product c ON p.category_id = c.id " +
+                "WHERE p.status <> 'Đã xoá' " +
+                "AND (" + whereClause.toString() + ") " +
+                "ORDER BY match_score DESC, p.id DESC";
+
+        return getJdbi().withHandle(h -> {
+            org.jdbi.v3.core.statement.Query query = h.createQuery(sql);
+            for (int i = 0; i < words.length; i++) {
+                query.bind("w" + i, "%" + words[i] + "%");
+            }
+            return query.mapToBean(Product.class).list();
+        });
     }
 
 
