@@ -114,15 +114,17 @@
 <div class="search-overlay" id="searchOverlay">
     <img class="logo" src="img/gau.png" alt="Logo">
 
-    <div class="boxSearch">
+    <div class="boxSearch" style="position: relative;">
         <form action="${pageContext.request.contextPath}/SearchController" method="get">
-            <input type="text" name="keyword"  value="${param.keyword}" placeholder="Tìm kiếm sản phẩm..." required />
+            <input type="text" id="ajaxSearchInput" data-context="${pageContext.request.contextPath}" name="keyword"  value="${param.keyword}" placeholder="Tìm kiếm sản phẩm..." autocomplete="off" required />
             <button type="submit">
                 <i class="fa-solid fa-magnifying-glass"></i>
             </button>
         </form>
+        <div id="ajaxSearchResults" class="ajax-search-results" style="display:none;"></div>
+
         <c:if test="${not empty sessionScope.searchHistory}">
-            <div class="search-history">
+            <div class="search-history" id="searchHistoryBox">
                 <div class="history-header">
                     <p class="history-title">Tìm kiếm gần đây</p>
                     <a class="clear-history" href="${pageContext.request.contextPath}/clear-search-history">
@@ -147,3 +149,6 @@
 
     <span class="closeSearch" id="closeSearch">&times; </span>
 </div>
+
+<script src="${pageContext.request.contextPath}/javaScript/header.js"></script>
+<script src="${pageContext.request.contextPath}/javaScript/search.js"></script>
