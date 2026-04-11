@@ -519,3 +519,113 @@ header li:hover .sub{
         transform: scale(1.3);
     }
 }
+
+#ajaxSearchResults.ajax-search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    z-index: 10001;
+    margin-top: 10px;
+    box-sizing: border-box;
+    overflow: hidden;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#ajaxSearchResults .suggest-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+#ajaxSearchResults .suggest-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+#ajaxSearchResults .suggest-item:hover {
+    background-color: #f9f9f9;
+}
+
+#ajaxSearchResults .suggest-item img {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    object-fit: cover !important;
+    border-radius: 4px !important;
+    margin-right: 15px !important;
+    padding: 0 !important;
+}
+
+#ajaxSearchResults .suggest-info {
+    flex: 1;
+    text-align: left;
+}
+
+#ajaxSearchResults .suggest-name {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    margin-bottom: 5px !important;
+    color: #222 !important;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4 !important;
+}
+
+#ajaxSearchResults .suggest-price-box {
+    font-size: 13px !important;
+}
+
+#ajaxSearchResults .suggest-price {
+    color: #dc3545 !important;
+    font-weight: bold !important;
+}
+
+#ajaxSearchResults .suggest-price-sale {
+    color: #dc3545 !important;
+    font-weight: bold !important;
+    margin-right: 8px !important;
+}
+
+#ajaxSearchResults .suggest-price-old {
+    color: #999 !important;
+    text-decoration: line-through !important;
+    font-size: 12px !important;
+}
+
+#ajaxSearchResults .suggest-more {
+    text-align: center;
+    padding: 12px;
+    background-color: #fafafa;
+}
+
+#ajaxSearchResults .suggest-more a {
+    color: #ff6f61 !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    display: block;
+}
+
+#ajaxSearchResults .suggest-more a:hover {
+    text-decoration: underline !important;
+}
+
+#ajaxSearchResults .suggest-empty {
+    padding: 20px;
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+    font-style: italic;
+}
