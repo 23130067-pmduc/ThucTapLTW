@@ -632,14 +632,18 @@ header li:hover .sub{
 .thong-bao-wrapper {
     position: relative;
     display: inline-block;
+    z-index: 1001;
 }
 
 .thong-bao-trigger {
-    position: relative;
+    background: transparent;
+    border: none;
+    color: inherit;
     cursor: pointer;
     display: flex;
     align-items: center;
     gap: 6px;
+    user-select: none;
 }
 
 .notification-badge {

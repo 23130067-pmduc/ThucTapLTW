@@ -7,21 +7,14 @@ public class Notification {
     private String title;
     private String content;
     private String type;
+    private String target_type;
     private String link;
+    private int is_active;
     private Timestamp created_at;
+    private Integer target_user_id;
     private int is_read;
 
     public Notification() {
-    }
-
-    public Notification(int id, String title, String content, String type, String link, Timestamp created_at, int is_read) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.type = type;
-        this.link = link;
-        this.created_at = created_at;
-        this.is_read = is_read;
     }
 
     public int getId() {
@@ -57,6 +50,14 @@ public class Notification {
         this.type = type;
     }
 
+    public String getTarget_type() {
+        return target_type;
+    }
+
+    public void setTarget_type(String target_type) {
+        this.target_type = target_type;
+    }
+
     public String getLink() {
         return link;
     }
@@ -65,12 +66,28 @@ public class Notification {
         this.link = link;
     }
 
+    public int getIs_active() {
+        return is_active;
+    }
+
+    public void setIs_active(int is_active) {
+        this.is_active = is_active;
+    }
+
     public Timestamp getCreated_at() {
         return created_at;
     }
 
     public void setCreated_at(Timestamp created_at) {
         this.created_at = created_at;
+    }
+
+    public Integer getTarget_user_id() {
+        return target_user_id;
+    }
+
+    public void setTarget_user_id(Integer target_user_id) {
+        this.target_user_id = target_user_id;
     }
 
     public int getIs_read() {

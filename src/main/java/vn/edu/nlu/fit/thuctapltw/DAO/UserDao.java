@@ -31,7 +31,6 @@ public class UserDao extends BaseDao {
                 handle.createUpdate("update users  set password=:password").bind("password", password).execute()
         );
     }
-    // tạo user tạm (chưa active)
     public void insertPendingUser(String username, String email, String password,
                                   String otp, LocalDateTime expiredAt) {
         getJdbi().withHandle(h ->
@@ -48,7 +47,6 @@ public class UserDao extends BaseDao {
         );
     }
 
-    // verify OTP
     public boolean verifyOtp(String email, String otp) {
         return getJdbi().withHandle(h ->
                 h.createUpdate(
@@ -304,6 +302,13 @@ public class UserDao extends BaseDao {
                 .one());
     }
 
-
+    public List<User> findAll() {
+        String sql = "SELECT * FROM users ORDER BY id DESC";
+        return getJdbi().withHandle(handle ->
+                handle.createQuery(sql)
+                        .mapToBean(User.class)
+                        .list()
+        );
+    }
 }
 

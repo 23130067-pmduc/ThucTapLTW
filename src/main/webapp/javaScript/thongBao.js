@@ -39,8 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     notificationBadge.style.display = "none";
                 }
             })
-            .catch(error => {
-                console.error("Lỗi unread-count:", error);
+            .catch(() => {
                 notificationBadge.style.display = "none";
             });
     }
@@ -53,8 +52,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 renderNotifications(data);
             })
-            .catch(error => {
-                console.error("Lỗi notifications:", error);
+            .catch(() => {
                 notificationList.innerHTML = "<li class='notification-empty'>Không thể tải thông báo.</li>";
             });
     }
@@ -108,8 +106,14 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
                         }
                     })
-                    .catch(error => {
-                        console.error("Lỗi mark read:", error);
+                    .catch(() => {
+                        if (link && link !== "#") {
+                            if (link.startsWith("http")) {
+                                window.location.href = link;
+                            } else {
+                                window.location.href = window.ctxPath + link;
+                            }
+                        }
                     });
             });
         });
