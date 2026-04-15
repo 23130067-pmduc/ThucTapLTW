@@ -45,10 +45,10 @@
     </div>
 
     <div class="contactInfo">
-        <h3>Shop SunnyBear Kids Clothing</h3>
+        <h3>Thông tin shop quần áo SunnyBear nhé!</h3>
 
-        <p><strong>DC:</strong> 123 Đường Hạnh Phúc, Quận 5, TP.HCM</p>
-        <p><strong>Mobile:</strong> 0909 999 999</p>
+        <p><strong>Địa chỉ:</strong> Hẻm 47, đường số 17, p.Linh Trung, Linh Xuân, TP.Hồ Chí Minh, Việt Nam </p>
+        <p><strong>Số điện thoại:</strong> 0983561258</p>
         <p><b>Thời gian làm việc:</b><br>
             Thứ 2 - Thứ 6: 8h00 - 17h30 <br>
             Thứ 7 - Chủ nhật: 9h00 - 17h00
@@ -58,15 +58,15 @@
 
 <section class="contact-map">
     <h3>Vị trí cửa hàng</h3>
-    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d233.10303900362814!2d106.773323162255!3d10.855091005177272!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e1!3m2!1svi!2s!4v1775900766281!5m2!1svi!2s"
+    <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d299.76423582194553!2d106.78682704585556!3d10.863600934211092!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1svi!2s!4v1776225886872!5m2!1svi!2s"
             width="600"
             height="450"
             style="border:0;"
             allowfullscreen=""
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade">
-    </iframe>
 
+    </iframe>
 </section>
 
 <%@include file="footer.jsp"%>

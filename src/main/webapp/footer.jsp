@@ -5,8 +5,8 @@
         <div class="footer-info">
             <h3>SunnyBear Kids Clothing</h3>
             <p class="slogan">Thời trang trẻ em chất lượng, an toàn cho bé yêu</p>
-            <p class="fa-phone"> <i class="fa-solid fa-phone"></i> Hotline: 0909 999 999</p>
-            <p class="fa-mail"> <i class="fa-solid fa-envelope"></i> Email: contact@sunnybear.vn</p>
+            <p class="fa-phone"> <i class="fa-solid fa-phone"></i> Hotline: 0983561258</p>
+            <p class="fa-mail"> <i class="fa-solid fa-envelope"></i> Email: sunnybear47ltlx@gmail.com</p>
         </div>
     </section>
     <section class="s-footer-2">
@@ -25,7 +25,7 @@
     <section class="s-footer-3">
         <div class="footer-contact">
             <h3>Địa chỉ & Thời gian làm việc</h3>
-            <p>123 Đường Hạnh Phúc, Quận 5, TP.HCM</p>
+            <p>Hẻm 47, Đường số 17, p.Linh Trung, Linh Xuân, TP.Hồ Chí Minh, Việt Nam</p>
             <p>Thời gian làm việc: </p>
             <p>Thứ 2 - Thứ 6: 8h00 - 17h30</p>
             <p>Thứ 7 - Chủ nhật: 9h00 - 17h00</p>
