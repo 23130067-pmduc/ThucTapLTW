@@ -77,7 +77,7 @@ public class ReviewDao extends BaseDao {
                 WHERE product_id = :id
                 """).bind("id", id)
                 .mapTo(double.class)
-                .one());
+                .findOne().orElse(0.0));
 
     }
 
@@ -88,7 +88,8 @@ public class ReviewDao extends BaseDao {
                 WHERE product_id = :id
                 """).bind("id", id)
                 .mapTo(int.class)
-                .one());
+                .findOne()
+                .orElse(0));
     }
 
     public Review getReviewByUserID(int userId, int productId) {

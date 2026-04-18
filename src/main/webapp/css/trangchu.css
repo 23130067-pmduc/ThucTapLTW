@@ -371,24 +371,24 @@ body {
     background-color: #717171;
 }
 
-
-.quick-add-modal{
+.quick-add-modal {
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.45);
     display: none;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 99999;
 }
 
 .quick-add-modal.show {
     display: flex;
 }
 
-.quick-add-content{
+.quick-add-box {
     width: 700px;
     max-width: 90%;
+    min-height: 400px;
     background: #fff;
     border-radius: 12px;
     padding: 24px;
@@ -398,40 +398,52 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
+.quick-add-left,
+.quick-add-right {
+    flex: 1;
+}
+
+.quick-add-left {
+    width: 40%;
+}
+
+.quick-add-right {
+    width: 60%;
+}
+
+.quick-add-left img {
+    width: 100%;
+    max-height: 320px;
+    object-fit: cover;
+    border-radius: 12px;
+    display: block;
+}
+
 .quick-add-close {
     position: absolute;
-    top: 12px;
+    top: 10px;
     right: 14px;
     border: none;
     background: none;
     font-size: 28px;
-    line-height: 1;
     cursor: pointer;
-    color: #5B3A29;
 }
+
 .quick-add-close:hover {
     opacity: 0.7;
-}
-
-.quick-add-left{
-    width: 40%;
-}
-
-.quick-add-left img{
-    width: 100%;
-    border-radius: 12px;
-    object-fit: cover;
-    display: block;
-}
-
-.quick-add-right{
-    width: 60%;
 }
 
 .quick-add-right h3 {
     font-size: 24px;
     color: #5B3A29;
     margin-bottom: 10px;
+}
+
+.quick-add-price {
+    font-size: 22px;
+    font-weight: 700;
+    color: #c0392b;
+    margin: 10px 0 14px;
 }
 
 .product-rating {
@@ -463,8 +475,10 @@ body {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
+    margin-top: 8px;
 }
 
+/* màu dạng chấm tròn */
 .quick-color-thumb {
     width: 32px;
     height: 32px;
@@ -474,6 +488,7 @@ body {
     padding: 0;
     outline: none;
     transition: 0.2s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
 }
 
 .quick-color-thumb:hover {
@@ -483,6 +498,10 @@ body {
 .quick-color-thumb.active {
     border: 2px solid #5B3A29;
     box-shadow: 0 0 0 3px rgba(91, 58, 41, 0.15);
+}
+
+.quick-color-thumb.white-color {
+    border: 2px solid #bbb;
 }
 
 .quick-size-btn {
@@ -562,7 +581,7 @@ body {
 }
 
 @media (max-width: 768px) {
-    .quick-add-content {
+    .quick-add-box {
         flex-direction: column;
         width: 95%;
         max-height: 90vh;
