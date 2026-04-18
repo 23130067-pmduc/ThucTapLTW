@@ -8,7 +8,7 @@
     request.setAttribute("pageCss", "sanpham.css");
     request.setAttribute("pageTitle" , "Trang chủ");
 %>
-
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/quick-add-modal.css">
 <%@include file="header.jsp"%>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/product-card.css">
 
@@ -211,7 +211,8 @@
                         Xem chi tiết
                     </a>
 
-                    <button class="btn-add">
+                    <button class="btn-add"
+                            data-product-id="${p.id}">
                         Thêm vào giỏ hàng
                     </button>
                 </div>
@@ -228,6 +229,8 @@
     <button id="scrollTopBtn" title="Lên đầu trang">
         <i class="fa-solid fa-arrow-up"></i>
     </button>
+
+    <%@ include file="quick-add-modal.jsp" %>
 
 </section>
 
