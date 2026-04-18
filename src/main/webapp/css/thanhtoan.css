@@ -452,3 +452,11 @@
     font-size: 14px;
     cursor: pointer;
 }
+.checkout-error-msg {
+    color: #721c24;
+    background-color: #f8d7da;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    border-radius: 4px;
+}

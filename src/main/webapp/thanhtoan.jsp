@@ -11,6 +11,17 @@
 
 <section class="checkout">
     <div class="checkout-container">
+        <c:if test="${param.error == 'out_of_stock'}">
+            <div class="checkout-error-msg">
+                <strong>Thông báo:</strong> Một hoặc nhiều sản phẩm trong giỏ hàng của bạn đã bán hết hoặc không đủ số lượng tồn kho. Vui lòng giảm số lượng.
+            </div>
+        </c:if>
+
+        <c:if test="${param.error == 'missing_info'}">
+            <div class="checkout-error-msg">
+                <strong>Thông báo:</strong> Vui lòng chọn hoặc thêm địa chỉ giao hàng trước khi thanh toán.
+            </div>
+        </c:if>
         <form action="checkout" method="post">
 
             <div class="checkout-left">
