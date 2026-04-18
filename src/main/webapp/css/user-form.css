@@ -148,12 +148,6 @@ button, .btn-primary, .btn-secondary {
     gap: 10px;
 }
 
-
-@media (max-width: 768px) {
-    .row {
-        flex-direction: column;
-    }
-}
 .status-form {
     display: flex;
     gap: 12px;
@@ -233,4 +227,23 @@ button, .btn-primary, .btn-secondary {
 .card p {
     font-size: 14px;
     color: #444;
+}
+
+.alert {
+    margin-bottom: 15px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.alert.alert-success {
+    background: #e8f7ec;
+    color: #2e7d32;
+    border: 1px solid #cde9d3;
+}
+
+.alert.alert-error {
+    background: #fdecea;
+    color: #c62828;
+    border: 1px solid #f5c6cb;
 }

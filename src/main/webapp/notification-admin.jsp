@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Quản lý thông báo</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/news-admin.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification-admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 <body>
@@ -37,19 +37,36 @@
     <c:if test="${not empty success}">
       <div class="alert alert-success">${success}</div>
     </c:if>
+
     <c:if test="${not empty error}">
       <div class="alert alert-error">${error}</div>
     </c:if>
 
     <section class="cards">
-      <div class="card">Tổng thông báo<br><span>${total}</span></div>
-      <div class="card">Đang hiển thị<br><span>${totalActive}</span></div>
-      <div class="card">Gửi tất cả user<br><span>${totalAllTarget}</span></div>
-      <div class="card">Gửi riêng user<br><span>${totalUserTarget}</span></div>
+      <div class="card">
+        Tổng thông báo
+        <br>
+        <span>${total}</span>
+      </div>
+      <div class="card">
+        Đang hiển thị
+        <br>
+        <span>${totalActive}</span>
+      </div>
+      <div class="card">
+        Gửi tất cả user
+        <br>
+        <span>${totalAllTarget}</span>
+      </div>
+      <div class="card">
+        Gửi riêng user
+        <br>
+        <span>${totalUserTarget}</span>
+      </div>
     </section>
 
-    <div class="news-toolbar">
-      <form method="get" action="${pageContext.request.contextPath}/notification-admin" class="news-search-form">
+    <div class="notification-toolbar">
+      <form method="get" action="${pageContext.request.contextPath}/notification-admin" class="notification-search-form">
         <input type="text" name="keyword" value="${keyword}" placeholder="Tìm theo tiêu đề, nội dung...">
         <button type="submit" class="btn-search">
           <i class="fa fa-search"></i> Tìm
@@ -61,8 +78,8 @@
       </a>
     </div>
 
-    <div class="news-table-wrapper">
-      <table class="news-table">
+    <div class="notification-table-wrapper">
+      <table class="notification-table">
         <thead>
         <tr>
           <th>ID</th>
@@ -86,7 +103,7 @@
             <c:forEach items="${notificationList}" var="n">
               <tr>
                 <td>${n.id}</td>
-                <td class="news-title-cell">${n.title}</td>
+                <td class="notification-title-cell">${n.title}</td>
                 <td>${n.type}</td>
                 <td>
                   <c:choose>
@@ -95,7 +112,9 @@
                   </c:choose>
                 </td>
                 <td>${n.link}</td>
-                <td><fmt:formatDate value="${n.created_at}" pattern="dd/MM/yyyy"/></td>
+                <td>
+                  <fmt:formatDate value="${n.created_at}" pattern="dd/MM/yyyy"/>
+                </td>
                 <td>
                   <c:choose>
                     <c:when test="${n.is_active == 1}">
@@ -108,19 +127,24 @@
                 </td>
                 <td>
                   <div class="actions">
-                    <a href="${pageContext.request.contextPath}/notification-admin?mode=view&id=${n.id}" class="icon-btn view" title="Xem">
+                    <a href="${pageContext.request.contextPath}/notification-admin?mode=view&id=${n.id}"
+                       class="icon-btn view"
+                       title="Xem">
                       <i class="fa fa-eye"></i>
                     </a>
-                    <a href="${pageContext.request.contextPath}/notification-admin?mode=edit&id=${n.id}" class="icon-btn edit" title="Sửa">
+
+                    <a href="${pageContext.request.contextPath}/notification-admin?mode=edit&id=${n.id}"
+                       class="icon-btn edit"
+                       title="Sửa">
                       <i class="fa fa-pen"></i>
                     </a>
-                    <form method="post" action="${pageContext.request.contextPath}/notification-admin" style="display:inline;">
-                      <input type="hidden" name="action" value="delete">
-                      <input type="hidden" name="id" value="${n.id}">
-                      <button type="submit" class="icon-btn delete" title="Ẩn" onclick="return confirm('Bạn có chắc muốn ẩn thông báo này?');">
-                        <i class="fa fa-trash"></i>
-                      </button>
-                    </form>
+
+                    <button type="button"
+                            class="icon-btn delete open-confirm-btn"
+                            title="Khóa"
+                            data-id="${n.id}">
+                      <i class="fa fa-trash"></i>
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -132,5 +156,24 @@
     </div>
   </section>
 </div>
+
+<div id="confirmModal" class="modal-overlay">
+  <div class="modal">
+    <h3>Xác nhận khóa thông báo</h3>
+    <p>Bạn có chắc muốn khóa thông báo này không?</p>
+
+    <form method="post" action="${pageContext.request.contextPath}/notification-admin">
+      <input type="hidden" name="action" value="delete">
+      <input type="hidden" name="id" id="confirmNotificationId">
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="closeConfirmModal">Hủy</button>
+        <button type="submit" class="btn-danger">Đồng ý</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="${pageContext.request.contextPath}/javaScript/notification-admin.js"></script>
 </body>
 </html>
