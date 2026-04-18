@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 
 <%
-    request.setAttribute("pageCss", "thanhtoan.css");
+    request.setAttribute("pageCss", "thanhtoan.css?v=" + System.currentTimeMillis());
     request.setAttribute("pageTitle", "Thanh toán");
 %>
 
@@ -11,7 +11,7 @@
 
 <section class="checkout">
     <div class="checkout-container">
-        <form action="pay" method="post">
+        <form action="checkout" method="post">
 
             <div class="checkout-left">
                 <h2>Thông tin giao hàng</h2>
@@ -27,6 +27,59 @@
                         <i id="addressToggleIcon" class="fa-solid fa-chevron-down" class="address-toggle-icon"></i>
                     </h2>
 
+                    <div id="addressSummaryView" onclick="toggleAddress()" class="address-summary-view" style="display: block;">
+                        <c:choose>
+                            <c:when test="${not empty addresses}">
+                                <c:set var="selAddr" value="${addresses[0]}" />
+                                <c:forEach var="a" items="${addresses}">
+                                    <c:if test="${a.defaultAddress}"><c:set var="selAddr" value="${a}" /></c:if>
+                                </c:forEach>
+                                <strong id="summaryClientInfo" class="summary-client-info">${selAddr.receiverName}, ${selAddr.phone}</strong>
+                                <p id="summaryAddressInfo" class="summary-address-info">${selAddr.detailAddress}, ${selAddr.ward}, ${selAddr.district}, ${selAddr.city}</p>
+                            </c:when>
+                            <c:otherwise>
+                                <p class="empty-address-msg">Bạn chưa có địa chỉ nào!</p>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                    <div id="addressDetailView" class="address-detail-view" style="display: none;">
+                        <c:choose>
+                            <c:when test="${not empty addresses}">
+                                <div class="address-selector-content">
+                                    <c:forEach var="a" items="${addresses}">
+                                        <label class="address-item-radio ${a.defaultAddress ? 'active' : ''}">
+                                            <input type="radio" name="selectedAddress" value="${a.id}"
+                                                   data-name="${a.receiverName}"
+                                                   data-phone="${a.phone}"
+                                                   data-address="${a.detailAddress}, ${a.ward}, ${a.district}, ${a.city}"
+                                                   onchange="updateHiddenFieldsFromRadio(this)"
+                                                ${a.defaultAddress ? 'checked' : ''}>
+                                            <div class="address-info">
+                                                <strong>${a.receiverName}, ${a.phone}</strong>
+                                                <p>${a.detailAddress}, ${a.ward}, ${a.district}, ${a.city}</p>
+                                                <c:if test="${a.defaultAddress}">
+                                                    <span class="badge-default">Mặc định</span>
+                                                </c:if>
+                                            </div>
+                                        </label>
+                                    </c:forEach>
+                                </div>
+
+                            </c:when>
+                            <c:otherwise>
+                                <p class="empty-address-msg-mb">Bạn chưa có địa chỉ nào!</p>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+
+                    <input type="hidden" name="receiverName" id="hiddenName" value="${not empty addresses ? addresses[0].receiverName : ''}">
+                    <input type="hidden" name="phone" id="hiddenPhone" value="${not empty addresses ? addresses[0].phone : ''}">
+                    <c:set var="defaultAddr" value="" />
+                    <c:if test="${not empty addresses}">
+                        <c:set var="defaultAddr" value="${addresses[0].detailAddress}, ${addresses[0].ward}, ${addresses[0].district}, ${addresses[0].city}" />
+                    </c:if>
+                    <input type="hidden" name="address" id="hiddenAddress" value="${defaultAddr}">
                     <div class="form-group" class="modal-group-mt15">
                         <input type="text" name="note" placeholder="Nhập ghi chú (nếu có)..." class="checkout-note-input">
                     </div>
@@ -54,7 +107,9 @@
                         </label>
                     </div>
                 </div>
+
             </div>
+
             <div class="checkout-right">
                 <h3>Đơn hàng của bạn</h3>
                 <input type="hidden" name="cartId" value="${sessionScope.cartId}">
@@ -113,5 +168,5 @@
         </form>
     </div>
 </section>
-
+<script src="${pageContext.request.contextPath}/javaScript/thanhtoan.js?v=<%=System.currentTimeMillis()%>"></script>
 <%@include file="footer.jsp"%>
