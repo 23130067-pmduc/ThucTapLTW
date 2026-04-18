@@ -74,9 +74,15 @@ public class AddressController extends HttpServlet {
                 default -> throw new RuntimeException("Thao tác không hợp lệ");
             }
 
-            redirectWithMessage(response, request.getContextPath() + "/dia-chi", "success", getSuccessMessage(action));
+            String redirectTo = request.getParameter("redirectTo");
+            String basePath = (redirectTo != null && !redirectTo.isBlank()) ? (request.getContextPath() + redirectTo) : (request.getContextPath() + "/dia-chi");
+
+            redirectWithMessage(response, basePath, "success", getSuccessMessage(action));
         } catch (RuntimeException e) {
-            redirectWithMessage(response, request.getContextPath() + "/dia-chi", "error", e.getMessage());
+            String redirectTo = request.getParameter("redirectTo");
+            String basePath = (redirectTo != null && !redirectTo.isBlank()) ? (request.getContextPath() + redirectTo) : (request.getContextPath() + "/dia-chi");
+
+            redirectWithMessage(response, basePath, "error", e.getMessage());
         }
     }
 

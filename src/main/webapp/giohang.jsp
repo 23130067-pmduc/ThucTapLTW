@@ -130,7 +130,7 @@
                 </a>
 
                 <c:if test="${not empty cartItems}">
-                    <form action="${pageContext.request.contextPath}/checkout" method="post" id="checkoutForm" class="checkout-form">
+                    <form action="${pageContext.request.contextPath}/checkout" method="get" id="checkoutForm" class="checkout-form">
 
                         <button type="submit" id="tt">
                             THANH TOÁN
