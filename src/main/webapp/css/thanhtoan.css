@@ -157,7 +157,43 @@
     color: #555;
     font-weight: 600;
 }
-
+.address-item-radio {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    margin-bottom: 5px;
+    transition: all 0.2s;
+}
+.address-item-radio:hover {
+    background: #f8f9fa;
+}
+.address-item-radio.active {
+    background: #f4f6fc;
+    border: 1px solid transparent;
+}
+.address-item-radio input[type="radio"] {
+    margin-top: 5px;
+    accent-color: #0b57d0;
+}
+.address-info {
+    flex: 1;
+}
+.address-info strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 4px;
+    color: #333;
+}
+.address-info p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+}
 .badge-default {
     display: inline-block;
     font-size: 11px;
@@ -166,6 +202,22 @@
     padding: 2px 8px;
     border-radius: 12px;
     margin-top: 6px;
+}
+.btn-add-address-checkout {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: none;
+    border: none;
+    color: #0b57d0;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 10px 15px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.btn-add-address-checkout:hover {
+    text-decoration: underline;
 }
 
 .checkout-modal-overlay {
@@ -185,7 +237,60 @@
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
-
+.checkout-modal-header {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+.checkout-modal-header button {
+    background: none; border: none; font-size: 20px; cursor: pointer; color: #555;
+}
+.checkout-modal-body {
+    padding: 20px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+.checkout-modal-body .form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.checkout-modal-body .form-row > div {
+    flex: 1;
+}
+.checkout-modal-body input[type="text"],
+.checkout-modal-body select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.checkout-modal-footer {
+    padding: 15px 20px;
+    border-top: 1px solid #eee;
+    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+.checkout-modal-footer button {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    font-size: 14px;
+}
+.btn-cancel-modal {
+    background: #fff; border: 1px solid #ddd; color: #333;
+}
+.btn-save-modal {
+    background: #212121; border: none; color: #fff;
+}
 .shipping-method-wrapper {
     margin-bottom: 20px;
     border: 1px solid #ddd;
@@ -229,7 +334,6 @@
     border-color: #0b57d0;
     background: #f8fbff;
 }
-
 .contact-email-text {
     flex: 1;
 }
@@ -251,6 +355,39 @@
     align-items: center;
     justify-content: center;
     transition: transform 0.3s;
+}
+
+.address-summary-view {
+    cursor: pointer;
+}
+
+.summary-client-info {
+    display: block;
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.summary-address-info {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.empty-address-msg {
+    color: red;
+    margin: 0;
+}
+
+.empty-address-msg-mb {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.address-detail-view {
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+    margin-top: 15px;
 }
 
 .checkout-note-input {
@@ -281,4 +418,37 @@
 
 .cod-label {
     margin-top: 10px;
+}
+
+.modal-group-mb15 {
+    margin-bottom: 15px;
+}
+
+.modal-group-mt15 {
+    margin-top: 15px;
+}
+
+.modal-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 12px;
+    color: #555;
+}
+
+.modal-select-disabled {
+    background: #f9f9f9;
+    color: #333;
+}
+
+.phone-error-msg {
+    color: red;
+    font-size: 12px;
+}
+
+.modal-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
 }
