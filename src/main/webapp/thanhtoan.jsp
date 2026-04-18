@@ -16,41 +16,45 @@
             <div class="checkout-left">
                 <h2>Thông tin giao hàng</h2>
 
-                <div class="form-group">
-                    <label>Họ và tên</label>
-                    <input type="text" name="receiverName" placeholder="Tên người nhận" required>
+                <div class="contact-email">
+                    <div class="avatar">${(not empty sessionScope.userlogin.fullName) ? sessionScope.userlogin.fullName.substring(0,1).toUpperCase() : 'U'}</div>
+                    <div class="contact-email-text">${sessionScope.userlogin.email}</div>
                 </div>
 
-                <div class="form-group">
-                    <label>Số điện thoại</label>
-                    <input type="text" name="phone" placeholder="Nhập số điện thoại" pattern="[0-9]{9,11}" required>
+                <div class="address-selector-wrapper">
+                    <h2 onclick="toggleAddress()" class="checkout-section-header">
+                        Vận chuyển đến
+                        <i id="addressToggleIcon" class="fa-solid fa-chevron-down" class="address-toggle-icon"></i>
+                    </h2>
+
+                    <div class="form-group" class="modal-group-mt15">
+                        <input type="text" name="note" placeholder="Nhập ghi chú (nếu có)..." class="checkout-note-input">
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Địa chỉ nhận hàng</label>
-                    <input type="text" name="address" placeholder="Số nhà, đường, phường/xã, quận/huyện" required>
+                <div class="shipping-method-wrapper">
+                    <h2>Phương thức vận chuyển</h2>
+                    <p>Giao hàng tiêu chuẩn (3 đến 7 ngày) · <strong>MIỄN PHÍ</strong></p>
                 </div>
 
-                <div class="form-group">
-                    <label>Ghi chú</label>
-                    <textarea name="note" placeholder="Giao giờ hành chính..."></textarea>
-                </div>
-
-                <h2>Phương thức thanh toán</h2>
-
-                <div class="payment-method">
-                    <label>
-                        <input type="radio" name="paymentMethod" value="COD" checked>
-                        Thanh toán khi nhận hàng (COD)
-                    </label>
-
-                    <label>
-                        <input type="radio" name="paymentMethod" value="VNPAY">
-                        Thanh toán qua VNPay
-                    </label>
+                <div class="payment-method-wrapper">
+                    <h2>Thanh toán</h2>
+                    <p class="payment-security-msg">Toàn bộ các giao dịch được bảo mật và mã hóa.</p>
+                    <div class="payment-method">
+                        <label class="active">
+                            <input type="radio" name="paymentMethod" value="VNPAY" checked onchange="updatePaymentUI(this)">
+                            <span>Thanh toán online qua cổng thanh toán VNPay</span>
+                        </label>
+                        <div id="vnpay-message" class="vnpay-message-box">
+                            Bạn sẽ được chuyển hướng đến hệ thống thanh toán VNPay để hoàn tất mua hàng.
+                        </div>
+                        <label class="cod-label">
+                            <input type="radio" name="paymentMethod" value="COD" onchange="updatePaymentUI(this)">
+                            <span>Thanh toán khi nhận hàng (COD)</span>
+                        </label>
+                    </div>
                 </div>
             </div>
-
             <div class="checkout-right">
                 <h3>Đơn hàng của bạn</h3>
                 <input type="hidden" name="cartId" value="${sessionScope.cartId}">

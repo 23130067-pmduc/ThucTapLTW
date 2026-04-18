@@ -120,3 +120,165 @@
 .btn-checkout:hover {
     opacity: 0.9;
 }
+.contact-email {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+.contact-email .avatar {
+    width: 40px;
+    height: 40px;
+    background: #eee;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #555;
+}
+.address-selector-wrapper {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+    background: #fff;
+}
+.address-selector-wrapper h2 {
+    font-size: 16px;
+    margin-bottom: 0px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #555;
+    font-weight: 600;
+}
+
+.badge-default {
+    display: inline-block;
+    font-size: 11px;
+    background: #757575;
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    margin-top: 6px;
+}
+
+.checkout-modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.checkout-modal {
+    background: #fff;
+    width: 600px;
+    max-width: 90%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.shipping-method-wrapper {
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+}
+.shipping-method-wrapper h2 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #777;
+    font-weight: normal;
+}
+.shipping-method-wrapper p {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+.payment-method-wrapper {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 15px;
+}
+.payment-method-wrapper h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+.payment-method label {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    gap: 10px;
+}
+.payment-method input[type="radio"]:checked + span {
+    font-weight: bold;
+}
+.payment-method label.active {
+    border-color: #0b57d0;
+    background: #f8fbff;
+}
+
+.contact-email-text {
+    flex: 1;
+}
+
+.checkout-section-header {
+    cursor: pointer;
+    user-select: none;
+}
+
+.address-toggle-icon {
+    background: #f0f4f8;
+    color: #0b57d0;
+    padding: 5px;
+    border-radius: 50%;
+    font-size: 14px;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s;
+}
+
+.checkout-note-input {
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 10px;
+}
+
+.payment-security-msg {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 15px;
+}
+
+.vnpay-message-box {
+    font-size: 13px;
+    color: #555;
+    padding: 0 15px 15px 40px;
+    background: #fafafa;
+    border: 1px solid #007bff;
+    border-top: none;
+    margin-top: -10px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+.cod-label {
+    margin-top: 10px;
+}
