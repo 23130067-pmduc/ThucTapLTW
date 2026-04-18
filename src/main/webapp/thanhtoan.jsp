@@ -65,10 +65,15 @@
                                         </label>
                                     </c:forEach>
                                 </div>
-
+                                <button type="button" class="btn-add-address-checkout" onclick="openCheckoutModal()">
+                                    <i class="fas fa-plus"></i> Sử dụng địa chỉ khác
+                                </button>
                             </c:when>
                             <c:otherwise>
                                 <p class="empty-address-msg-mb">Bạn chưa có địa chỉ nào!</p>
+                                <button type="button" class="btn-add-address-checkout" onclick="openCheckoutModal()">
+                                    <i class="fas fa-plus"></i> Thêm địa chỉ mới
+                                </button>
                             </c:otherwise>
                         </c:choose>
                     </div>
@@ -168,5 +173,79 @@
         </form>
     </div>
 </section>
+
+<div class="checkout-modal-overlay" id="checkoutAddressModal">
+    <div class="checkout-modal">
+        <div class="checkout-modal-header">
+            <span>Thêm địa chỉ</span>
+            <button type="button" onclick="closeCheckoutModal()">&times;</button>
+        </div>
+        <form action="${pageContext.request.contextPath}/dia-chi" method="post" id="addressForm">
+            <input type="hidden" name="action" value="add">
+            <input type="hidden" name="redirectTo" value="/checkout">
+
+            <div class="checkout-modal-body">
+                <div class="modal-group-mb15">
+                    <label class="modal-label">Quốc gia/Vùng</label>
+                    <select disabled class="modal-select-disabled">
+                        <option>Việt Nam</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label class="modal-label">Họ và tên</label>
+                        <input type="text" name="receiverName" required placeholder="Họ và tên">
+                    </div>
+                    <div>
+                        <label class="modal-label">Điện thoại</label>
+                        <input type="text" id="phoneInput" name="phone" required placeholder="09xxxx..." pattern="^(0[3|5|7|8|9])[0-9]{8}$">
+                        <small id="phoneError" class="phone-error-msg"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label class="modal-label">Tỉnh Thành</label>
+                        <select name="city" id="citySelect" required>
+                            <option value="">-- Chọn Tỉnh / Thành phố --</option>
+                            <option value="Hồ Chí Minh">Hồ Chí Minh</option>
+                            <option value="Hà Nội">Hà Nội</option>
+                            <option value="Bình Dương">Bình Dương</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="districtSelect" class="modal-label">Quận Huyện</label>
+                        <select name="district" id="districtSelect" required disabled>
+                            <option value="">-- Chọn Quận / Huyện --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div>
+                        <label for="wardSelect" class="modal-label">Phường Xã</label>
+                        <select name="ward" id="wardSelect" required disabled>
+                            <option value="">-- Chọn Phường / Xã --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="modal-label">Địa chỉ cụ thể</label>
+                        <input type="text" name="detailAddress" required placeholder="Số nhà, tên đường...">
+                    </div>
+                </div>
+                <div class="modal-group-mt15">
+                    <label class="modal-checkbox-label">
+                        <input type="checkbox" name="isDefault" value="true">
+                        Đây là địa chỉ mặc định của tôi
+                    </label>
+                </div>
+            </div>
+            <div class="checkout-modal-footer">
+                <button type="button" class="btn-cancel-modal" onclick="closeCheckoutModal()">Hủy</button>
+                <button type="submit" class="btn-save-modal">Lưu địa chỉ</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script src="${pageContext.request.contextPath}/javaScript/thanhtoan.js?v=<%=System.currentTimeMillis()%>"></script>
+<script src="${pageContext.request.contextPath}/javaScript/address.js"></script>
 <%@include file="footer.jsp"%>

@@ -51,3 +51,10 @@ function updatePaymentUI(radio) {
         }
     }
 }
+
+function openCheckoutModal() {
+    document.getElementById('checkoutAddressModal').style.display = 'flex';
+}
+function closeCheckoutModal() {
+    document.getElementById('checkoutAddressModal').style.display = 'none';
+}
