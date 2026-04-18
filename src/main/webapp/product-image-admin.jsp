@@ -24,6 +24,7 @@
             <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">Người dùng</a>
             <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">Banner</a>
             <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">Tin tức</a>
+            <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">Thông báo</a>
             <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">Liên hệ</a>
         </div>
     </aside>

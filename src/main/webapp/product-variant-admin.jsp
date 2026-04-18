@@ -18,14 +18,15 @@
         <p>ADMIN</p>
 
         <nav class="nav">
-            <a href="dashboard" class="nav-item">Dashboard</a>
-            <a href="product-admin" class="nav-item active">Sản phẩm</a>
-            <a href="category-admin" class="nav-item">Danh mục</a>
-            <a href="order-admin" class="nav-item">Đơn hàng</a>
-            <a href="user-admin" class="nav-item">Người dùng</a>
-            <a href="banner-admin" class="nav-item">Banner</a>
-            <a href="news-admin" class="nav-item">Tin tức</a>
-            <a href="contact-admin" class="nav-item">Liên hệ</a>
+            <a href="${pageContext.request.contextPath}/dashboard" class="nav-item">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/product-admin" class="nav-item active">Sản phẩm</a>
+            <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">Danh mục</a>
+            <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">Đơn hàng</a>
+            <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">Người dùng</a>
+            <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">Banner</a>
+            <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">Tin tức</a>
+            <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">Thông báo</a>
+            <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">Liên hệ</a>
         </nav>
     </aside>
 
