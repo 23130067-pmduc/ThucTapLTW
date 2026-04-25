@@ -158,23 +158,25 @@
                 <div class="order-summary">
                     <div>
                         <span>Tạm tính</span>
-                        <span>
+                        <span id="subtotalAmount">
                         <fmt:formatNumber value="${total}" type="number"/>₫
                     </span>
                     </div>
 
                     <div>
                         <span>Phí vận chuyển</span>
-                        <span>Miễn phí</span>
+                        <span id="shippingFeeAmount">Miễn phí</span>
                     </div>
+                    <div id="shippingFeeHint" style="color: red; font-size: 0.9em;"></div>
 
                     <div class="total">
                         <span>Tổng cộng</span>
-                        <span>
+                        <span id="finalAmount">
                         <fmt:formatNumber value="${total}" type="number"/>₫
                     </span>
                     </div>
                 </div>
+                <input type="hidden" name="shippingFee" id="hiddenShippingFee" value="0">
 
                 <button type="submit" class="btn-checkout">
                     XÁC NHẬN THANH TOÁN

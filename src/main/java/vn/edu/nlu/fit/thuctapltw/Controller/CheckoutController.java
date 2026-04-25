@@ -1,8 +1,11 @@
 package vn.edu.nlu.fit.thuctapltw.Controller;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.*;
-import jakarta.servlet.annotation.*;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import vn.edu.nlu.fit.thuctapltw.DAO.CartItemDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.OrderDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.OrderItemDao;
@@ -11,7 +14,11 @@ import vn.edu.nlu.fit.thuctapltw.Service.AddressService;
 import vn.edu.nlu.fit.thuctapltw.Service.EmailService;
 import vn.edu.nlu.fit.thuctapltw.Service.GhnShippingService;
 import vn.edu.nlu.fit.thuctapltw.Service.OrderEmailService;
-import vn.edu.nlu.fit.thuctapltw.model.*;
+import vn.edu.nlu.fit.thuctapltw.model.Address;
+import vn.edu.nlu.fit.thuctapltw.model.CartItem;
+import vn.edu.nlu.fit.thuctapltw.model.Order;
+import vn.edu.nlu.fit.thuctapltw.model.OrderItem;
+import vn.edu.nlu.fit.thuctapltw.model.User;
 
 import java.io.IOException;
 import java.util.List;
@@ -81,18 +88,30 @@ public class CheckoutController extends HttpServlet {
         }
         int cartId = cartIdObj;
 
-        String receiverName = request.getParameter("receiverName");
-        String phone = request.getParameter("phone");
-        String address = request.getParameter("address");
-        String note = request.getParameter("note");
-        String paymentMethod = request.getParameter("paymentMethod");
+        String selectedAddressRaw = request.getParameter("selectedAddress");
+        Integer selectedAddressId = parseInteger(selectedAddressRaw);
 
-        if (receiverName == null || receiverName.trim().isEmpty() ||
-                phone == null || phone.trim().isEmpty() ||
-                address == null || address.trim().isEmpty()) {
+        Address selectedAddress = null;
+        if (selectedAddressId != null) {
+            selectedAddress = addressService.getAddressById(selectedAddressId, user.getId());
+        }
+        if (selectedAddress == null) {
+            List<Address> addresses = addressService.getAddressesByUser(user.getId());
+            if (!addresses.isEmpty()) {
+                selectedAddress = addresses.get(0);
+            }
+        }
+
+        if (selectedAddress == null) {
             response.sendRedirect("checkout?error=missing_info");
             return;
         }
+
+        String receiverName = selectedAddress.getReceiverName();
+        String phone = selectedAddress.getPhone();
+        String address = selectedAddress.getFullAddress();
+        String note = request.getParameter("note");
+        String paymentMethod = request.getParameter("paymentMethod");
 
         List<CartItem> cartItems = cartItemDao.getByCartId(cartId);
         if (cartItems.isEmpty()) {
@@ -113,7 +132,23 @@ public class CheckoutController extends HttpServlet {
             totalPrice += item.getPrice() * item.getQuantity();
         }
 
-        int orderId = orderDao.createOrder(user.getId(), receiverName, phone, address, note, paymentMethod, totalPrice);
+        GhnShippingService.ShippingQuote shippingQuote = ghnShippingService.calculateFee(selectedAddress);
+        if (!shippingQuote.success() && ghnShippingService.isConfigured()) {
+            response.sendRedirect("checkout?error=shipping_unavailable");
+            return;
+        }
+        double shippingFee = shippingQuote.success() ? shippingQuote.fee() : 0;
+
+        int orderId = orderDao.createOrder(
+                user.getId(),
+                receiverName,
+                phone,
+                address,
+                note,
+                paymentMethod,
+                totalPrice,
+                shippingFee
+        );
 
         for (CartItem item : cartItems) {
             int variantId = item.getVariantId();
@@ -136,5 +171,16 @@ public class CheckoutController extends HttpServlet {
         EmailService.sendEmail(user.getEmail(), "Đã xác nhận đơn hàng #" + orderId + " - SunnyBear", emailContent);
 
         response.sendRedirect("paysuccess");
+    }
+
+    private Integer parseInteger(String raw) {
+        if (raw == null || raw.isBlank()) {
+            return null;
+        }
+        try {
+            return Integer.parseInt(raw);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }

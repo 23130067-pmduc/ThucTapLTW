@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;
 
-@WebServlet(name = "GhnShippingFeeController", value = "ghn_fee")
+@WebServlet(name = "GhnShippingFeeController", value = "/ghn_fee")
 public class GhnShippingFeeController extends HttpServlet {
     private AddressService addressService;
     private GhnShippingService ghnShippingService;
