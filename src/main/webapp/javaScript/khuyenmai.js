@@ -3,7 +3,7 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         setupLoadMore();
-        setupAddToCart();
+        //setupAddToCart();
     });
 
     function setupLoadMore() {

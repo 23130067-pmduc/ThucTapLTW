@@ -8,7 +8,9 @@
     request.setAttribute("activePage", "khuyenmai");
 %>
 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/quick-add-modal.css">
 <%@ include file="header.jsp" %>
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product-card.css">
 
 <div class="title"></div>
 
@@ -27,46 +29,34 @@
 
     <div class="flash-products">
         <c:forEach items="${flashSaleProducts}" var="p">
-            <div class="product-card"
-                 data-product-id="${p.id}"
-                 data-sale-price="${p.sale_price}">
+            <div class="product-card">
                 <span class="badge flash">SALE -${p.discountPercent}%</span>
 
-                <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="product-image">
-                    <c:choose>
-                        <c:when test="${empty p.thumbnail}">
-                            <img src="${pageContext.request.contextPath}/images/no-image.png" alt="${p.name}">
-                        </c:when>
-                        <c:when test="${p.thumbnail.startsWith('http://') or p.thumbnail.startsWith('https://')}">
-                            <img src="${p.thumbnail}" alt="${p.name}">
-                        </c:when>
-                        <c:when test="${p.thumbnail.startsWith('/')}">
-                            <img src="${pageContext.request.contextPath}${p.thumbnail}" alt="${p.name}">
-                        </c:when>
-                        <c:otherwise>
-                            <img src="${pageContext.request.contextPath}/${p.thumbnail}" alt="${p.name}">
-                        </c:otherwise>
-                    </c:choose>
-                </a>
+                <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover"></a>
 
-                <h3>
-                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}">
-                            ${p.name}
-                    </a>
-                </h3>
+                <img src="${p.thumbnail}" alt="${p.name}">
+
+                <h3>${p.name}</h3>
 
                 <p class="price">
-                    <span class="new-price">
-                        <fmt:formatNumber value="${p.sale_price}" type="number" groupingUsed="true"/>₫
-                    </span>
+        <span class="new-price">
+            <fmt:formatNumber value="${p.sale_price}" type="number" groupingUsed="true"/>đ
+        </span>
                     <span class="old-price">
-                        <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫
-                    </span>
+            <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>đ
+        </span>
                 </p>
 
-                <button type="button" class="btn-add">
-                    Thêm vào giỏ
-                </button>
+                <div class="button">
+                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="btn-detail">
+                        Xem chi tiết
+                    </a>
+
+                    <button class="btn-add"
+                            data-product-id="${p.id}">
+                        Thêm vào giỏ hàng
+                    </button>
+                </div>
             </div>
         </c:forEach>
     </div>
@@ -77,46 +67,34 @@
 
     <div class="product-grid discount-grid">
         <c:forEach items="${discountProducts}" var="p">
-            <div class="product-card"
-                 data-product-id="${p.id}"
-                 data-sale-price="${p.sale_price}">
+            <div class="product-card">
                 <span class="badge flash">SALE -${p.discountPercent}%</span>
 
-                <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="product-image">
-                    <c:choose>
-                        <c:when test="${empty p.thumbnail}">
-                            <img src="${pageContext.request.contextPath}/images/no-image.png" alt="${p.name}">
-                        </c:when>
-                        <c:when test="${p.thumbnail.startsWith('http://') or p.thumbnail.startsWith('https://')}">
-                            <img src="${p.thumbnail}" alt="${p.name}">
-                        </c:when>
-                        <c:when test="${p.thumbnail.startsWith('/')}">
-                            <img src="${pageContext.request.contextPath}${p.thumbnail}" alt="${p.name}">
-                        </c:when>
-                        <c:otherwise>
-                            <img src="${pageContext.request.contextPath}/${p.thumbnail}" alt="${p.name}">
-                        </c:otherwise>
-                    </c:choose>
-                </a>
+                <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover"></a>
 
-                <h3>
-                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}">
-                            ${p.name}
-                    </a>
-                </h3>
+                <img src="${p.thumbnail}" alt="${p.name}">
+
+                <h3>${p.name}</h3>
 
                 <p class="price">
-                    <span class="new-price">
-                        <fmt:formatNumber value="${p.sale_price}" type="number" groupingUsed="true"/>₫
-                    </span>
+        <span class="new-price">
+            <fmt:formatNumber value="${p.sale_price}" type="number" groupingUsed="true"/>đ
+        </span>
                     <span class="old-price">
-                        <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>₫
-                    </span>
+            <fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>đ
+        </span>
                 </p>
 
-                <button type="button" class="btn-add">
-                    Thêm vào giỏ
-                </button>
+                <div class="button">
+                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="btn-detail">
+                        Xem chi tiết
+                    </a>
+
+                    <button class="btn-add"
+                            data-product-id="${p.id}">
+                        Thêm vào giỏ hàng
+                    </button>
+                </div>
             </div>
         </c:forEach>
     </div>
@@ -132,6 +110,6 @@
     const CONTEXT_PATH = '${pageContext.request.contextPath}';
 </script>
 <script src="${pageContext.request.contextPath}/javaScript/khuyenmai.js?v=2.1"></script>
-<%-- <script src="${pageContext.request.contextPath}/javaScript/themvaogiohang.js?v=2.0"></script> --%>
 
+<%@ include file="quick-add-modal.jsp" %>
 <%@ include file="footer.jsp" %>
