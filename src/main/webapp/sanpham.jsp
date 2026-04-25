@@ -230,9 +230,9 @@
         <i class="fa-solid fa-arrow-up"></i>
     </button>
 
-    <%@ include file="quick-add-modal.jsp" %>
+
 
 </section>
-
+<%@ include file="quick-add-modal.jsp" %>
 
 <%@ include file="footer.jsp"%>
