@@ -65,7 +65,12 @@
 
         <div class="summary-row">
             <span>Vận chuyển</span>
-            <span>MIỄN PHÍ</span>
+            <span>
+                <c:choose>
+                    <c:when test="${order.shippingFee == 0}">MIỄN PHÍ</c:when>
+                    <c:otherwise><fmt:formatNumber value="${order.shippingFee}" type="number"/>₫</c:otherwise>
+                </c:choose>
+            </span>
         </div>
 
         <hr>
