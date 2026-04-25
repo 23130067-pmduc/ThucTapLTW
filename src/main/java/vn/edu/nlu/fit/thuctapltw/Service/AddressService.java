@@ -12,6 +12,10 @@ public class AddressService {
         return addressDao.getByUser(userId);
     }
 
+    public Address getAddressById(int addressId, int userId) {
+        return addressDao.findById(addressId, userId);
+    }
+
     public void addAddress(Address address) {
         validateAddress(address);
 

@@ -24,6 +24,10 @@ public class GhnShippingService {
     private final String token = readConfig("GHN_API_TOKEN");
     private final int shopId = readIntConfig("GHN_SHOP_ID", 0);
     private final int fromDistrictId = readIntConfig("GHN_FROM_DISTRICT_ID", 0);
+    private final int defaultWeight = readIntConfig("GHN_DEFAULT_WEIGHT", 500);
+    private final int defaultLength = readIntConfig("GHN_DEFAULT_LENGTH", 20);
+    private final int defaultWidth = readIntConfig("GHN_DEFAULT_WIDTH", 20);
+    private final int defaultHeight = readIntConfig("GHN_DEFAULT_HEIGHT", 10);
 
     public ShippingQuote calculateFee(Address address) {
         if (address == null) {
@@ -34,24 +38,26 @@ public class GhnShippingService {
             return ShippingQuote.success(0, "Chua cau hinh GHN, tam tinh phi ship = 0.");
         }
 
-        if (isBlank(address.getCity()) || isBlank(address.getDistrict()) || isBlank(address.getWard())) {
-            return ShippingQuote.failure("Dia chi giao hang chua day du de tinh phi van chuyen.");
-        }
-
         try {
-            Integer districtId = findDistrictId(address.getDistrict(), address.getCity());
-            if (districtId == null) {
+            Integer toDistrictId = findDistrictId(address.getDistrict(), address.getCity());
+            if (toDistrictId == null) {
                 return ShippingQuote.failure("Khong tim thay ma quan/huyen tren GHN.");
             }
 
-            String wardCode = findWardCode(districtId, address.getWard());
+            String wardCode = findWardCode(toDistrictId, address.getWard());
             if (wardCode == null) {
                 return ShippingQuote.failure("Khong tim thay ma phuong/xa tren GHN.");
             }
 
-            return ShippingQuote.success(0, "Da map duoc dia chi GHN, se tinh phi o commit tiep theo.");
+            Integer serviceId = findServiceId(toDistrictId);
+            if (serviceId == null) {
+                return ShippingQuote.failure("Khong tim thay dich vu giao hang phu hop.");
+            }
+
+            long fee = requestShippingFee(serviceId, toDistrictId, wardCode);
+            return ShippingQuote.success(fee, null);
         } catch (Exception e) {
-            return ShippingQuote.failure("Khong xu ly duoc dia chi GHN: " + e.getMessage());
+            return ShippingQuote.failure("Khong tinh duoc phi van chuyen GHN: " + e.getMessage());
         }
     }
 
@@ -60,39 +66,55 @@ public class GhnShippingService {
     }
 
     private Integer findDistrictId(String districtName, String cityName) throws IOException, InterruptedException {
-        JsonArray provinces = getAndReadDataArray("/master-data/province");
+        JsonArray provinces = getAndReadDataArray("/master-data/province", false);
 
-        Integer provinceId = null;
+        Integer toProvinceId = null;
         String normalizedCity = normalizeAdministrativeUnit(cityName);
 
         for (JsonElement item : provinces) {
             JsonObject province = item.getAsJsonObject();
-            String ghnCityName = province.get("ProvinceName").getAsString();
+            JsonElement pNameElem = province.get("ProvinceName");
+            if (pNameElem == null || pNameElem.isJsonNull()) continue;
+
+            String ghnCityName = pNameElem.getAsString();
             String normalizedGhnCity = normalizeAdministrativeUnit(ghnCityName);
 
-            if (normalizedGhnCity.equals(normalizedCity)
-                    || normalizedGhnCity.contains(normalizedCity)
-                    || normalizedCity.contains(normalizedGhnCity)) {
-                provinceId = province.get("ProvinceID").getAsInt();
+            if (normalizedGhnCity.equals(normalizedCity) || normalizedGhnCity.contains(normalizedCity) || normalizedCity.contains(normalizedGhnCity)) {
+                toProvinceId = province.get("ProvinceID").getAsInt();
                 break;
             }
         }
 
-        if (provinceId == null) {
+        if (toProvinceId == null) {
             return null;
         }
 
-        JsonArray districts = getAndReadDataArray("/master-data/district?province_id=" + provinceId);
+        JsonArray districts = getAndReadDataArray("/master-data/district?province_id=" + toProvinceId, false);
+
         String normalizedDistrict = normalizeAdministrativeUnit(districtName);
 
         for (JsonElement item : districts) {
             JsonObject district = item.getAsJsonObject();
-            String ghnDistrictName = district.get("DistrictName").getAsString();
+            JsonElement dNameElem = district.get("DistrictName");
+            if (dNameElem == null || dNameElem.isJsonNull()) continue;
+
+            String ghnDistrictName = dNameElem.getAsString();
             String normalizedGhnDistrict = normalizeAdministrativeUnit(ghnDistrictName);
 
-            if (normalizedGhnDistrict.equals(normalizedDistrict)
-                    || normalizedGhnDistrict.contains(normalizedDistrict)
-                    || normalizedDistrict.contains(normalizedGhnDistrict)) {
+            if (normalizedGhnDistrict.equals(normalizedDistrict)) {
+                return district.get("DistrictID").getAsInt();
+            }
+        }
+
+        for (JsonElement item : districts) {
+            JsonObject district = item.getAsJsonObject();
+            JsonElement dNameElem = district.get("DistrictName");
+            if (dNameElem == null || dNameElem.isJsonNull()) continue;
+
+            String ghnDistrictName = dNameElem.getAsString();
+            String normalizedGhnDistrict = normalizeAdministrativeUnit(ghnDistrictName);
+
+            if (normalizedGhnDistrict.contains(normalizedDistrict) || normalizedDistrict.contains(normalizedGhnDistrict)) {
                 return district.get("DistrictID").getAsInt();
             }
         }
@@ -101,40 +123,120 @@ public class GhnShippingService {
     }
 
     private String findWardCode(int districtId, String wardName) throws IOException, InterruptedException {
-        JsonArray wards = getAndReadDataArray("/master-data/ward?district_id=" + districtId);
+        JsonArray wards = getAndReadDataArray("/master-data/ward?district_id=" + districtId, false);
+
         String normalizedWard = normalize(wardName);
 
         for (JsonElement item : wards) {
             JsonObject ward = item.getAsJsonObject();
-            String ghnWardName = ward.get("WardName").getAsString();
-            String normalizedGhnWard = normalize(ghnWardName);
+            JsonElement wNameElem = ward.get("WardName");
+            if (wNameElem == null || wNameElem.isJsonNull()) continue;
 
-            if (normalizedGhnWard.equals(normalizedWard)
-                    || normalizedGhnWard.contains(normalizedWard)
-                    || normalizedWard.contains(normalizedGhnWard)) {
+            String ghnWardName = wNameElem.getAsString();
+            String normalizedGhnWard = normalize(ghnWardName);
+            if (normalizedGhnWard.equals(normalizedWard)) {
                 return ward.get("WardCode").getAsString();
             }
         }
 
+        for (JsonElement item : wards) {
+            JsonObject ward = item.getAsJsonObject();
+            JsonElement wNameElem = ward.get("WardName");
+            if (wNameElem == null || wNameElem.isJsonNull()) continue;
+
+            String ghnWardName = wNameElem.getAsString();
+            String normalizedGhnWard = normalize(ghnWardName);
+            if (normalizedGhnWard.contains(normalizedWard) || normalizedWard.contains(normalizedGhnWard)) {
+                return ward.get("WardCode").getAsString();
+            }
+        }
         return null;
     }
 
-    private JsonArray getAndReadDataArray(String path) throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder()
+    private Integer findServiceId(int toDistrictId) throws IOException, InterruptedException {
+        JsonObject body = new JsonObject();
+        body.addProperty("shop_id", shopId);
+        body.addProperty("from_district", fromDistrictId);
+        body.addProperty("to_district", toDistrictId);
+
+        JsonArray services = postAndReadDataArray("/v2/shipping-order/available-services", body, true);
+        if (services.isEmpty()) {
+            return null;
+        }
+        JsonObject firstService = services.get(0).getAsJsonObject();
+        JsonElement sIdElem = firstService.get("service_id");
+        if (sIdElem == null || sIdElem.isJsonNull()) return null;
+        return sIdElem.getAsInt();
+    }
+
+    private long requestShippingFee(int serviceId, int toDistrictId, String wardCode) throws IOException, InterruptedException {
+        JsonObject body = new JsonObject();
+        body.addProperty("service_id", serviceId);
+        body.addProperty("insurance_value", 0);
+        body.addProperty("from_district_id", fromDistrictId);
+        body.addProperty("to_district_id", toDistrictId);
+        body.addProperty("to_ward_code", wardCode);
+        body.addProperty("height", defaultHeight);
+        body.addProperty("length", defaultLength);
+        body.addProperty("weight", defaultWeight);
+        body.addProperty("width", defaultWidth);
+        body.addProperty("coupon", "");
+
+        JsonObject response = post("/v2/shipping-order/fee", body, true);
+        JsonObject data = response.getAsJsonObject("data");
+        if (data == null || data.isJsonNull()) return 0;
+        JsonElement totalElem = data.get("total");
+        if (totalElem == null || totalElem.isJsonNull()) return 0;
+        return totalElem.getAsLong();
+    }
+
+    private JsonArray postAndReadDataArray(String path, JsonObject body, boolean includeShopId)
+            throws IOException, InterruptedException {
+        JsonObject response = sendRequest("POST", path, body, includeShopId);
+        return response.getAsJsonArray("data");
+    }
+
+    private JsonObject post(String path, JsonObject body, boolean includeShopId) throws IOException, InterruptedException {
+        return sendRequest("POST", path, body, includeShopId);
+    }
+
+    private JsonArray getAndReadDataArray(String path, boolean includeShopId) throws IOException, InterruptedException {
+        JsonObject response = sendRequest("GET", path, null, includeShopId);
+        return response.getAsJsonArray("data");
+    }
+
+    private JsonObject sendRequest(String method, String path, JsonObject body, boolean includeShopId) throws IOException, InterruptedException {
+        HttpRequest.Builder requestBuilder = HttpRequest.newBuilder()
                 .uri(URI.create(GHN_BASE_URL + path))
                 .header("Content-Type", "application/json")
-                .header("Token", token)
-                .GET()
-                .build();
+                .header("Token", token);
 
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-        JsonObject root = JsonParser.parseString(response.body()).getAsJsonObject();
-
-        if (response.statusCode() < 200 || response.statusCode() >= 300) {
-            throw new IOException("HTTP " + response.statusCode());
+        if (includeShopId) {
+            requestBuilder.header("ShopId", String.valueOf(shopId));
         }
 
-        return root.getAsJsonArray("data");
+        if ("POST".equalsIgnoreCase(method)) {
+            requestBuilder.POST(HttpRequest.BodyPublishers.ofString(gson.toJson(body)));
+        } else {
+            requestBuilder.GET();
+        }
+
+        HttpResponse<String> response = httpClient.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString());
+
+        JsonObject root = null;
+        try {
+            root = JsonParser.parseString(response.body()).getAsJsonObject();
+        } catch (Exception e) {
+            throw new IOException("HTTP " + response.statusCode() + " - " + response.body());
+        }
+
+        int code = root.has("code") && !root.get("code").isJsonNull() ? root.get("code").getAsInt() : response.statusCode();
+        if (response.statusCode() < 200 || response.statusCode() >= 300 || code != 200) {
+            String message = root.has("message") && !root.get("message").isJsonNull()
+                    ? root.get("message").getAsString() : "Loi khong xac dinh tu GHN";
+            throw new IOException("API Error " + response.statusCode() + ": " + message);
+        }
+        return root;
     }
 
     private static String readConfig(String key) {
@@ -150,7 +252,6 @@ public class GhnShippingService {
         if (value == null || value.isBlank()) {
             return defaultValue;
         }
-
         try {
             return Integer.parseInt(value.trim());
         } catch (NumberFormatException e) {
@@ -163,18 +264,17 @@ public class GhnShippingService {
             return "";
         }
 
-        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD)
-                .replaceAll("\\p{M}", "");
+        String normalized = Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("\\p{M}", "");
 
         return normalized.toLowerCase(Locale.ROOT)
-                .replace("đ", "d")
+                .replace("\u0111", "d")
+                .replace("\u0110", "d")
                 .trim();
     }
 
     private static String normalizeAdministrativeUnit(String value) {
         String normalized = normalize(value);
-        normalized = normalized
-                .replace("thanh pho ", "")
+        normalized = normalized.replace("thanh pho ", "")
                 .replace("tp ", "")
                 .replace("quan ", "")
                 .replace("huyen ", "")
@@ -185,9 +285,6 @@ public class GhnShippingService {
         return normalized.replaceAll("\\s+", " ").trim();
     }
 
-    private boolean isBlank(String value) {
-        return value == null || value.trim().isEmpty();
-    }
 
     public record ShippingQuote(long fee, boolean success, String message) {
         public static ShippingQuote success(long fee, String message) {
