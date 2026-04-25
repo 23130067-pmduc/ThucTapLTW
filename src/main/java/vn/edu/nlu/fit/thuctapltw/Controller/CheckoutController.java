@@ -9,6 +9,7 @@ import vn.edu.nlu.fit.thuctapltw.DAO.OrderItemDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.ProductVariantDao;
 import vn.edu.nlu.fit.thuctapltw.Service.AddressService;
 import vn.edu.nlu.fit.thuctapltw.Service.EmailService;
+import vn.edu.nlu.fit.thuctapltw.Service.GhnShippingService;
 import vn.edu.nlu.fit.thuctapltw.Service.OrderEmailService;
 import vn.edu.nlu.fit.thuctapltw.model.*;
 
@@ -22,6 +23,7 @@ public class CheckoutController extends HttpServlet {
     private OrderDao orderDao;
     private OrderItemDao orderItemDao;
     private ProductVariantDao variantDao;
+    private GhnShippingService ghnShippingService;
 
     @Override
     public void init() {
@@ -30,6 +32,7 @@ public class CheckoutController extends HttpServlet {
         orderDao = new OrderDao();
         orderItemDao = new OrderItemDao();
         variantDao = new ProductVariantDao();
+        ghnShippingService = new GhnShippingService();
     }
 
     @Override
