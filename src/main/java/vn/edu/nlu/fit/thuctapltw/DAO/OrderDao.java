@@ -143,10 +143,11 @@ public class OrderDao extends BaseDao {
         );
     }
 
-    public int createOrder(int userId, String receiver, String phone, String address, String note, String paymentMethod, double totalPrice) {
+    public int createOrder(int userId, String receiver, String phone, String address, String note, String paymentMethod, double totalPrice, double shippingFee) {
+        double finalAmount = totalPrice + shippingFee;
         return getJdbi().withHandle(h -> h.createUpdate("""
             INSERT INTO orders( user_id, receiver_name, phone, shipping_address, note,total_price, discount, shipping_fee, final_amount,payment_methods, payment_statuses, order_status, created_at)
-            VALUES(:uid, :receiver, :phone, :address, :note,:total, 0, 0, :total,:payment, 'UNPAID', 'PENDING', NOW()) """).bind("uid", userId).bind("receiver", receiver).bind("phone", phone).bind("address", address).bind("note", note).bind("total", totalPrice).bind("payment", paymentMethod).executeAndReturnGeneratedKeys("id").mapTo(int.class).one()
+            VALUES(:uid, :receiver, :phone, :address, :note,:total, 0, :shippingFee, :finalAmount,:payment, 'UNPAID', 'PENDING', NOW()) """).bind("uid", userId).bind("receiver", receiver).bind("phone", phone).bind("address", address).bind("note", note).bind("total", totalPrice).bind("shippingFee", shippingFee).bind("finalAmount", finalAmount).bind("payment", paymentMethod).executeAndReturnGeneratedKeys("id").mapTo(int.class).one()
         );
     }
 
