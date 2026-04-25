@@ -32,7 +32,20 @@ public class AddCart extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
+        String ajaxHeader = request.getHeader("X-Requested-With");
+        boolean isAjax = "XMLHttpRequest".equals(ajaxHeader);
+
         if (session == null || session.getAttribute("cartId") == null) {
+            if (isAjax) {
+                response.setContentType("application/json");
+                response.setCharacterEncoding("UTF-8");
+                response.getWriter().write(
+                        "{\"success\":false,\"message\":\"Vui lòng đăng nhập để thêm vào giỏ hàng\",\"redirect\":\""
+                                + request.getContextPath() + "/login\"}"
+                );
+                return;
+            }
+
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
@@ -142,8 +155,8 @@ public class AddCart extends HttpServlet {
                 e.printStackTrace();
             }
 
-            String ajaxHeader = request.getHeader("X-Requested-With");
-            if ("XMLHttpRequest".equals(ajaxHeader)) {
+
+            if (isAjax) {
                 System.out.println("[AddCart] Responding with JSON (AJAX request)");
                 response.setContentType("application/json");
                 response.setCharacterEncoding("UTF-8");
