@@ -139,7 +139,10 @@
                     <c:set var="total" value="0"/>
                     <c:forEach var="item" items="${checkoutItems}">
                         <div class="order-item">
-                            <img src="${item.product.thumbnail}">
+                            <div class="checkout-product-thumb">
+                                <img src="${item.product.thumbnail}">
+                                <span class="checkout-product-qty">${item.quantity}</span>
+                            </div>
                             <div class="info">
                                 <p class="name">${item.product.name}</p>
                                 <p class="variant">Size ${item.size} · ${item.color}
@@ -155,28 +158,36 @@
                     </c:forEach>
                 </div>
 
+                <div class="voucher-box">
+                    <input type="text" id="voucherCode" name="voucherCode" placeholder="Mã giảm giá">
+                    <button type="button" id="applyVoucherBtn">áp dụng</button>
+                </div>
+                <p id="voucherMessage" class="voucher-message"></p>
+
                 <div class="order-summary">
-                    <div>
-                        <span>Tạm tính</span>
-                        <span id="subtotalAmount">
+                    <div class="summary-row">
+                        <span>Tổng phụ</span>
+                        <span id="subtotalAmount" data-subtotal="${total}">
                         <fmt:formatNumber value="${total}" type="number"/>₫
                     </span>
                     </div>
 
-                    <div>
-                        <span>Phí vận chuyển</span>
+                    <div class="summary-row">
+                        <span>Vận chuyển <i class="fa-regular fa-circle-question shipping-help-icon"></i></span>
                         <span id="shippingFeeAmount">Miễn phí</span>
                     </div>
+
                     <div id="shippingFeeHint" style="color: red; font-size: 0.9em;"></div>
 
                     <div class="total">
-                        <span>Tổng cộng</span>
-                        <span id="finalAmount">
+                        <span>Tổng</span>
+                        <span class="final-price-wrap"><span id="finalAmount">
                         <fmt:formatNumber value="${total}" type="number"/>₫
-                    </span>
+                    </span></span>
                     </div>
                 </div>
                 <input type="hidden" name="shippingFee" id="hiddenShippingFee" value="0">
+                <input type="hidden" name="discount" id="hiddenDiscount" value="0">
 
                 <button type="submit" class="btn-checkout">
                     XÁC NHẬN THANH TOÁN

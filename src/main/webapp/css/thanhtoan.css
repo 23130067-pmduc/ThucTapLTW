@@ -69,10 +69,37 @@
     margin-bottom: 12px;
 }
 
-.order-item img {
+.checkout-product-thumb {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex: 0 0 60px;
+}
+
+.order-item img,
+.checkout-product-thumb img {
     width: 60px;
     height: 60px;
     object-fit: cover;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+}
+
+.checkout-product-qty {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 7px;
+    border-radius: 9px;
+    background: #000;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .order-item .info {
@@ -94,15 +121,87 @@
     padding-top: 16px;
 }
 
+.voucher-box {
+    display: grid;
+    grid-template-columns: 1fr 104px;
+    gap: 14px;
+    margin-top: 24px;
+}
+
+.voucher-box input {
+    height: 48px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0 14px;
+    font-size: 15px;
+}
+
+.voucher-box button {
+    height: 48px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #f7f7f7;
+    color: #666;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.voucher-box button:hover {
+    background: #eeeeee;
+}
+
+.voucher-message {
+    min-height: 18px;
+    margin: 8px 0 0;
+    font-size: 13px;
+}
+
+.voucher-message.success {
+    color: #198754;
+}
+
+.voucher-message.error {
+    color: #dc3545;
+}
+
 .order-summary div {
     display: flex;
     justify-content: space-between;
     margin-bottom: 8px;
 }
 
+.order-summary .summary-row {
+    color: #222;
+    font-size: 15px;
+}
+
+.order-summary .discount-row {
+    color: #dc3545;
+}
+
+.shipping-help-icon {
+    color: #777;
+    font-size: 13px;
+    margin-left: 4px;
+}
+
 .order-summary .total {
-    font-size: 18px;
+    align-items: baseline;
+    margin-top: 24px;
+    font-size: 24px;
     font-weight: bold;
+}
+
+.final-price-wrap {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.final-price-wrap small {
+    color: #777;
+    font-size: 13px;
+    font-weight: 400;
 }
 
 .btn-checkout {
