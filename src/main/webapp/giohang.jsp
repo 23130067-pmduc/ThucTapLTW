@@ -46,7 +46,7 @@
 
                             <tbody>
                             <c:forEach var="item" items="${cartItems}">
-                                <tr data-price="${item.price}">
+                                <tr data-price="${item.price}" data-stock="${item.stock}">
                                     <td>
                                         <img src="${item.product.thumbnail}" width="60">
                                         <br>
@@ -72,6 +72,7 @@
                                                    name="quantity"
                                                    class="qty-display"
                                                    value="${item.quantity}"
+                                                   max="${item.stock}"
                                                    readonly
                                                    style="width:40px; text-align:center;">
 

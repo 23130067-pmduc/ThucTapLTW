@@ -4,16 +4,19 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import vn.edu.nlu.fit.thuctapltw.DAO.CartItemDao;
+import vn.edu.nlu.fit.thuctapltw.DAO.ProductVariantDao;
 
 import java.io.IOException;
 
 @WebServlet(name = "UpdateCart", value = "/update-cart")
 public class UpdateCart extends HttpServlet {
     private CartItemDao cartItemDao;
+    private ProductVariantDao variantDao;
 
     @Override
     public void init() {
         cartItemDao = new CartItemDao();
+        variantDao = new ProductVariantDao();
     }
 
     @Override
@@ -38,7 +41,18 @@ public class UpdateCart extends HttpServlet {
             if (quantity <= 0) {
                 cartItemDao.delete(cartId, variantId);
             } else {
-                cartItemDao.updateQuantity(cartId, variantId, quantity);
+                int stock = variantDao.getStockByVariantId(variantId);
+                int limitedQuantity = Math.min(quantity, stock);
+
+                if (limitedQuantity <= 0) {
+                    cartItemDao.delete(cartId, variantId);
+                    int cartSize = cartItemDao.countTotalQuantity(cartId);
+                    session.setAttribute("cartSize", cartSize);
+                    response.sendRedirect("my-cart?error=out_of_stock");
+                    return;
+                }
+
+                cartItemDao.updateQuantity(cartId, variantId, limitedQuantity);
             }
 
             int cartSize = cartItemDao.countTotalQuantity(cartId);

@@ -30,6 +30,22 @@ public class MyCart extends HttpServlet {
         Integer cartId = (Integer) session.getAttribute("cartId");
 
         List<CartItem> items = cartItemDao.getItemsByCartId(cartId);
+        boolean changed = false;
+        for (CartItem item : items) {
+            if (item.getStock() <= 0) {
+                cartItemDao.delete(cartId, item.getVariantId());
+                changed = true;
+            } else if (item.getQuantity() > item.getStock()) {
+                cartItemDao.updateQuantity(cartId, item.getVariantId(), item.getStock());
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            items = cartItemDao.getItemsByCartId(cartId);
+            session.setAttribute("cartSize", cartItemDao.countTotalQuantity(cartId));
+        }
+
         request.setAttribute("cartItems", items);
 
         request.getRequestDispatcher("giohang.jsp").forward(request, response);

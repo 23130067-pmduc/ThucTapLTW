@@ -25,9 +25,17 @@ public class CartItemDao extends BaseDao {
         return getJdbi().withHandle(h -> h.createQuery("SELECT COALESCE(SUM(quantity),0) FROM cart_items WHERE cart_id = :cid").bind("cid", cartId).mapTo(int.class).one());
     }
 
+    public int getQuantity(int cartId, int variantId) {
+        return getJdbi().withHandle(h -> h.createQuery("""
+                SELECT COALESCE(quantity, 0)
+                FROM cart_items
+                WHERE cart_id = :cid AND variant_id = :vid
+                """).bind("cid", cartId).bind("vid", variantId).mapTo(int.class).findOne().orElse(0));
+    }
+
     public List<CartItem> getItemsByCartId(int cartId) {
         String sql = """
-        SELECT ci.variant_id, ci.quantity, ci.price, p.id   AS pid, p.name, p.thumbnail, s.code AS size, c.name AS color
+        SELECT ci.variant_id, ci.quantity, ci.price, v.stock, p.id   AS pid, p.name, p.thumbnail, s.code AS size, c.name AS color
         FROM cart_items ci
         JOIN product_variants v ON ci.variant_id = v.id
         JOIN products p ON v.product_id = p.id
@@ -39,6 +47,7 @@ public class CartItemDao extends BaseDao {
             item.setVariantId(rs.getInt("variant_id"));
             item.setQuantity(rs.getInt("quantity"));
             item.setPrice(rs.getDouble("price"));
+            item.setStock(rs.getInt("stock"));
             item.setSize(rs.getString("size"));
             item.setColor(rs.getString("color"));
 
@@ -68,26 +77,27 @@ public class CartItemDao extends BaseDao {
 
     public List<CartItem> getByCartId(int cartId) {
         return getJdbi().withHandle(h -> h.createQuery("""
-            SELECT ci.variant_id, ci.quantity, ci.price, s.code AS size, c.name AS color, p.id   AS product_id, p.name AS product_name, p.thumbnail
+            SELECT ci.variant_id, ci.quantity, ci.price, pv.stock, s.code AS size, c.name AS color, p.id   AS product_id, p.name AS product_name, p.thumbnail
             FROM cart_items ci
             JOIN product_variants pv ON ci.variant_id = pv.id
             JOIN products p ON pv.product_id = p.id
             LEFT JOIN sizes s ON pv.size_id = s.id
             LEFT JOIN colors c ON pv.color_id = c.id
             WHERE ci.cart_id = :cartId """).bind("cartId", cartId).map((rs, ctx) -> {
-                CartItem item = new CartItem();
-                item.setVariantId(rs.getInt("variant_id"));
-                item.setQuantity(rs.getInt("quantity"));
-                item.setPrice(rs.getDouble("price"));
-                item.setSize(rs.getString("size"));
-                item.setColor(rs.getString("color"));
+            CartItem item = new CartItem();
+            item.setVariantId(rs.getInt("variant_id"));
+            item.setQuantity(rs.getInt("quantity"));
+            item.setPrice(rs.getDouble("price"));
+            item.setStock(rs.getInt("stock"));
+            item.setSize(rs.getString("size"));
+            item.setColor(rs.getString("color"));
 
-                Product p = new Product();
-                p.setId(rs.getInt("product_id"));
-                p.setName(rs.getString("product_name"));
-                p.setThumbnail(rs.getString("thumbnail"));
-                item.setProduct(p);
-                return item;}).list());
+            Product p = new Product();
+            p.setId(rs.getInt("product_id"));
+            p.setName(rs.getString("product_name"));
+            p.setThumbnail(rs.getString("thumbnail"));
+            item.setProduct(p);
+            return item;}).list());
     }
 
 

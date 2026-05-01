@@ -26,6 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const minus = form.querySelector(".btn-minus");
         const plus = form.querySelector(".btn-plus");
         const qtyInput = form.querySelector(".qty-display");
+        const row = qtyInput.closest("tr");
+        const stock = Number(row.dataset.stock || qtyInput.getAttribute("max") || 0);
+
+        function updateButtons() {
+            const qty = Number(qtyInput.value);
+            minus.disabled = qty <= 1;
+            plus.disabled = stock > 0 && qty >= stock;
+        }
 
         minus.addEventListener("click", () => {
             let qty = Number(qtyInput.value);
@@ -33,12 +41,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 qtyInput.value = qty - 1;
                 form.submit();
             }
+            updateButtons();
         });
 
         plus.addEventListener("click", () => {
-            qtyInput.value = Number(qtyInput.value) + 1;
+            const qty = Number(qtyInput.value);
+            if (stock > 0 && qty >= stock) {
+                updateButtons();
+                return;
+            }
+
+            qtyInput.value = qty + 1;
             form.submit();
         });
+        updateButtons();
     });
 
     updateTotal();

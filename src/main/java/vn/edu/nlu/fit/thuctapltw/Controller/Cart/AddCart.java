@@ -112,6 +112,25 @@ public class AddCart extends HttpServlet {
             }
             if (quantity <= 0) quantity = 1;
 
+            int stock = variantDao.getStockByVariantId(variantId);
+            int currentQuantity = cartItemDao.getQuantity(cartId, variantId);
+            int remainingStock = stock - currentQuantity;
+
+            if (remainingStock <= 0) {
+                if (isAjax) {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"success\":false,\"message\":\"So luong trong gio hang da dat toi da ton kho\"}"
+                    );
+                    return;
+                }
+
+                response.sendRedirect(request.getContextPath() + "/my-cart?error=max_stock");
+                return;
+            }
+
+            quantity = Math.min(quantity, remainingStock);
+
             System.out.println("[AddCart] Parameters - cartId: " + cartId + ", variantId: " + variantId + ", quantity: " + quantity);
 
             double price;

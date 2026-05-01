@@ -11,6 +11,7 @@ public class CartItem implements Serializable {
     private int variantId;
     private String size;
     private String color;
+    private int stock;
     public int getVariantId() {
         return variantId;
     }
@@ -23,6 +24,10 @@ public class CartItem implements Serializable {
         return color;
     }
 
+    public int getStock() {
+        return stock;
+    }
+
     public void setVariantId(int variantId) {
         this.variantId = variantId;
     }
@@ -33,6 +38,10 @@ public class CartItem implements Serializable {
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 
     public CartItem(int quantity, double price, Product product, int variantId, String size, String color) {
