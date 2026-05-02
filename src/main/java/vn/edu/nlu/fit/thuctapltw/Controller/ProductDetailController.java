@@ -69,14 +69,19 @@ public class ProductDetailController extends HttpServlet {
 
         List<ProductVariant> listVariant = productVariantService.getVariantByProductId(id);
 
-        User user = (User) request.getSession().getAttribute("userlogin");
+        HttpSession session = request.getSession(false);
+        User user = session != null ? (User) session.getAttribute("userlogin") : null;
 
-        Review myReview = null;
+        boolean canReview = false;
+        int remainingReviewTimes = 0;
 
-        if(user != null){
-            myReview = reviewService.getReviewByUserID(user.getId(), id);
+        if (user != null) {
+            remainingReviewTimes = reviewService.getRemainingReviewTimes(user.getId(), id);
+            canReview = remainingReviewTimes > 0;
         }
 
+        request.setAttribute("canReview", canReview);
+        request.setAttribute("remainingReviewTimes", remainingReviewTimes);
 
         request.setAttribute("variants", listVariant);
         request.setAttribute("sizes", listSize);
@@ -86,7 +91,6 @@ public class ProductDetailController extends HttpServlet {
         request.setAttribute("totalReviews", totalReviews);
         request.setAttribute("product", product);
         request.setAttribute("reviews",reviews);
-        request.setAttribute("myReview", myReview);
         request.setAttribute("ralatedProducts",ralatedProducts);
         request.getRequestDispatcher("/chitietsanpham.jsp").forward(request, response);
 

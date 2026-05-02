@@ -97,29 +97,49 @@
     </section>
 
     <section class="product-review">
-        <form action="review" method="post" class="review-form">
-            <input type="hidden" name="product_id" value="${product.id}">
-            <input type="hidden" name="rating" id="rating-value" value="${myReview.rating}">
+        <c:if test="${param.reviewSuccess == '1'}">
+            <p class="review-success">Đánh giá của bạn đã được gửi thành công!</p>
+        </c:if>
 
-            <div class="star-select">
-                <span class="star" data-value="1">★</span>
-                <span class="star" data-value="2">★</span>
-                <span class="star" data-value="3">★</span>
-                <span class="star" data-value="4">★</span>
-                <span class="star" data-value="5">★</span>
-            </div>
+        <c:if test="${param.reviewError == 'no_permission'}">
+            <p class="review-error">
+                Bạn chưa mua sản phẩm này hoặc đã dùng hết lượt đánh giá.
+            </p>
+        </c:if>
 
-            <textarea id="review-text" name="comment" required placeholder="Nhập nhận xét của bạn...">${myReview.comment}</textarea>
+        <c:choose>
+            <c:when test="${canReview}">
+                <p class="review-note">
+                    Bạn còn ${remainingReviewTimes} lượt đánh giá cho sản phẩm này.
+                </p>
 
-            <c:choose>
-                <c:when test="${myReview != null}">
-                    <button type="submit" class="review-submit-btn">Cập nhật đánh giá</button>
-                </c:when>
-                <c:otherwise>
+                <form action="${pageContext.request.contextPath}/review" method="post" class="review-form">
+                    <input type="hidden" name="product_id" value="${product.id}">
+                    <input type="hidden" name="rating" id="rating-value" value="5">
+
+                    <div class="star-select">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+
+                    <textarea id="review-text"
+                              name="comment"
+                              required
+                              placeholder="Nhập nhận xét của bạn..."></textarea>
+
                     <button type="submit" class="review-submit-btn">Gửi đánh giá</button>
-                </c:otherwise>
-            </c:choose>
-        </form>
+                </form>
+            </c:when>
+
+            <c:otherwise>
+                <p class="review-warning">
+                    Bạn cần mua sản phẩm này và còn lượt đánh giá thì mới được đánh giá.
+                </p>
+            </c:otherwise>
+        </c:choose>
 
 
 

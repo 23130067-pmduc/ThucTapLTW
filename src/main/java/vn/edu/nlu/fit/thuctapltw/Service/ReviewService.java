@@ -1,5 +1,6 @@
 package vn.edu.nlu.fit.thuctapltw.Service;
 
+import vn.edu.nlu.fit.thuctapltw.DAO.OrderDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.ReviewDao;
 import vn.edu.nlu.fit.thuctapltw.model.Review;
 
@@ -7,6 +8,7 @@ import java.util.List;
 
 public class ReviewService {
     private final ReviewDao reviewDao = new ReviewDao();
+    private final OrderDao orderDao = new OrderDao();
 
     public void addOrUpdateReview(Review review) {
         Review exist = reviewDao.findByProductAndUser(
@@ -36,5 +38,13 @@ public class ReviewService {
 
     public Review getReviewByUserID(int userId, int productId) {
         return reviewDao.getReviewByUserID(userId, productId);
+    }
+
+    public int getRemainingReviewTimes(int userId, int productId) {
+        int purchaseCount = orderDao.countCompletePurchaseByUserAndProduct(userId, productId);
+        int reviewCount = reviewDao.countReviewByUserAndProduct(userId, productId);
+
+        return purchaseCount - reviewCount;
+
     }
 }

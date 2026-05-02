@@ -103,4 +103,15 @@ public class ReviewDao extends BaseDao {
                 .findOne()
                 .orElse(null));
     }
+
+    public int countReviewByUserAndProduct(int userId, int productId) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM product_reviews
+                WHERE product_id = :productId AND user_id = :userId""")
+                .bind("userId", userId)
+                .bind("productId", productId)
+                .mapTo(Integer.class)
+                .one());
+    }
 }

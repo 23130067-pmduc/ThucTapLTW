@@ -32,7 +32,9 @@ public class ReviewController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        User user = (User) request.getSession().getAttribute("userlogin");
+        HttpSession session = request.getSession(false);
+        User user = session != null ? (User) session.getAttribute("userlogin") : null;
+
 
         if (user == null) {
             response.sendRedirect("login.jsp");
@@ -45,6 +47,14 @@ public class ReviewController extends HttpServlet {
 
         int userId = user.getId();
 
+        int remainingReviewTimes = reviewService.getRemainingReviewTimes(userId, productId);
+
+        if (remainingReviewTimes <= 0) {
+            response.sendRedirect(request.getContextPath()
+                    + "/chi-tiet-san-pham?id=" + productId + "&reviewError=no_permission");
+            return;
+        }
+
         Review review = new Review();
         review.setProductId(productId);
         review.setUserId(userId);
@@ -54,6 +64,6 @@ public class ReviewController extends HttpServlet {
         reviewService.addOrUpdateReview(review);
 
 
-        response.sendRedirect("chi-tiet-san-pham?id=" + productId);
+        response.sendRedirect("chi-tiet-san-pham?id=" + productId + "&reviewSuccess=1");
     }
 }

@@ -176,4 +176,17 @@ public class OrderDao extends BaseDao {
             return o;}).findOne().orElse(null)
         );
     }
+
+    public int countCompletePurchaseByUserAndProduct(int userId, int productId) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM orders O
+                JOIN order_items OI ON O.id = OI.order_id
+                JOIN product_variants PV ON OI.variant_id = PV.id
+                WHERE O.user_id = :userId AND PV.product_id = :productId AND O.order_status IN ('DELIVERED', 'COMPLETED')""")
+                .bind("userId", userId)
+                .bind("productId", productId)
+                .mapTo(Integer.class)
+                .one());
+    }
 }
