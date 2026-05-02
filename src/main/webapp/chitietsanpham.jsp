@@ -146,6 +146,23 @@
         <section class="review-list">
             <h3>Đánh giá của khách hàng</h3>
 
+            <div class="review-sort">
+                <a class="${empty sortRating ? 'active' : ''}"
+                   href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${product.id}">
+                    Mới nhất
+                </a>
+
+                <a class="${sortRating == 'desc' ? 'active' : ''}"
+                   href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${product.id}&sortRating=desc">
+                    Từ 5 sao xuống
+                </a>
+
+                <a class="${sortRating == 'asc' ? 'active' : ''}"
+                   href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${product.id}&sortRating=asc">
+                    Từ 1 sao lên
+                </a>
+            </div>
+
             <c:if test="${empty reviews}">
                 <p>Chưa có đánh giá nào.</p>
             </c:if>

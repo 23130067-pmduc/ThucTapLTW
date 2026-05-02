@@ -28,6 +28,10 @@ public class ReviewService {
         return reviewDao.findByProductID(productID);
     }
 
+    public List<Review> getReviewByProductID(int productId, String sortRating) {
+        return reviewDao.getReviewByProductID(productId, sortRating);
+    }
+
     public double getAvgRating(int id) {
         return reviewDao.getAvgRating(id);
     }

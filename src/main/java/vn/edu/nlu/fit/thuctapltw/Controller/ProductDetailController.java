@@ -50,7 +50,17 @@ public class ProductDetailController extends HttpServlet {
             return;
         }
 
-        List<Review> reviews = reviewService.getReviewByProductID(id);
+        String sortRating = request.getParameter("sortRating");
+
+        List<Review> reviews;
+
+        if ("asc".equals(sortRating) || "desc".equals(sortRating)) {
+            reviews = reviewService.getReviewByProductID(id, sortRating);
+        } else {
+            reviews = reviewService.getReviewByProductID(id);
+        }
+
+        request.setAttribute("sortRating", sortRating);
 
 
         List<Product> ralatedProducts = productService.ralatedProduct(id, 4);
@@ -82,6 +92,8 @@ public class ProductDetailController extends HttpServlet {
 
         request.setAttribute("canReview", canReview);
         request.setAttribute("remainingReviewTimes", remainingReviewTimes);
+
+        request.setAttribute("sortRating", sortRating);
 
         request.setAttribute("variants", listVariant);
         request.setAttribute("sizes", listSize);

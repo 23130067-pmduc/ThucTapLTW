@@ -510,3 +510,32 @@ input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
+
+
+.review-sort {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 16px 0 22px;
+}
+
+.review-sort a {
+    text-decoration: none;
+    color: #5B3A29;
+    border: 1px solid #D8B08C;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    background: #fff;
+    transition: 0.2s ease;
+}
+
+.review-sort a:hover {
+    background: #FFF2E5;
+}
+
+.review-sort a.active {
+    background: #5B3A29;
+    color: #fff;
+    border-color: #5B3A29;
+}

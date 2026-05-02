@@ -69,6 +69,24 @@ public class ReviewDao extends BaseDao {
                 .list());
     }
 
+    public List<Review> getReviewByProductID(int productId, String sortRating) {
+        String orderDirection = "asc".equalsIgnoreCase(sortRating) ? "ASC" : "DESC";
+
+        return getJdbi().withHandle(handle -> handle.createQuery(
+                        """
+                                SELECT r.* , u.username
+                                FROM product_reviews r
+                                JOIN users u ON r.user_id = u.id
+                                WHERE r.product_id = :productId
+                                ORDER BY r.rating""" + " " + orderDirection + ", r.created_at DESC"
+
+                ).bind("productId", productId)
+                .mapToBean(Review.class)
+                .list());
+    }
+
+    
+
 
     public double getAvgRating(int id) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
@@ -104,6 +122,8 @@ public class ReviewDao extends BaseDao {
                 .orElse(null));
     }
 
+
+
     public int countReviewByUserAndProduct(int userId, int productId) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT COUNT(*)
@@ -114,4 +134,7 @@ public class ReviewDao extends BaseDao {
                 .mapTo(Integer.class)
                 .one());
     }
+
+
+
 }
