@@ -61,7 +61,7 @@ public class ReviewController extends HttpServlet {
         review.setRating(rating);
         review.setComment(comment);
 
-        reviewService.addOrUpdateReview(review);
+        reviewService.addReview(review);
 
 
         response.sendRedirect("chi-tiet-san-pham?id=" + productId + "&reviewSuccess=1");

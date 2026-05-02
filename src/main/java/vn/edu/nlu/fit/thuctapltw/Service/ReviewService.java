@@ -23,6 +23,9 @@ public class ReviewService {
         }
     }
 
+    public void addReview(Review review) {
+        reviewDao.insert(review);
+    }
 
     public List<Review> getReviewByProductID(int productID){
         return reviewDao.findByProductID(productID);
@@ -51,4 +54,6 @@ public class ReviewService {
         return purchaseCount - reviewCount;
 
     }
+
+
 }
