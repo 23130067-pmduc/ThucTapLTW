@@ -26,6 +26,7 @@
             <a href="${pageContext.request.contextPath}/news-admin" class="nav-item active">Tin tức</a>
             <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">Thông báo</a>
             <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">Liên hệ</a>
+            <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">Hồ sơ</a>
 
         </div>
     </aside>
