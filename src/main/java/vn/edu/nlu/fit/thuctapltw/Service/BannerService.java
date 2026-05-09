@@ -32,4 +32,12 @@ public class BannerService {
     public Banner getBannerById(int id) {
         return bannerDao.getBannerById(id);
     }
+
+    public List<Banner> getBannersByPage(int pageSize, int offset) {
+        return bannerDao.getBannersByPage(pageSize, offset);
+    }
+
+    public int countAllBanner() {
+        return bannerDao.countAllBanner();
+    }
 }

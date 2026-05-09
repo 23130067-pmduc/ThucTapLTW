@@ -73,4 +73,24 @@ public class BannerDao extends BaseDao{
                 .bind("id",id)
                 .execute());
     }
+
+    public List<Banner> getBannersByPage(int pageSize, int offset) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT id, image_url, navigate_to, title, status
+                FROM banners
+                ORDER BY status DESC , id ASC 
+                LIMIT :pageSize OFFSET :offset""")
+                .bind("pageSize", pageSize)
+                .bind("offset", offset)
+                .mapToBean(Banner.class)
+                .list());
+    }
+
+    public int countAllBanner() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM banners""")
+                .mapTo(Integer.class)
+                .one());
+    }
 }

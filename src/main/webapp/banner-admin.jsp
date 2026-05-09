@@ -112,6 +112,33 @@
                         </tbody>
                     </table>
                 </div>
+
+
+                <c:if test="${totalPages > 1}">
+                    <div class="pagination">
+
+                        <c:if test="${currentPage > 1}">
+                            <a class="page-btn" href="banner-admin?page=${currentPage - 1}">
+                                Trước
+                            </a>
+                        </c:if>
+
+                        <c:forEach begin="1" end="${totalPages}" var="i">
+                            <a href="banner-admin?page=${i}"
+                               class="page-btn ${i == currentPage ? 'active' : ''}">
+                                    ${i}
+                            </a>
+                        </c:forEach>
+
+                        <c:if test="${currentPage < totalPages}">
+                            <a class="page-btn" href="banner-admin?page=${currentPage + 1}">
+                                Sau
+                            </a>
+                        </c:if>
+
+                    </div>
+                </c:if>
+
             </section>
         </main>
     </section>

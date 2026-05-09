@@ -30,15 +30,49 @@ public class BannerAdminController extends HttpServlet {
         String mode = request.getParameter("mode");
 
         if (mode == null){
-            List<Banner> banners = bannerService.getAllBanner();
 
-            int total = banners.size();
+            int pageSize = 20;
+            int currentPage = 1;
 
+            String pageParam = request.getParameter("page");
+
+            if (pageParam != null){
+                try {
+                    currentPage = Integer.parseInt(pageParam);
+                } catch (NumberFormatException e){
+                    currentPage = 1;
+                }
+            }
+
+            if (currentPage < 1){
+                currentPage = 1;
+            }
+
+
+            int total = bannerService.countAllBanner();
             int totalActive = bannerService.getActiveBanners().size();
+
+            int totalPages = (int) Math.ceil((double) total / pageSize);
+
+            if (totalPages == 0){
+                totalPages = 1;
+            }
+
+            if (currentPage > totalPages){
+                currentPage = totalPages;
+            }
+
+            int offset = (currentPage - 1) * pageSize;
+
+            List<Banner> banners = bannerService.getBannersByPage(pageSize, offset);
 
             request.setAttribute("banners", banners);
             request.setAttribute("total", total);
             request.setAttribute("totalActive", totalActive);
+
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("pageSize", pageSize);
 
             request.getRequestDispatcher("/banner-admin.jsp").forward(request,response);
             return;
