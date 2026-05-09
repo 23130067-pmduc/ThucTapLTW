@@ -149,12 +149,12 @@
             <p id="deleteMessage">Bạn có chắc muốn xóa banner này không?</p>
 
             <form id="deleteForm" method="post" action="banner-admin">
-                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="action" value="block">
                 <input type="hidden" name="id" id="deleteBannerId">
 
                 <div class="modal-actions">
                     <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Hủy</button>
-                    <button type="submit" class="btn-danger">Xóa</button>
+                    <button type="submit" class="btn-danger">Ẩn</button>
                 </div>
             </form>
         </div>
@@ -166,7 +166,7 @@
     function openDeleteModal(id, title) {
         document.getElementById("deleteBannerId").value = id;
         document.getElementById("deleteMessage").innerHTML =
-            'Bạn có chắc muốn xóa banner "<b>' + title + '</b>" không?';
+            'Bạn có chắc muốn ẩn banner "<b>' + title + '</b>" không?';
         document.getElementById("deleteModal").style.display = "flex";
     }
 
