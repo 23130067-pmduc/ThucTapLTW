@@ -49,7 +49,7 @@ public class RegisterController extends HttpServlet {
             );
 
         } catch (RuntimeException e) {
-            request.setAttribute("Email đã tồn tại", e.getMessage());
+            request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("/register.jsp").forward(request, response);
         }
 
