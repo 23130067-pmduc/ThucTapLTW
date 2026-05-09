@@ -232,11 +232,10 @@ body, .admin {
     font-size: 16px;
     padding: 6px;
     border-radius: 6px;
-    color: red;
 }
 
 .icon-btn.view {
-    color: green;
+    color: #228be6;
     text-decoration: none;
 }
 
@@ -249,7 +248,7 @@ body, .admin {
     background: rgba(0,0,0,0.05);
 }
 
-.banner-table-wrapper {
+.user-table-wrapper {
     background: #fff;
     border-radius: 12px;
     padding: 16px;
@@ -266,6 +265,15 @@ body, .admin {
 .active {
     background: rgba(255, 255, 255, 0.15);
     transform: translateX(5px);
+}
+
+
+.icon-btn.delete {
+    color: #e03131;
+}
+
+.icon-btn.delete:hover {
+    background: rgba(224, 49, 49, 0.1);
 }
 
 .modal-overlay {

@@ -88,19 +88,16 @@
                                     </c:choose>
                                 </td>
                                 <td class="actions">
-                                    <!-- XEM -->
                                     <a href="banner-admin?mode=view&id=${b.id}"
                                        class="icon-btn view" title="Xem chi tiết">
                                         <i class="fa fa-eye"></i>
                                     </a>
 
-                                    <!-- SỬA -->
                                     <a href="banner-admin?mode=edit&id=${b.id}"
                                        class="icon-btn edit" title="Chỉnh sửa">
                                         <i class="fa fa-pen"></i>
                                     </a>
 
-                                    <!-- XÓA MỀM -->
                                     <button type="button"
                                             class="icon-btn delete"
                                             title="Xóa banner"

@@ -74,7 +74,6 @@
 
 
         <div class="user-table-wrapper">
-          <!-- TABLE USER -->
           <table class="user-table">
             <thead>
             <tr>

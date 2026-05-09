@@ -21,12 +21,10 @@
       <c:choose>
         <c:when test="${mode == 'add'}">Thêm banner</c:when>
         <c:when test="${mode == 'edit'}">Chỉnh sửa banner</c:when>
+        <c:otherwise>Xem chi tiết banner</c:otherwise>
       </c:choose>
     </h2>
   </div>
-
-
-
 
   <form method="post" action="banner-admin" enctype="multipart/form-data">
 
@@ -35,17 +33,17 @@
       <div class="row">
         <div class="col">
           <label>Tiêu đề</label>
-          <input type="text"
-                 name="title"
-                 value="${banner.title}">
+          <input type="text"  name="title"
+                 value="${banner.title}"
+                 <c:if test="${mode == 'view'}">readonly</c:if>>
         </div>
 
         <div class="col">
           <label>Liên kết đến</label>
-          <input type="text"
-                 name="navigateTo"
+          <input type="text" name="navigateTo"
                  value="${banner.navigateTo}"
-                 placeholder="san-pham">
+                 placeholder="san-pham"
+                 <c:if test="${mode == 'view'}">readonly</c:if>>
         </div>
       </div>
 
@@ -54,7 +52,7 @@
       <div class="row">
         <div class="col">
           <label>Trạng thái</label>
-          <select name="status">
+          <select name="status" <c:if test="${mode == 'view'}">disabled</c:if>>
             <option value="1" ${banner.status ? "selected" : ""}>Hoạt động</option>
             <option value="0" ${!banner.status ? "selected" : ""}>Không hoạt động</option>
           </select>
@@ -66,10 +64,12 @@
       <div class="row">
         <div class="col">
           <label>Ảnh banner</label>
-          <input type="file"
-                 name="imageFile"
-                 accept="image/*"
-                 <c:if test="${mode == 'add'}">required</c:if>>
+          <c:if test="${mode != 'view'}">
+            <input type="file"
+                   name="imageFile"
+                   accept="image/*"
+                   <c:if test="${mode == 'add'}">required</c:if>>
+          </c:if>
 
           <div class="preview">
             <img id="previewImg"
@@ -83,12 +83,15 @@
     </div>
 
     <div class="form-footer">
-      <button type="submit"
-              name="action"
-              value="${mode == 'add' ? 'create' : 'update'}"
-              class="btn-primary">
-        Lưu
-      </button>
+      <c:if test="${mode != 'view'}">
+        <button type="submit"
+                name="action"
+                value="${mode == 'add' ? 'create' : 'update'}"
+                class="btn-primary">
+          Lưu
+        </button>
+      </c:if>
+
       <a href="banner-admin" class="btn-secondary">Hủy</a>
     </div>
 

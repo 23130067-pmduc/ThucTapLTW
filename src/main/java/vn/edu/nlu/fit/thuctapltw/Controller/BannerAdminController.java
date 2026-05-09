@@ -44,7 +44,7 @@ public class BannerAdminController extends HttpServlet {
             return;
         }
 
-        if ("edit".equals(mode)){
+        if ("edit".equals(mode) || "view".equals(mode)){
             int id = Integer.parseInt(request.getParameter("id"));
             Banner banner = bannerService.getBannerById(id);
 
