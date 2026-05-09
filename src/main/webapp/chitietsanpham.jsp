@@ -102,6 +102,22 @@
 
 
 
+    <div id="imageLightbox" class="image-lightbox">
+        <button type="button" class="lightbox-close" id="lightboxClose">&times;</button>
+
+        <button type="button" class="lightbox-nav lightbox-prev" id="lightboxPrev">
+            &lt;
+        </button>
+
+        <img id="lightboxImage" src="" alt="${product.name}">
+
+        <button type="button" class="lightbox-nav lightbox-next" id="lightboxNext">
+            &gt;
+        </button>
+    </div>
+
+
+
     <section class="product-description-section">
         <div class="description-tab">Mô tả</div>
 
@@ -166,7 +182,7 @@
             </c:when>
 
             <c:otherwise>
-                <p class="review-warning">
+                <p class="review-warning"id="">
                     Bạn cần mua sản phẩm này và còn lượt đánh giá thì mới được đánh giá.
                 </p>
             </c:otherwise>
@@ -370,4 +386,214 @@
         window.addEventListener("load", checkDescriptionHeight);
     });
 </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const mainImage = document.getElementById("main-image");
+
+        const lightbox = document.getElementById("imageLightbox");
+        const lightboxImage = document.getElementById("lightboxImage");
+        const closeBtn = document.getElementById("lightboxClose");
+        const prevBtn = document.getElementById("lightboxPrev");
+        const nextBtn = document.getElementById("lightboxNext");
+
+        const thumbs = Array.from(document.querySelectorAll(".image-thumbs .thumb"));
+
+        if (!mainImage || !lightbox || !lightboxImage || !closeBtn || !prevBtn || !nextBtn) return;
+
+        let currentIndex = 0;
+
+        let zoomLevel = 1;
+        let translateX = 0;
+        let translateY = 0;
+
+        let isDragging = false;
+        let hasDragged = false;
+
+        let startX = 0;
+        let startY = 0;
+        let lastTranslateX = 0;
+        let lastTranslateY = 0;
+
+        function applyTransform() {
+            lightboxImage.style.transform =
+                "translate(" + translateX + "px, " + translateY + "px) scale(" + zoomLevel + ")";
+        }
+
+        function resetZoom() {
+            zoomLevel = 1;
+            translateX = 0;
+            translateY = 0;
+
+            lastTranslateX = 0;
+            lastTranslateY = 0;
+
+            isDragging = false;
+            hasDragged = false;
+
+            lightboxImage.classList.remove("zoomed");
+            lightboxImage.classList.remove("dragging");
+            lightboxImage.style.transform = "";
+        }
+
+        function zoomIn() {
+            zoomLevel = 2;
+            translateX = 0;
+            translateY = 0;
+
+            lastTranslateX = 0;
+            lastTranslateY = 0;
+
+            lightboxImage.classList.add("zoomed");
+            applyTransform();
+        }
+
+        function zoomOut() {
+            resetZoom();
+        }
+
+        function findCurrentIndexBySrc(src) {
+            const index = thumbs.findIndex(function (thumb) {
+                return thumb.src === src;
+            });
+
+            return index === -1 ? 0 : index;
+        }
+
+        function showImage(index) {
+            if (thumbs.length === 0) {
+                lightboxImage.src = mainImage.src;
+                resetZoom();
+                return;
+            }
+
+            if (index < 0) {
+                index = thumbs.length - 1;
+            }
+
+            if (index >= thumbs.length) {
+                index = 0;
+            }
+
+            currentIndex = index;
+            lightboxImage.src = thumbs[currentIndex].src;
+
+            resetZoom();
+        }
+
+        function openLightbox() {
+            currentIndex = findCurrentIndexBySrc(mainImage.src);
+            showImage(currentIndex);
+
+            lightbox.classList.add("show");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeLightbox() {
+            lightbox.classList.remove("show");
+            document.body.style.overflow = "";
+
+            resetZoom();
+        }
+
+        mainImage.addEventListener("click", function () {
+            openLightbox();
+        });
+
+        closeBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            closeLightbox();
+        });
+
+        prevBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            showImage(currentIndex - 1);
+        });
+
+        nextBtn.addEventListener("click", function (event) {
+            event.stopPropagation();
+            showImage(currentIndex + 1);
+        });
+
+        lightboxImage.addEventListener("click", function (event) {
+            event.stopPropagation();
+
+            if (hasDragged) {
+                hasDragged = false;
+                return;
+            }
+
+            if (zoomLevel === 1) {
+                zoomIn();
+            } else {
+                zoomOut();
+            }
+        });
+
+        lightboxImage.addEventListener("mousedown", function (event) {
+            if (zoomLevel === 1) return;
+
+            event.preventDefault();
+            event.stopPropagation();
+
+            isDragging = true;
+            hasDragged = false;
+
+            lightboxImage.classList.add("dragging");
+
+            startX = event.clientX;
+            startY = event.clientY;
+
+            lastTranslateX = translateX;
+            lastTranslateY = translateY;
+        });
+
+        document.addEventListener("mousemove", function (event) {
+            if (!isDragging || zoomLevel === 1) return;
+
+            const deltaX = event.clientX - startX;
+            const deltaY = event.clientY - startY;
+
+            if (Math.abs(deltaX) > 3 || Math.abs(deltaY) > 3) {
+                hasDragged = true;
+            }
+
+            translateX = lastTranslateX + deltaX;
+            translateY = lastTranslateY + deltaY;
+
+            applyTransform();
+        });
+
+        document.addEventListener("mouseup", function () {
+            if (!isDragging) return;
+
+            isDragging = false;
+            lightboxImage.classList.remove("dragging");
+        });
+
+        lightbox.addEventListener("click", function (event) {
+            if (event.target === lightbox) {
+                closeLightbox();
+            }
+        });
+
+        document.addEventListener("keydown", function (event) {
+            if (!lightbox.classList.contains("show")) return;
+
+            if (event.key === "Escape") {
+                closeLightbox();
+            }
+
+            if (event.key === "ArrowLeft") {
+                showImage(currentIndex - 1);
+            }
+
+            if (event.key === "ArrowRight") {
+                showImage(currentIndex + 1);
+            }
+        });
+    });
+</script>
+
 <%@include file="footer.jsp"%>
