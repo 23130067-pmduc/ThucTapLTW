@@ -1,33 +1,61 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhập mã OTP</title>
-    <link rel="stylesheet" href="./css/otplogin.css">
+    <link rel="stylesheet" href="./css/Verify.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
-<body class="forget-page">
+<body>
 
-<main class="forgot-container">
-    <div class="forget-box" >
-        <a href="trangchu.jsp" class="close-btn">
-            <i class="fa-solid fa-arrow-left"></i>
+<main class="main">
+    <div class="card">
+
+        <a href="login.jsp">
+            <button class="back-btn"><i class="fa-solid fa-arrow-left"></i></button>
         </a>
-        <h2 class="quenMatKhau">Nhập mã OTP</h2>
-        <form id="forgetForm" action="otp" method="post">
-            <div class="input-group">
-                <input type="hidden" name="email" value="${param.email}">
-                <input type="text" name="otp" placeholder="Nhập OTP 6 số" maxlength="6" pattern="[0-9]{6}" required>
-                <p style="color:red">${error}</p>
+        <h2>Nhập mã OTP</h2>
+
+        <p style="color:red; text-align:center;">
+            ${error}
+        </p>
+
+        <p class="desc">
+            Mã xác minh đã được gửi đến Email<br>
+            <strong>${param.email}</strong>
+        </p>
+
+        <form action="otp" method="post" onsubmit=" return joinOtp()">
+            <input type="hidden" name="email" value="${param.email}">
+            <input type="hidden" name="otp" id="otp">
+            <input type="hidden" name="type" value="${param.type}">
+
+            <div class="otp-line">
+                <input type="text" maxlength="1" class="o" inputmode="numeric">
+                <input type="text" maxlength="1" class="o" inputmode="numeric">
+                <input type="text" maxlength="1" class="o" inputmode="numeric">
+                <input type="text" maxlength="1" class="o" inputmode="numeric">
+                <input type="text" maxlength="1" class="o" inputmode="numeric">
+                <input type="text" maxlength="1" class="o" inputmode="numeric">
             </div>
-            <button type="submit" class="btn-primary">Xác nhận</button>
+
+            <div class="resend">
+                <span id="resendText">
+                    Bạn vẫn chưa nhận được?
+                    <a href="#" id="resendLink">Gửi lại</a>
+                </span>
+                <span id="countdown" style="display:none; color:#999999;">
+                    Vui lòng chờ <b id="time">60</b> giây để gửi lại
+                </span>
+            </div>
+
+            <button type="submit" class="btn-primary" id="submitBtn">XÁC NHẬN</button>
         </form>
-        <div class="links">
-            <a href="login.jsp">Quay lại đăng nhập</a>
-        </div>
+
     </div>
 </main>
 </body>
+<script src="./javaScript/otp.js"></script>
 </html>
