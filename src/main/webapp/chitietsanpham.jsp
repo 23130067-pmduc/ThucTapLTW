@@ -23,12 +23,24 @@
                 </c:if>
             </c:forEach>
 
-            <div class="image-thumbs">
-                <c:forEach var="img" items="${images}">
-                    <img class="thumb ${img.main ? 'active' : ''}"
-                         src="${img.imageUrl}"
-                         alt="${product.name}">
-                </c:forEach>
+            <div class="thumbs-carousel">
+                <button type="button" class="thumb-arrow thumb-prev" id="thumbPrev">
+                    &lt;
+                </button>
+
+                <div class="thumbs-viewport">
+                    <div class="image-thumbs" id="imageThumbs">
+                        <c:forEach var="img" items="${images}">
+                            <img class="thumb ${img.main ? 'active' : ''}"
+                                 src="${img.imageUrl}"
+                                 alt="${product.name}">
+                        </c:forEach>
+                    </div>
+                </div>
+
+                <button type="button" class="thumb-arrow thumb-next" id="thumbNext">
+                    &gt;
+                </button>
             </div>
         </div>
 
@@ -241,6 +253,71 @@
         </c:forEach>
     ];
 </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const thumbsTrack = document.getElementById("imageThumbs");
+        const prevBtn = document.getElementById("thumbPrev");
+        const nextBtn = document.getElementById("thumbNext");
+
+        if (!thumbsTrack || !prevBtn || !nextBtn) return;
+
+        const thumbs = thumbsTrack.querySelectorAll(".thumb");
+        const totalThumbs = thumbs.length;
+
+        const visibleCount = 5;
+        const thumbWidth = 70;
+        const gap = 10;
+        const moveSize = thumbWidth + gap;
+
+        let currentIndex = 0;
+
+        if (totalThumbs <= 4) {
+            thumbsTrack.classList.add("few-thumbs");
+            prevBtn.classList.add("hidden");
+            nextBtn.classList.add("hidden");
+            return;
+        }
+
+        if (totalThumbs === 5) {
+            prevBtn.classList.add("hidden");
+            nextBtn.classList.add("hidden");
+            return;
+        }
+
+        function updateCarousel() {
+            const maxIndex = totalThumbs - visibleCount;
+
+            if (currentIndex < 0) {
+                currentIndex = 0;
+            }
+
+            if (currentIndex > maxIndex) {
+                currentIndex = maxIndex;
+            }
+
+            thumbsTrack.style.transform =
+                "translateX(-" + (currentIndex * moveSize) + "px)";
+
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === maxIndex;
+        }
+
+        prevBtn.addEventListener("click", function () {
+            currentIndex--;
+            updateCarousel();
+        });
+
+        nextBtn.addEventListener("click", function () {
+            currentIndex++;
+            updateCarousel();
+        });
+
+        updateCarousel();
+    });
+</script>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
