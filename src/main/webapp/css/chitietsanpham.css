@@ -188,27 +188,89 @@ html, body {
     background: #c62828;
     transform: scale(1.05);
 }
-.product-description {
-    border-top: 1px solid #ffffff;
-    padding-top: 10px;
-    color: #333333;
-    line-height: 1.6;
+
+
+
+
+
+.product-description-section {
+    margin: 50px 25px;
 }
 
-.product-description h2 {
-    color: #222222;
-    margin-bottom: 15px;
-    font-size: 26px;
+.description-tab {
+    display: inline-block;
+    background: #ff9f3a;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 14px 25px;
+    border-radius: 4px 4px 0 0;
 }
 
-.product-description p {
-    margin-bottom: 16px;
+.description-box {
+    border: 1px solid #ddd;
+    padding: 20px;
+    background: #fff;
+    position: relative;
 }
 
-.product-description ul {
-    margin-left: 20px;
-    list-style-type: disc;
-    margin-bottom: 15px;
+.description-wrapper {
+    position: relative;
+}
+
+.description-content {
+    font-size: 18px;
+    line-height: 1;
+    color: #333;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+
+.description-content {
+    white-space: pre-line;
+}
+
+.description-content.collapsed {
+    max-height: 320px;
+}
+
+.description-content.expanded {
+    max-height: none;
+}
+
+.description-wrapper.has-fade::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 90px;
+    background: linear-gradient(to bottom, rgba(255,255,255,0), #fff);
+    pointer-events: none;
+}
+
+.toggle-description-btn {
+    display: none;
+    margin: 20px auto 0;
+    padding: 12px 32px;
+    border: none;
+    border-radius: 999px;
+    background: #ff9f3a;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.toggle-description-btn:hover {
+    background: #f08d24;
+}
+
+.description-empty {
+    font-size: 18px;
+    color: #333;
 }
 
 

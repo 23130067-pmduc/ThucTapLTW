@@ -88,13 +88,32 @@
         </div>
     </div>
 
-    <section class="product-description">
-        <h2>Mô tả chi tiết</h2>
-        <div class="product-description">
-            ${product.description}
-        </div>
 
+
+    <section class="product-description-section">
+        <div class="description-tab">Mô tả</div>
+
+        <div class="description-box">
+            <c:choose>
+                <c:when test="${not empty product.description}">
+                    <div id="productDescriptionWrapper" class="description-wrapper">
+                        <div id="productDescription" class="description-content collapsed">
+                                ${product.description}
+                        </div>
+                    </div>
+
+                    <button type="button" id="toggleDescriptionBtn" class="toggle-description-btn">
+                        Xem thêm
+                    </button>
+                </c:when>
+
+                <c:otherwise>
+                    <div class="description-empty">Đang cập nhật thông tin</div>
+                </c:otherwise>
+            </c:choose>
+        </div>
     </section>
+
 
     <section class="product-review">
         <c:if test="${param.reviewSuccess == '1'}">
@@ -223,4 +242,55 @@
     ];
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const content = document.getElementById("productDescription");
+        const wrapper = document.getElementById("productDescriptionWrapper");
+        const button = document.getElementById("toggleDescriptionBtn");
+
+        if (!content || !wrapper || !button) return;
+
+        const collapsedHeight = 320;
+
+        function checkDescriptionHeight() {
+            content.classList.remove("expanded");
+            content.classList.add("collapsed");
+
+            if (content.scrollHeight <= collapsedHeight + 10) {
+                content.classList.remove("collapsed");
+                wrapper.classList.remove("has-fade");
+                button.style.display = "none";
+            } else {
+                content.classList.add("collapsed");
+                wrapper.classList.add("has-fade");
+                button.style.display = "block";
+                button.textContent = "Xem thêm";
+            }
+        }
+
+        button.addEventListener("click", function () {
+            const isExpanded = content.classList.contains("expanded");
+
+            if (isExpanded) {
+                content.classList.remove("expanded");
+                content.classList.add("collapsed");
+                wrapper.classList.add("has-fade");
+                button.textContent = "Xem thêm";
+
+                wrapper.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            } else {
+                content.classList.remove("collapsed");
+                content.classList.add("expanded");
+                wrapper.classList.remove("has-fade");
+                button.textContent = "Thu gọn";
+            }
+        });
+
+        checkDescriptionHeight();
+        window.addEventListener("load", checkDescriptionHeight);
+    });
+</script>
 <%@include file="footer.jsp"%>
