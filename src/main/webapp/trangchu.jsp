@@ -1,15 +1,15 @@
 <%@ page contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" %>
-<%@ taglib prefix = "c" uri = "http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <%
     request.setAttribute("pageCss", "trangchu.css");
-    request.setAttribute("pageTitle" , "Trang chủ");
+    request.setAttribute("pageTitle", "Trang chủ");
 %>
+
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/quick-add-modal.css">
-<%@include file="header.jsp"%>
+<%@ include file="header.jsp" %>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/css/product-card.css">
 
 
