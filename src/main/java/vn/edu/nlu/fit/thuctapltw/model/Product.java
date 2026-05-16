@@ -15,6 +15,9 @@ public class Product implements Serializable {
     private int views;
     private String status;
     private String categoryName;
+    private int totalStock;
+
+
 
     public Product(int id, int category_id, String name, String description, double price, double
             sale_price, String thumbnail, LocalDateTime created_at, int views, String status) {
@@ -126,6 +129,14 @@ public class Product implements Serializable {
     }
     public boolean isOnSale() {
         return sale_price > 0 && sale_price < price;
+    }
+
+    public int getTotalStock() {
+        return totalStock;
+    }
+
+    public void setTotalStock(int totalStock) {
+        this.totalStock = totalStock;
     }
 
 }
