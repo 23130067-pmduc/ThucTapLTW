@@ -45,14 +45,33 @@
     <main id="page">
       <section id="dashboard" class="page active">
         <div class="cards">
-          <div class="card">Tổng danh mục<br><span id="dashboard-total-category">${total}</span></div>
+          <div class="card">Tổng danh mục<br><span id="dashboard-total-category">${totalAllCategory}</span></div>
           <div class="card">Đang hoạt động<br><span id="dashboard-total-category-active">${totalActive}</span></div>
         </div>
 
         <div class="category-toolbar">
-          <a href="category-admin?mode=add" class="btn-add">
-            <i class="fa fa-plus"></i> Thêm danh mục
-          </a>
+
+          <form action="category-admin" method="get" class="category-search-form" id="categorySearchForm">
+            <div class="search-box">
+              <input type="text"
+                     name="keyword"
+                     id="keywordInput"
+                     placeholder="Tìm theo tên danh mục..."
+                     value="${keyword}">
+            </div>
+
+            <button type="button" class="btn-search" id="searchBtn">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span>Tìm</span>
+            </button>
+          </form>
+
+          <div class="toolbar-right">
+            <a href="category-admin?mode=add" class="btn-add">
+              <i class="fa fa-plus"></i> Thêm danh mục
+            </a>
+          </div>
+
         </div>
 
 
@@ -70,7 +89,7 @@
             </thead>
             <tbody id="categoryTableBody">
 
-            <c:forEach items="${categories}" var="c">
+            <c:forEach items="${categorys}" var="c">
               <tr>
                 <td>${c.id}</td>
                 <td>${c.name}</td>
@@ -116,6 +135,32 @@
 
             </tbody>
           </table>
+
+          <c:if test="${totalPages > 1}">
+            <div class="pagination" id="pagination">
+
+              <c:if test="${currentPage > 1}">
+                <a class="page-btn" href="category-admin?page=${currentPage - 1}">
+                  Trước
+                </a>
+              </c:if>
+
+              <c:forEach begin="1" end="${totalPages}" var="i">
+                <a href="category-admin?page=${i}"
+                   class="page-btn ${i == currentPage ? 'active' : ''}">
+                    ${i}
+                </a>
+              </c:forEach>
+
+              <c:if test="${currentPage < totalPages}">
+                <a class="page-btn" href="category-admin?page=${currentPage + 1}">
+                  Sau
+                </a>
+              </c:if>
+
+            </div>
+          </c:if>
+
         </div>
       </section>
     </main>
@@ -156,4 +201,6 @@
     document.getElementById("confirmModal").style.display = "none";
   }
 </script>
+<script src="javaScript/searchCategory.js"></script>
+
 </html>
