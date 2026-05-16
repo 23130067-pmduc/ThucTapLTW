@@ -101,6 +101,33 @@ public class VNPayUtil {
         return "OD" + orderId + "T" + System.currentTimeMillis();
     }
 
+    public static Integer extractOrderIdFromTxnRef(String txnRef) {
+        if (txnRef == null || txnRef.isBlank()) {
+            return null;
+        }
+
+        if (txnRef.matches("\\d+")) {
+            try {
+                return Integer.parseInt(txnRef);
+            } catch (NumberFormatException ignored) {
+                return null;
+            }
+        }
+
+        if (txnRef.startsWith("OD")) {
+            int markerIndex = txnRef.indexOf('T', 2);
+            if (markerIndex > 2) {
+                try {
+                    return Integer.parseInt(txnRef.substring(2, markerIndex));
+                } catch (NumberFormatException ignored) {
+                    return null;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public static String getClientIp(HttpServletRequest request) {
         String ip = request.getHeader("X-Forwarded-For");
 
@@ -151,11 +178,41 @@ public class VNPayUtil {
             throw new RuntimeException("Loi tinh HMAC-SHA512", e);
         }
     }
-    public static void main(String[] args) {
-        String payUrl = buildPaymentUrl(
-                1, 100000, "127.0.0.1", "http://localhost:8080/ThucTapLTW/vnpay-return"
-        );
-        System.out.println(payUrl);
+
+    public static boolean verifyReturnUrl(Map<String, String[]> params) {
+        String vnpSecureHash = getSingleParam(params, "vnp_SecureHash");
+        if (vnpSecureHash == null || vnpSecureHash.isBlank()) {
+            return false;
+        }
+
+        Map<String, String> sortedParams = new TreeMap<>();
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            String key = entry.getKey();
+            if (!"vnp_SecureHash".equals(key) && !"vnp_SecureHashType".equals(key)) {
+                String[] values = entry.getValue();
+                if (values != null && values.length > 0) {
+                    sortedParams.put(key, values[0]);
+                }
+            }
+        }
+
+        StringBuilder hashData = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, String> entry : sortedParams.entrySet()) {
+            if (!first) {
+                hashData.append('&');
+            }
+            hashData.append(entry.getKey()).append('=').append(URLEncoder.encode(entry.getValue(), StandardCharsets.US_ASCII));
+            first = false;
+        }
+
+        String computedHash = hmacSHA512(VNPayConfig.VNPAY_HASH_SECRET, hashData.toString());
+        return computedHash.equalsIgnoreCase(vnpSecureHash);
+    }
+
+    public static String getSingleParam(Map<String, String[]> params, String key) {
+        String[] values = params.get(key);
+        return values != null && values.length > 0 ? values[0] : null;
     }
 
 }
