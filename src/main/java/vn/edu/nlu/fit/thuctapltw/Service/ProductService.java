@@ -95,4 +95,20 @@ public class ProductService {
 
         return productDao.getRelatedProductByCategory(categoryId, currentProductId, limit);
     }
+
+    public int countProducts() {
+        return productDao.countProducts();
+    }
+
+    public List<Product> getProductByPage(int pageSize, int offset) {
+        return productDao.getProductByPage(pageSize, offset);
+    }
+
+    public int countActiveProduct() {
+        return productDao.countActiveProduct();
+    }
+
+    public int countInactiveProducts() {
+        return productDao.countInactiveProducts();
+    }
 }

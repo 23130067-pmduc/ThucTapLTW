@@ -264,4 +264,44 @@ public class ProductDao extends BaseDao {
         );
     }
 
+    public int countProducts() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM products""")
+                .mapTo(Integer.class)
+                .one());
+    }
+
+    public List<Product> getProductByPage(int pageSize, int offset) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT p.id, p.name, p.price, p.thumbnail, p.status, c.name AS categoryName
+                FROM products p
+                LEFT JOIN category_product c ON p.category_id = c.id
+                ORDER BY p.created_at DESC, p.id DESC
+                LIMIT :pageSize OFFSET :offset""")
+                .bind("pageSize", pageSize)
+                .bind("offset",offset)
+                .mapToBean(Product.class)
+                .list());
+    }
+
+    public int countActiveProduct() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM products
+                WHERE status = :status""")
+                .bind("status", "Đang bán")
+                .mapTo(Integer.class)
+                .one());
+    }
+
+    public int countInactiveProducts() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM products
+                WHERE status <> :status""")
+                .bind("status", "Đang bán")
+                .mapTo(Integer.class)
+                .one());
+    }
 }

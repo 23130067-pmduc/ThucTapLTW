@@ -11,6 +11,7 @@
 
   <link rel="stylesheet" href="css/user.css">
   <link rel="stylesheet" href="css/product-admin.css">
+  <link rel="stylesheet" href="css/pagination.css">
 
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -177,24 +178,35 @@
           </tbody>
         </table>
 
+        <c:set var="startPage" value="${currentPage - 2}" />
+        <c:set var="endPage" value="${currentPage + 2}" />
+
+        <c:if test="${startPage < 1}">
+          <c:set var="startPage" value="1" />
+        </c:if>
+
+        <c:if test="${endPage > totalPages}">
+          <c:set var="endPage" value="${totalPages}" />
+        </c:if>
+
         <c:if test="${totalPages > 1}">
           <div class="pagination">
 
             <c:if test="${currentPage > 1}">
-              <a class="page-btn" href="banner-admin?page=${currentPage - 1}">
+              <a class="page-btn" href="product-admin?page=${currentPage - 1}">
                 Trước
               </a>
             </c:if>
 
-            <c:forEach begin="1" end="${totalPages}" var="i">
-              <a href="banner-admin?page=${i}"
+            <c:forEach begin="${startPage}" end="${endPage}" var="i">
+              <a href="product-admin?page=${i}"
                  class="page-btn ${i == currentPage ? 'active' : ''}">
                   ${i}
               </a>
             </c:forEach>
 
             <c:if test="${currentPage < totalPages}">
-              <a class="page-btn" href="banner-admin?page=${currentPage + 1}">
+              <a class="page-btn" href="product-admin?page=${currentPage + 1}">
                 Sau
               </a>
             </c:if>
@@ -203,16 +215,6 @@
         </c:if>
       </div>
 
-      <c:if test="${not empty totalPages and totalPages > 1}">
-        <div class="pagination">
-          <c:forEach begin="1" end="${totalPages}" var="i">
-            <a href="product-admin?page=${i}&keyword=${keyword}"
-               class="page-link ${currentPage == i ? 'active' : ''}">
-                ${i}
-            </a>
-          </c:forEach>
-        </div>
-      </c:if>
 
     </main>
   </section>

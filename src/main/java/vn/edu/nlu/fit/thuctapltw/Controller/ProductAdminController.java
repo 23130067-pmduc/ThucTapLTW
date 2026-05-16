@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import vn.edu.nlu.fit.thuctapltw.DAO.CategoryDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.ProductDao;
+import vn.edu.nlu.fit.thuctapltw.Service.ProductService;
 import vn.edu.nlu.fit.thuctapltw.model.Category;
 import vn.edu.nlu.fit.thuctapltw.model.Product;
 
@@ -25,11 +26,13 @@ public class ProductAdminController extends HttpServlet {
 
     private ProductDao productDao;
     private CategoryDao categoryDao;
+    private ProductService productService;
 
     @Override
     public void init() {
         productDao = new ProductDao();
         categoryDao = new CategoryDao();
+        productService = new ProductService();
     }
 
     @Override
@@ -47,14 +50,51 @@ public class ProductAdminController extends HttpServlet {
         String mode = request.getParameter("mode");
 
         if (mode == null) {
-            List<Product> allProducts = productDao.findAll();
 
-            request.setAttribute("products", allProducts);
-            request.setAttribute("totalProducts", allProducts.size());
-            request.setAttribute("activeProducts",
-                    allProducts.stream().filter(p -> "Đang bán".equals(p.getStatus())).count());
-            request.setAttribute("inactiveProducts",
-                    allProducts.stream().filter(p -> !"Đang bán".equals(p.getStatus())).count());
+            int pageSize = 20;
+            int currentPage = 1;
+
+            String pageParam = request.getParameter("page");
+
+            if (pageParam != null){
+                try {
+                    currentPage = Integer.parseInt(pageParam);
+                } catch (NumberFormatException e){
+                    currentPage = 1;
+                }
+            }
+
+            if (currentPage < 1){
+                currentPage = 1;
+            }
+
+            int totalProducts = productService.countProducts();
+
+            int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+            if (totalPages == 0){
+                totalPages = 1;
+            }
+
+            if (currentPage > totalPages){
+                currentPage = totalPages;
+            }
+
+            int offset = (currentPage - 1) * pageSize;
+
+
+            List<Product> products = productService.getProductByPage(pageSize, offset);
+            int activeProducts = productService.countActiveProduct();
+            int inactiveProducts = productService.countInactiveProducts();
+
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("pageSize", pageSize);
+
+            request.setAttribute("products", products);
+            request.setAttribute("totalProducts", totalProducts);
+            request.setAttribute("activeProducts",activeProducts);
+            request.setAttribute("inactiveProducts",inactiveProducts);
 
             request.getRequestDispatcher("/product-admin.jsp").forward(request, response);
             return;
