@@ -111,4 +111,8 @@ public class ProductService {
     public int countInactiveProducts() {
         return productDao.countInactiveProducts();
     }
+
+    public int countNewProductThisWeek() {
+        return productDao.countNewProductThisWeek();
+    }
 }

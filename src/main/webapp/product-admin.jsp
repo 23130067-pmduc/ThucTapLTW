@@ -55,7 +55,7 @@
 
         <div class="product-card">
           <div class="card-title">Sản phẩm mới / tuần</div>
-          <div class="card-value">${newProductsThisWeek}</div>
+          <div class="card-value">${newProductThisWeek}</div>
         </div>
 
         <div class="product-card">
@@ -102,6 +102,7 @@
             <th>Tên sản phẩm</th>
             <th>Giá</th>
             <th>Danh mục</th>
+            <th>Tồn kho</th>
             <th>Trạng thái</th>
             <th>Hành động</th>
           </tr>
@@ -110,7 +111,7 @@
           <tbody>
           <c:if test="${empty products}">
             <tr>
-              <td colspan="7" class="empty-row">Chưa có sản phẩm nào</td>
+              <td colspan="8" class="empty-row">Chưa có sản phẩm nào</td>
             </tr>
           </c:if>
 
@@ -125,7 +126,7 @@
                      onerror="handleImageError(this)">
               </td>
 
-              <td class="col-name">${p.name}</td>
+              <td class="col-name" title="${p.name}">${p.name}</td>
 
               <td class="col-price">
                 <fmt:formatNumber value="${p.price}" pattern="#,##0" /> đ
@@ -133,10 +134,12 @@
 
               <td class="col-category">${p.categoryName}</td>
 
+              <td class="col-stock">${p.totalStock}</td>
+
               <td class="col-status">
-                                <span class="status-badge ${p.status == 'Đang bán' ? 'active' : 'inactive'}">
-                                    ${p.status}
-                                </span>
+                <span class="status-badge ${p.status == 'Đang bán' ? 'active' : 'inactive'}">
+                    ${p.status}
+                </span>
               </td>
 
               <td class="col-actions">

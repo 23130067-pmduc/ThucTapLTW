@@ -86,6 +86,7 @@ public class ProductAdminController extends HttpServlet {
             List<Product> products = productService.getProductByPage(pageSize, offset);
             int activeProducts = productService.countActiveProduct();
             int inactiveProducts = productService.countInactiveProducts();
+            int newProductThisWeek = productService.countNewProductThisWeek();
 
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
@@ -95,6 +96,7 @@ public class ProductAdminController extends HttpServlet {
             request.setAttribute("totalProducts", totalProducts);
             request.setAttribute("activeProducts",activeProducts);
             request.setAttribute("inactiveProducts",inactiveProducts);
+            request.setAttribute("newProductThisWeek",newProductThisWeek);
 
             request.getRequestDispatcher("/product-admin.jsp").forward(request, response);
             return;
