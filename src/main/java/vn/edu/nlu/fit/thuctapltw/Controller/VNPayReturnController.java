@@ -6,8 +6,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import vn.edu.nlu.fit.thuctapltw.DAO.CartItemDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.OrderDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.OrderItemDao;
+import vn.edu.nlu.fit.thuctapltw.DAO.ProductVariantDao;
 import vn.edu.nlu.fit.thuctapltw.Service.EmailService;
 import vn.edu.nlu.fit.thuctapltw.Service.OrderEmailService;
 import vn.edu.nlu.fit.thuctapltw.Util.VNPayUtil;
@@ -23,11 +25,15 @@ public class VNPayReturnController extends HttpServlet {
 
     private OrderDao orderDao;
     private OrderItemDao orderItemDao;
+    private ProductVariantDao variantDao;
+    private CartItemDao cartItemDao;
 
     @Override
     public void init() {
         orderDao = new OrderDao();
         orderItemDao = new OrderItemDao();
+        variantDao = new ProductVariantDao();
+        cartItemDao = new CartItemDao();
     }
 
     @Override
@@ -55,11 +61,28 @@ public class VNPayReturnController extends HttpServlet {
             return;
         }
 
+        Order order = orderDao.getById(orderId);
+        if (order != null && "PAID".equalsIgnoreCase(order.getPaymentStatuses())) {
+            HttpSession session = request.getSession(true);
+            session.setAttribute("lastOrderId", orderId);
+            response.sendRedirect(request.getContextPath() + "/paysuccess");
+            return;
+        }
+
         orderDao.updatePaymentStatus(orderId, "PAID");
 
         try {
-            Order order = orderDao.getById(orderId);
             List<OrderItem> orderItems = orderItemDao.getByOrderId(orderId);
+            for (OrderItem item : orderItems) {
+                variantDao.decreaseStock(item.getVariantId(), item.getQuantity());
+            }
+
+            HttpSession session = request.getSession(true);
+            Integer cartId = (Integer) session.getAttribute("cartId");
+            if (cartId != null) {
+                cartItemDao.clearCart(cartId);
+                session.setAttribute("cartSize", 0);
+            }
 
             if (order != null) {
                 String userEmail = orderDao.getUserEmailByOrderId(orderId);
