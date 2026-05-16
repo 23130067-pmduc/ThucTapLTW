@@ -36,4 +36,12 @@ public class CategoryService {
     public void deleteCategory(int id) {
         categoryDao.deleteCategory(id);
     }
+
+    public int countAllCategory() {
+        return categoryDao.countAllCategory();
+    }
+
+    public List<Category> getCategoryByPage(int pageSize, int offset) {
+        return categoryDao.getCategoryByPage(pageSize, offset);
+    }
 }

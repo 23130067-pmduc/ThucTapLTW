@@ -70,7 +70,7 @@
             </thead>
             <tbody id="categoryTableBody">
 
-            <c:forEach items="${categories}" var="c">
+            <c:forEach items="${categorys}" var="c">
               <tr>
                 <td>${c.id}</td>
                 <td>${c.name}</td>
@@ -116,6 +116,32 @@
 
             </tbody>
           </table>
+
+          <c:if test="${totalPages > 1}">
+            <div class="pagination">
+
+              <c:if test="${currentPage > 1}">
+                <a class="page-btn" href="category-admin?page=${currentPage - 1}">
+                  Trước
+                </a>
+              </c:if>
+
+              <c:forEach begin="1" end="${totalPages}" var="i">
+                <a href="category-admin?page=${i}"
+                   class="page-btn ${i == currentPage ? 'active' : ''}">
+                    ${i}
+                </a>
+              </c:forEach>
+
+              <c:if test="${currentPage < totalPages}">
+                <a class="page-btn" href="category-admin?page=${currentPage + 1}">
+                  Sau
+                </a>
+              </c:if>
+
+            </div>
+          </c:if>
+
         </div>
       </section>
     </main>

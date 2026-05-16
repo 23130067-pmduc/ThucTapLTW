@@ -4,6 +4,7 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import vn.edu.nlu.fit.thuctapltw.Service.CategoryService;
+import vn.edu.nlu.fit.thuctapltw.model.Banner;
 import vn.edu.nlu.fit.thuctapltw.model.Category;
 
 import java.io.IOException;
@@ -23,14 +24,50 @@ public class CategoryAdminController extends HttpServlet {
         String mode = request.getParameter("mode");
 
         if(mode == null){
-            List<Category> categories = categoryService.findAllWithCountProduct();
 
-            int total = categories.size();
+            int pageSize = 20;
+            int currentPage = 1;
+
+            String pageParam = request.getParameter("page");
+
+            if (pageParam != null){
+                try {
+                    currentPage = Integer.parseInt(pageParam);
+                } catch (NumberFormatException e){
+                    currentPage = 1;
+                }
+            }
+
+            if (currentPage < 1){
+                currentPage = 1;
+            }
+
+            int total = categoryService.countAllCategory();
+
+            int totalPages = (int) Math.ceil((double) total / pageSize);
+
+            if (totalPages == 0){
+                totalPages = 1;
+            }
+
+            if (currentPage > totalPages){
+                currentPage = totalPages;
+            }
+
+            int offset = (currentPage - 1) * pageSize;
+
+            List<Category> categorys = categoryService.getCategoryByPage(pageSize, offset);
+
+
             int totalActive = categoryService.getCategoryActive();
 
-            request.setAttribute("categories", categories);
+            request.setAttribute("categorys", categorys);
             request.setAttribute("total", total);
             request.setAttribute("totalActive", totalActive);
+
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("pageSize", pageSize);
 
             request.getRequestDispatcher("category-admin.jsp").forward(request,response);
             return;
@@ -43,6 +80,7 @@ public class CategoryAdminController extends HttpServlet {
 
             request.setAttribute("mode", mode);
             request.setAttribute("category", category);
+
 
             request.getRequestDispatcher("category-form.jsp").forward(request,response);
         }

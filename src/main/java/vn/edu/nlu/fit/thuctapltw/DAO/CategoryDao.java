@@ -102,4 +102,26 @@ public class CategoryDao extends BaseDao {
                 .bind("id", id)
                 .execute());
     }
+
+    public int countAllCategory() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM category_product""")
+                .mapTo(Integer.class)
+                .one());
+    }
+
+    public List<Category> getCategoryByPage(int pageSize, int offset) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT c.id, c.name, c.description, c.status, COUNT(p.id) AS countProduct
+                FROM category_product c
+                LEFT JOIN products p ON p.category_id = c.id
+                GROUP BY c.id, c.name, c.description, c.status
+                ORDER BY c.id ASC
+                LIMIT :pageSize OFFSET :offset""")
+                .bind("pageSize",pageSize)
+                .bind("offset", offset)
+                .mapToBean(Category.class)
+                .list());
+    }
 }
