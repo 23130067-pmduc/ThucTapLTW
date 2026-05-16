@@ -153,21 +153,58 @@ body, .admin {
 
 .category-toolbar {
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
     align-items: center;
     margin: 20px 0;
     gap: 12px;
+    flex-wrap: wrap;
 }
 
+.category-search-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.search-box input {
+    flex: 1;
+    width: 350px;
+    max-width: 350px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+}
+
+.btn-search {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #40c057;
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+}
+
+.btn-search:hover {
+    background: #37b24d;
+}
 
 .btn-add {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 10px 16px;
+    padding: 8px 14px;
     background: #4caf50;
     color: #fff;
-    border-radius: 8px;
+    border-radius: 6px;
     text-decoration: none;
     font-size: 14px;
     font-weight: 600;
@@ -365,4 +402,41 @@ body, .admin {
     background: #4caf50;
     color: #fff;
     border-color: #4caf50;
+}
+
+.pagination .page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #333;
+    text-decoration: none;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 14px;
+    font-weight: 500;
+    transition: 0.2s;
+    cursor: pointer;
+}
+
+.pagination .page-btn:hover {
+    background: #eef7e7;
+    color: #3f8f3f;
+    border-color: #8bc36b;
+}
+
+.pagination .page-btn.active {
+    background: #4caf50;
+    color: #fff;
+    border-color: #4caf50;
+}
+
+.pagination .page-btn.disabled {
+    visibility: hidden;
+    pointer-events: none;
 }
