@@ -14,6 +14,7 @@ import vn.edu.nlu.fit.thuctapltw.Service.AddressService;
 import vn.edu.nlu.fit.thuctapltw.Service.EmailService;
 import vn.edu.nlu.fit.thuctapltw.Service.GhnShippingService;
 import vn.edu.nlu.fit.thuctapltw.Service.OrderEmailService;
+import vn.edu.nlu.fit.thuctapltw.Util.VNPayUtil;
 import vn.edu.nlu.fit.thuctapltw.model.Address;
 import vn.edu.nlu.fit.thuctapltw.model.CartItem;
 import vn.edu.nlu.fit.thuctapltw.model.Order;
@@ -156,13 +157,26 @@ public class CheckoutController extends HttpServlet {
             double price = item.getPrice();
 
             orderItemDao.insert(orderId, variantId, item.getProduct().getName(), item.getSize(), item.getColor(), qty, price, price * qty);
-            variantDao.decreaseStock(variantId, qty);
+        }
+
+        session.setAttribute("lastOrderId", orderId);
+
+        if ("VNPAY".equals(paymentMethod)) {
+            long amountVnd = Math.round(totalPrice + shippingFee);
+            String ipAddr = VNPayUtil.getClientIp(request);
+            String returnUrl = VNPayUtil.buildReturnUrl(request);
+            String payUrl = VNPayUtil.buildPaymentUrl(orderId, amountVnd, ipAddr, returnUrl);
+
+            response.sendRedirect(payUrl);
+            return;
+        }
+
+        for (CartItem item : cartItems) {
+            variantDao.decreaseStock(item.getVariantId(), item.getQuantity());
         }
 
         cartItemDao.clearCart(cartId);
-
         session.setAttribute("cartSize", 0);
-        session.setAttribute("lastOrderId", orderId);
 
         Order order = orderDao.getById(orderId);
         List<OrderItem> orderItems = orderItemDao.getByOrderId(orderId);

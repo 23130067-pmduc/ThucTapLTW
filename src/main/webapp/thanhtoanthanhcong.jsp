@@ -22,7 +22,14 @@
         <div class="order-info">
             <h4>Đơn hàng của bạn đã được xác nhận</h4>
             <ul>
-                <li>✔ Thanh toán khi nhận hàng (COD)</li>
+                <c:choose>
+                    <c:when test="${order.paymentMethods == 'VNPAY'}">
+                        <li>✔ Đã thanh toán qua VNPay</li>
+                    </c:when>
+                    <c:otherwise>
+                        <li>✔ Thanh toán khi nhận hàng (COD)</li>
+                    </c:otherwise>
+                </c:choose>
                 <li>✔ Nhân viên giao hàng sẽ liên hệ trước</li>
                 <li>✔ Giao hàng tiêu chuẩn (3–5 ngày)</li>
             </ul>
