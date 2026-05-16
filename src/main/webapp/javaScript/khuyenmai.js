@@ -3,7 +3,7 @@
 
     document.addEventListener("DOMContentLoaded", function () {
         setupLoadMore();
-        //setupAddToCart();
+        setupCopyCoupon();
     });
 
     function setupLoadMore() {
@@ -13,16 +13,16 @@
         if (!discountGrid || !loadMoreBtn) return;
 
         const products = discountGrid.querySelectorAll(".product-card");
-        const SHOW_FIRST = 8;
-        const SHOW_MORE = 8;
+        const showFirst = 8;
+        const showMore = 8;
 
         products.forEach((item, index) => {
-            if (index >= SHOW_FIRST) {
+            if (index >= showFirst) {
                 item.classList.add("hidden");
             }
         });
 
-        if (products.length <= SHOW_FIRST) {
+        if (products.length <= showFirst) {
             loadMoreBtn.style.display = "none";
             return;
         }
@@ -30,7 +30,7 @@
         loadMoreBtn.addEventListener("click", function () {
             const hiddenProducts = discountGrid.querySelectorAll(".product-card.hidden");
 
-            for (let i = 0; i < SHOW_MORE && i < hiddenProducts.length; i++) {
+            for (let i = 0; i < showMore && i < hiddenProducts.length; i++) {
                 hiddenProducts[i].classList.remove("hidden");
             }
 
@@ -40,78 +40,57 @@
         });
     }
 
-    function setupAddToCart() {
-        const addToCartButtons = document.querySelectorAll(".btn-add");
+    function setupCopyCoupon() {
+        const copyButtons = document.querySelectorAll(".btn-copy-coupon");
 
-        addToCartButtons.forEach(button => {
-            button.addEventListener("click", function (e) {
-                e.preventDefault();
+        copyButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                const code = this.dataset.code;
 
-                const productCard = this.closest(".product-card");
-                if (!productCard) return;
-
-                const productId = productCard.dataset.productId;
-                const salePrice = productCard.dataset.salePrice;
-
-                if (!productId) {
-                    showToast("Không tìm thấy thông tin sản phẩm!", "error");
+                if (!code) {
+                    showToast("Không tìm thấy mã giảm giá!", "error");
                     return;
                 }
 
-                const url = `${CONTEXT_PATH}/add-cart?productId=${encodeURIComponent(productId)}&quantity=1&salePrice=${encodeURIComponent(salePrice || 0)}`;
+                copyText(code)
+                    .then(() => {
+                        this.textContent = "Đã sao chép";
+                        showToast("Đã sao chép mã " + code, "success");
 
-                fetch(url, {
-                    method: "GET",
-                    headers: {
-                        "X-Requested-With": "XMLHttpRequest"
-                    }
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error("HTTP error: " + response.status);
-                        }
-                        return response.json();
+                        setTimeout(() => {
+                            this.textContent = "Sao chép mã";
+                        }, 1800);
                     })
-                    .then(data => {
-                        if (data.success) {
-                            showToast(data.message || "Đã thêm vào giỏ hàng!", "success");
-                            updateCartBadge(data.cartSize);
-                        } else {
-                            showToast(data.message || "Có lỗi xảy ra!", "error");
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Add cart error:", error);
-                        showToast("Không thể thêm vào giỏ hàng!", "error");
+                    .catch(() => {
+                        showToast("Không thể sao chép mã!", "error");
                     });
             });
         });
     }
 
-    function updateCartBadge(count) {
-        const iconCart = document.querySelector(".iconCart");
-        if (!iconCart) return;
-
-        let cartCount = iconCart.querySelector(".cart-count");
-
-        if (!cartCount) {
-            cartCount = document.createElement("span");
-            cartCount.className = "cart-count";
-            iconCart.appendChild(cartCount);
+    function copyText(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            return navigator.clipboard.writeText(text);
         }
 
-        cartCount.textContent = count;
+        return new Promise((resolve, reject) => {
+            const input = document.createElement("textarea");
+            input.value = text;
+            input.style.position = "fixed";
+            input.style.opacity = "0";
+            document.body.appendChild(input);
+            input.focus();
+            input.select();
 
-        if (count > 0) {
-            cartCount.style.display = "block";
-            cartCount.style.animation = "none";
-
-            setTimeout(() => {
-                cartCount.style.animation = "cartBounce 0.5s ease";
-            }, 10);
-        } else {
-            cartCount.style.display = "none";
-        }
+            try {
+                const success = document.execCommand("copy");
+                document.body.removeChild(input);
+                success ? resolve() : reject();
+            } catch (error) {
+                document.body.removeChild(input);
+                reject(error);
+            }
+        });
     }
 
     function showToast(message, type) {
@@ -119,7 +98,7 @@
         if (!toast) return;
 
         toast.textContent = message;
-        toast.className = `show ${type}`;
+        toast.className = "show " + type;
 
         setTimeout(() => {
             toast.className = toast.className.replace("show", "").trim();
