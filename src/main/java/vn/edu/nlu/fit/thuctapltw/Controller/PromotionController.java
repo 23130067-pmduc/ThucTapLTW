@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vn.edu.nlu.fit.thuctapltw.DAO.ProductDao;
+import vn.edu.nlu.fit.thuctapltw.Service.VoucherService;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,30 +19,7 @@ public class PromotionController extends HttpServlet {
             throws ServletException, IOException {
 
         ProductDao productDao = new ProductDao();
-
-        List<Map<String, String>> couponSamples = List.of(
-                Map.of(
-                        "code", "SUNNY10",
-                        "type", "Giảm đơn hàng",
-                        "title", "Giảm 10% đơn hàng",
-                        "condition", "Áp dụng cho đơn từ 200.000đ",
-                        "expire", "Hạn dùng: 30/06/2026"
-                ),
-                Map.of(
-                        "code", "FREESHIP",
-                        "type", "Miễn phí vận chuyển",
-                        "title", "Giảm phí vận chuyển",
-                        "condition", "Miễn phí ship cho đơn từ 300.000đ",
-                        "expire", "Hạn dùng: 30/06/2026"
-                ),
-                Map.of(
-                        "code", "BABY50K",
-                        "type", "Giảm đơn hàng",
-                        "title", "Giảm 50.000đ",
-                        "condition", "Áp dụng cho đơn từ 500.000đ",
-                        "expire", "Hạn dùng: 15/07/2026"
-                )
-        );
+        VoucherService voucherService = new VoucherService();
 
         List<Map<String, String>> promotionEvents = List.of(
                 Map.of(
@@ -70,7 +48,7 @@ public class PromotionController extends HttpServlet {
                 )
         );
 
-        request.setAttribute("couponSamples", couponSamples);
+        request.setAttribute("vouchers", voucherService.getActiveOrderAndProductVouchers());
         request.setAttribute("promotionEvents", promotionEvents);
         request.setAttribute("flashSaleProducts", productDao.findFlashSaleProducts(4));
         request.setAttribute("discountProducts", productDao.findDiscountProducts());
