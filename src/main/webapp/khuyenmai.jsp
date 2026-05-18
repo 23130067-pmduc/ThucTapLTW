@@ -33,28 +33,36 @@
         <div class="section-heading">
             <div>
                 <span>Mã giảm giá</span>
-                <h2>Voucher nổi bật</h2>
+                <h2>Voucher đơn hàng và sản phẩm</h2>
             </div>
         </div>
 
-        <div class="coupon-grid">
-            <c:forEach items="${couponSamples}" var="coupon">
-                <div class="coupon-card">
-                    <div class="coupon-left">
-                        <span>${coupon.type}</span>
-                        <strong>${coupon.code}</strong>
-                    </div>
-                    <div class="coupon-right">
-                        <h3>${coupon.title}</h3>
-                        <p>${coupon.condition}</p>
-                        <small>${coupon.expire}</small>
-                        <button type="button" class="btn-copy-coupon" data-code="${coupon.code}">
-                            Sao chép mã
-                        </button>
-                    </div>
+        <c:choose>
+            <c:when test="${not empty vouchers}">
+                <div class="coupon-grid">
+                    <c:forEach items="${vouchers}" var="voucher">
+                        <div class="coupon-card">
+                            <div class="coupon-left">
+                                <span>${voucher.typeLabel}</span>
+                                <strong>${voucher.code}</strong>
+                            </div>
+                            <div class="coupon-right">
+                                <h3>${voucher.name}</h3>
+                                <p>${voucher.description}</p>
+                                <small>${voucher.conditionText}</small>
+                                <small>${voucher.expireText}</small>
+                                <button type="button" class="btn-copy-coupon" data-code="${voucher.code}">
+                                    Sao chép mã
+                                </button>
+                            </div>
+                        </div>
+                    </c:forEach>
                 </div>
-            </c:forEach>
-        </div>
+            </c:when>
+            <c:otherwise>
+                <div class="empty-promotion">Hiện chưa có mã giảm giá đơn hàng hoặc sản phẩm khả dụng.</div>
+            </c:otherwise>
+        </c:choose>
     </section>
 
     <section class="promo-section event-section">
@@ -160,7 +168,7 @@
 <script>
     const CONTEXT_PATH = '${pageContext.request.contextPath}';
 </script>
-<script src="${pageContext.request.contextPath}/javaScript/khuyenmai.js?v=2.2"></script>
+<script src="${pageContext.request.contextPath}/javaScript/khuyenmai.js?v=2.3"></script>
 
 <jsp:include page="/quick-add-modal.jsp" />
 <%@ include file="footer.jsp" %>

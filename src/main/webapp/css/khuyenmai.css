@@ -494,6 +494,7 @@
     background: linear-gradient(135deg, #ff4500, #ff6347);
     animation: pulse 1.5s infinite;
 }
+
 #load-more {
     display: block;
     margin: 60px auto 0;
@@ -501,7 +502,6 @@
     color: #666666;
     text-decoration: none;
     padding: 10px 25px;
-    border: 1px solid #5B3A29;
     border-radius: 25px;
     font-size: 15px;
     font-weight: 500;
@@ -509,7 +509,6 @@
     width: fit-content;
     position: relative;
     cursor: pointer;
-    z-index: 1;
 }
 
 #load-more::before,
@@ -517,19 +516,20 @@
     content: "";
     position: absolute;
     top: 50%;
-    width: clamp(90px, calc((min(100vw, 1180px) - 250px) / 2), 455px);
+    width: 550px;
     height: 2px;
     background-color: #C89F7B;
     transform: translateY(-50%);
 }
 
 #load-more::before {
-    right: calc(100% + 28px);
+    left: -550px;
 }
 
 #load-more::after {
-    left: calc(100% + 28px);
+    right: -550px;
 }
+
 
 #load-more:hover {
     background-color: #5B3A29;
