@@ -220,6 +220,10 @@
     position: relative;
 }
 
+.shipping-coupon-left {
+    background: linear-gradient(180deg, #41b883, #2f80ed);
+}
+
 .coupon-left::before,
 .coupon-left::after {
     content: "";
@@ -515,6 +519,7 @@
     width: fit-content;
     position: relative;
     cursor: pointer;
+    border: none;
 }
 
 #load-more::before,
@@ -522,20 +527,19 @@
     content: "";
     position: absolute;
     top: 50%;
-    width: 550px;
+    width: clamp(90px, calc((min(100vw, 1280px) - 250px) / 2), 500px);
     height: 2px;
     background-color: #C89F7B;
     transform: translateY(-50%);
 }
 
 #load-more::before {
-    left: -550px;
+    right: calc(100% + 28px);
 }
 
 #load-more::after {
-    right: -550px;
+    left: calc(100% + 28px);
 }
-
 
 #load-more:hover {
     background-color: #5B3A29;

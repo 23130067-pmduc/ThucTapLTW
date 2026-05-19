@@ -15,4 +15,8 @@ public class VoucherService {
     public List<Voucher> getActiveOrderAndProductVouchers() {
         return voucherDao.findActiveOrderAndProductVouchers();
     }
+
+    public List<Voucher> getActiveShippingVouchers() {
+        return voucherDao.findActiveShippingVouchers();
+    }
 }
