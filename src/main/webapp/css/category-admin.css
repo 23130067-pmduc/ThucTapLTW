@@ -365,3 +365,8 @@ body, .admin {
 }
 
 
+.empty-row {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+}
