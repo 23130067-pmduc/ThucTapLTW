@@ -27,13 +27,14 @@
 
                 <c:choose>
                     <c:when test="${empty cartItems}">
-                        <p style="text-align:center; padding:40px; font-size:18px;">
-                            🛒 Giỏ hàng của bạn đang trống
-                        </p>
+                        <div class="cart-empty-state">
+                            <span class="empty-icon">🛒</span>
+                            <p>Giỏ hàng của bạn đang trống</p>
+                        </div>
                     </c:when>
 
                     <c:otherwise>
-                        <table border="1" cellpadding="10" cellspacing="0" width="100%">
+                        <table>
                             <thead>
                             <tr>
                                 <th>Sản phẩm</th>
@@ -48,21 +49,23 @@
                             <c:forEach var="item" items="${cartItems}">
                                 <tr data-price="${item.price}" data-stock="${item.stock}">
                                     <td>
-                                        <img src="${item.product.thumbnail}" width="60">
-                                        <br>
-                                            ${item.product.name}
+                                        <div class="product-cell">
+                                            <img src="${item.product.thumbnail}" alt="${item.product.name}">
+                                            <div class="product-cell-info">
+                                                <span class="product-cell-name">${item.product.name}</span>
+                                            </div>
+                                        </div>
                                     </td>
 
                                     <td>
-                                        Size: <b>${item.size}</b><br>
-                                        Màu: <b>${item.color}</b>
+                                        <span class="variant-label">Size: <b>${item.size}</b></span><br>
+                                        <span class="variant-label">Màu: <b>${item.color}</b></span>
                                     </td>
 
                                     <td>
                                         <form action="update-cart"
                                               method="post"
-                                              class="qty-form"
-                                              style="display:flex; justify-content:center; align-items:center; gap:6px;">
+                                              class="qty-form">
 
                                             <input type="hidden" name="variantId" value="${item.variantId}">
 
