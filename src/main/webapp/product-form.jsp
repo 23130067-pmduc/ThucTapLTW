@@ -13,7 +13,6 @@
 
 <div class="container">
 
-    <!-- HEADER -->
     <div class="form-header">
         <a href="product-admin" class="btn-back">← Quay lại</a>
         <h2>
@@ -32,11 +31,11 @@
         <div class="card">
             <h3>Thông tin sản phẩm</h3>
 
-            <c:if test="${mode != 'add'}">
+            <c:if test="${mode eq 'edit'}">
                 <div class="row">
                     <div class="col">
                         <label>ID</label>
-                        <input type="text" name="id" value="${product.id}">
+                        <input type="text" name="id" value="${product.id}" readonly>
                     </div>
                 </div>
             </c:if>
@@ -73,8 +72,8 @@
                         <option value="Đang bán" ${product.status == 'Đang bán' ? 'selected' : ''}>
                             Đang bán
                         </option>
-                        <option value="Hết hàng" ${product.status == 'Hết hàng' ? 'selected' : ''}>
-                            Hết hàng
+                        <option value="Ngừng bán" ${product.status == 'Ngừng bán' ? 'selected' : ''}>
+                            Ngừng bán
                         </option>
                     </select>
                 </div>
@@ -92,7 +91,7 @@
                 </div>
             </div>
 
-            <!-- Preview ảnh hiện tại hoặc ảnh mới chọn -->
+
             <div class="row">
                 <div class="col">
                     <div id="product-image-preview-container" style="margin-top: 10px;">

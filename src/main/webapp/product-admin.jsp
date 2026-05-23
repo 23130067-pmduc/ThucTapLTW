@@ -277,7 +277,7 @@
   }
 
   function closeStatusModal() {
-    document.getElementById("confirmModal").style.display = "none";
+    document.getElementById("statusModal").style.display = "none";
   }
 </script>
 </body>
