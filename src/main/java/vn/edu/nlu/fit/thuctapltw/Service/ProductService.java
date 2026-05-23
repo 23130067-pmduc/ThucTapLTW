@@ -115,4 +115,8 @@ public class ProductService {
     public int countNewProductThisWeek() {
         return productDao.countNewProductThisWeek();
     }
+
+    public void stopSellingProduct(int id) {
+        productDao.stopSellingProduct(id, "Ngừng bán");
+    }
 }

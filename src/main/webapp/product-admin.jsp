@@ -168,12 +168,12 @@
                     <i class="fa-regular fa-image"></i>
                   </a>
 
-                  <a href="javascript:void(0)"
-                     class="action-btn delete"
-                     title="Xóa"
-                     onclick="confirmDelete(${p.id}, '${p.name}')">
-                    <i class="fa-solid fa-trash"></i>
-                  </a>
+                  <button type="button"
+                          class="icon-btn delete"
+                          title="Khóa sản phẩm"
+                          onclick="openDeleteModal(${p.id}, '${p.name}')">
+                    <i class="fa fa-trash"></i>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -222,7 +222,38 @@
     </main>
   </section>
 </div>
+<div id="deleteModal" class="modal-overlay">
+  <div class="modal">
+    <h3>Xác nhận xóa</h3>
+    <p id="deleteMessage">Bạn có chắc muốn khóa sản phẩm này không?</p>
 
-<script src="javaScript/product-admin.js"></script>
+    <form id="deleteForm" method="post" action="product-admin">
+      <input type="hidden" name="action" value="delete">
+      <input type="hidden" name="id" id="deleteProductId">
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Hủy</button>
+        <button type="submit" class="btn-danger">Khóa</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openDeleteModal(id, title) {
+    document.getElementById("deleteProductId").value = id;
+    document.getElementById("deleteMessage").innerHTML =
+            'Bạn có chắc muốn khóa sản phẩm "<b>' + title + '</b>" không?';
+    document.getElementById("deleteModal").style.display = "flex";
+  }
+
+  function closeDeleteModal() {
+    document.getElementById("deleteModal").style.display = "none";
+  }
+
+  function closeModal() {
+    document.getElementById("confirmModal").style.display = "none";
+  }
+</script>
 </body>
 </html>

@@ -315,4 +315,14 @@ public class ProductDao extends BaseDao {
                 .mapTo(Integer.class)
                 .one());
     }
+
+    public void stopSellingProduct(int id, String status) {
+        getJdbi().useHandle(handle -> handle.createUpdate("""
+                UPDATE products
+                SET status = :status
+                WHERE id = :id""")
+                .bind("status", status)
+                .bind("id", id)
+                .execute());
+    }
 }
