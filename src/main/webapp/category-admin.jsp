@@ -178,7 +178,7 @@
 
         <div class="modal-actions">
           <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Hủy</button>
-          <button type="submit" class="btn-danger">Xóa</button>
+          <button type="submit" class="btn-danger">Khóa</button>
         </div>
       </form>
     </div>

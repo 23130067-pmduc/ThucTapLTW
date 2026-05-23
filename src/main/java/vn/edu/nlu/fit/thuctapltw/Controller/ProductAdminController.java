@@ -40,12 +40,7 @@ public class ProductAdminController extends HttpServlet {
             throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        if ("delete".equals(action)) {
-            int id = Integer.parseInt(request.getParameter("id"));
-            productDao.softDelete(id);
-            response.sendRedirect("product-admin");
-            return;
-        }
+
 
         String mode = request.getParameter("mode");
 
@@ -144,6 +139,14 @@ public class ProductAdminController extends HttpServlet {
 
         double price = (priceRaw != null && !priceRaw.isEmpty()) ? Double.parseDouble(priceRaw) : 0;
         int categoryId = (categoryIdRaw != null && !categoryIdRaw.isEmpty()) ? Integer.parseInt(categoryIdRaw) : 0;
+
+        if ("updateStatus".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+
+            productService.updateProductStatus(id, status);
+            response.sendRedirect("product-admin");
+            return;
+        }
 
         if ("create".equals(action)) {
             Product product = new Product();
