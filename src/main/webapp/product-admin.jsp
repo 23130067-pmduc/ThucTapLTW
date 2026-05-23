@@ -168,12 +168,25 @@
                     <i class="fa-regular fa-image"></i>
                   </a>
 
-                  <button type="button"
-                          class="icon-btn delete"
-                          title="Khóa sản phẩm"
-                          onclick="openDeleteModal(${p.id}, '${p.name}')">
-                    <i class="fa fa-trash"></i>
-                  </button>
+                  <c:choose>
+                    <c:when test="${p.status eq 'Đang bán'}">
+                      <button type="button"
+                              class="icon-btn delete"
+                              title="Ngừng bán sản phẩm"
+                              onclick="openStatusModal(${p.id}, '${p.name}', 'Ngừng bán')">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </c:when>
+
+                    <c:otherwise>
+                      <button type="button"
+                              class="icon-btn restore"
+                              title="Mở bán lại sản phẩm"
+                              onclick="openStatusModal(${p.id}, '${p.name}', 'Đang bán')">
+                        <i class="fa fa-rotate-left"></i>
+                      </button>
+                    </c:otherwise>
+                  </c:choose>
                 </div>
               </td>
             </tr>
@@ -222,36 +235,48 @@
     </main>
   </section>
 </div>
-<div id="deleteModal" class="modal-overlay">
+<div id="statusModal" class="modal-overlay">
   <div class="modal">
-    <h3>Xác nhận xóa</h3>
-    <p id="deleteMessage">Bạn có chắc muốn khóa sản phẩm này không?</p>
+    <h3 id="statusModalTitle">Xác nhận</h3>
+    <p id="statusMessage"></p>
 
-    <form id="deleteForm" method="post" action="product-admin">
-      <input type="hidden" name="action" value="delete">
-      <input type="hidden" name="id" id="deleteProductId">
+    <form id="statusForm" method="post" action="product-admin">
+      <input type="hidden" name="action" value="updateStatus">
+      <input type="hidden" name="id" id="statusProductId">
+      <input type="hidden" name="status" id="statusProductValue">
 
       <div class="modal-actions">
-        <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Hủy</button>
-        <button type="submit" class="btn-danger">Khóa</button>
+        <button type="button" class="btn-secondary" onclick="closeStatusModal()">Hủy</button>
+        <button type="submit" class="btn-danger " id="statusSubmitBtn">Khóa</button>
       </div>
     </form>
   </div>
 </div>
 
 <script>
-  function openDeleteModal(id, title) {
-    document.getElementById("deleteProductId").value = id;
-    document.getElementById("deleteMessage").innerHTML =
-            'Bạn có chắc muốn khóa sản phẩm "<b>' + title + '</b>" không?';
-    document.getElementById("deleteModal").style.display = "flex";
+  function openStatusModal(id, title, status) {
+    document.getElementById("statusProductId").value = id;
+    document.getElementById("statusProductValue").value = status;
+
+    document.getElementById("statusModalTitle").innerText =
+            status === "Đang bán" ? "Xác nhận mở bán lại" : "Xác nhận ngừng bán";
+
+    document.getElementById("statusMessage").innerHTML =
+            status === "Đang bán"
+                    ? 'Bạn có chắc muốn mở bán lại sản phẩm "<b>' + title + '</b>" không?'
+                    : 'Bạn có chắc muốn ngừng bán sản phẩm "<b>' + title + '</b>" không?';
+
+    document.getElementById("statusSubmitBtn").innerText =
+            status === "Đang bán" ? "Mở bán lại" : "Ngừng bán";
+
+    document.getElementById("statusModal").style.display = "flex";
   }
 
   function closeDeleteModal() {
     document.getElementById("deleteModal").style.display = "none";
   }
 
-  function closeModal() {
+  function closeStatusModal() {
     document.getElementById("confirmModal").style.display = "none";
   }
 </script>

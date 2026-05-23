@@ -316,7 +316,7 @@ public class ProductDao extends BaseDao {
                 .one());
     }
 
-    public void stopSellingProduct(int id, String status) {
+    public void updateProductStatus(int id, String status) {
         getJdbi().useHandle(handle -> handle.createUpdate("""
                 UPDATE products
                 SET status = :status
@@ -325,4 +325,5 @@ public class ProductDao extends BaseDao {
                 .bind("id", id)
                 .execute());
     }
+
 }

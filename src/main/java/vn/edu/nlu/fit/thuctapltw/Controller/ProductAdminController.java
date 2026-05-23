@@ -140,9 +140,10 @@ public class ProductAdminController extends HttpServlet {
         double price = (priceRaw != null && !priceRaw.isEmpty()) ? Double.parseDouble(priceRaw) : 0;
         int categoryId = (categoryIdRaw != null && !categoryIdRaw.isEmpty()) ? Integer.parseInt(categoryIdRaw) : 0;
 
-        if ("delete".equals(action)) {
+        if ("updateStatus".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
-            productService.stopSellingProduct(id);
+
+            productService.updateProductStatus(id, status);
             response.sendRedirect("product-admin");
             return;
         }
