@@ -56,6 +56,18 @@ public class ProductAdminController extends HttpServlet {
         if ("search".equals(ajax)) {
             response.setContentType("application/json;charset=UTF-8");
 
+
+            String categoryParam = request.getParameter("categoryId");
+            int categoryId = 0;
+
+            if (categoryParam != null && !categoryParam.isEmpty() ) {
+                try {
+                    categoryId = Integer.parseInt(categoryParam);
+                } catch (NumberFormatException e) {
+                    categoryId = 0;
+                }
+            }
+
             int pageSize = 20;
             int currentPage = 1;
 
@@ -79,14 +91,8 @@ public class ProductAdminController extends HttpServlet {
                 currentPage = 1;
             }
 
-            int total;
-            List<Product> products;
 
-            if (keyword.isEmpty()){
-                total = productService.countProducts();
-            } else {
-                total = productService.countProductByKeyword(keyword);
-            }
+            int total = productService.countProductByFilter(keyword , categoryId);
 
             int totalPages = (int) Math.ceil((double) total / pageSize);
 
@@ -100,11 +106,8 @@ public class ProductAdminController extends HttpServlet {
 
             int offset = (currentPage - 1) * pageSize;
 
-            if (keyword.isEmpty()){
-                products = productService.getProductByPage(pageSize, offset);
-            } else {
-                products = productService.searchProductByPage(keyword, pageSize, offset);
-            }
+            List<Product> products = productService.searchProductByFilter(keyword, categoryId, pageSize, offset);
+
 
             Map<String, Object> result = new HashMap<>();
             result.put("products", products);
@@ -161,6 +164,8 @@ public class ProductAdminController extends HttpServlet {
             int inactiveProducts = productService.countInactiveProducts();
             int newProductThisWeek = productService.countNewProductThisWeek();
 
+            List<Category> categories = categoryDao.findAll();
+
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("pageSize", pageSize);
@@ -170,6 +175,8 @@ public class ProductAdminController extends HttpServlet {
             request.setAttribute("activeProducts",activeProducts);
             request.setAttribute("inactiveProducts",inactiveProducts);
             request.setAttribute("newProductThisWeek",newProductThisWeek);
+
+            request.setAttribute("categories", categories);
 
             request.getRequestDispatcher("/product-admin.jsp").forward(request, response);
             return;

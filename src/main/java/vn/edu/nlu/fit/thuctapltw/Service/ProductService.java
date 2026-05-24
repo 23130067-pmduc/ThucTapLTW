@@ -121,11 +121,11 @@ public class ProductService {
         productDao.updateProductStatus(id, status);
     }
 
-    public int countProductByKeyword(String keyword) {
-        return productDao.countProductByKeyword(keyword);
+    public int countProductByFilter(String keyword, int categoryId) {
+        return productDao.countProductByFilter(keyword, categoryId);
     }
 
-    public List<Product> searchProductByPage(String keyword, int pageSize, int offset) {
-        return productDao.searchProductByPage(keyword,pageSize, offset);
+    public List<Product> searchProductByFilter(String keyword, int categoryId, int pageSize, int offset) {
+        return productDao.searchProductByFilter(keyword, categoryId, pageSize, offset);
     }
 }

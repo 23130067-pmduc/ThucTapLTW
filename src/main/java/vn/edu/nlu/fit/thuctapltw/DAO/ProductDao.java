@@ -326,27 +326,34 @@ public class ProductDao extends BaseDao {
                 .execute());
     }
 
-    public int countProductByKeyword(String keyword) {
+    public int countProductByFilter(String keyword, int categoryId) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT COUNT(*)
-                FROM products
-                WHERE name LIKE :keyword""")
-                .bind("keyword","%" + keyword + "%")
+                FROM products p
+                LEFT JOIN category_product c ON p.category_id = c.id
+                WHERE (:keyword = '' OR p.name LIKE :keywordLike)
+                AND (:categoryId = 0 OR p.category_id = :categoryId)""")
+                .bind("keyword", keyword)
+                .bind("keywordLike", "%" + keyword + "%")
+                .bind("categoryId", categoryId)
                 .mapTo(Integer.class)
                 .one());
     }
 
-    public List<Product> searchProductByPage(String keyword, int pageSize, int offset) {
+    public List<Product> searchProductByFilter(String keyword, int categoryId, int pageSize, int offset) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT p.id, p.name, p.price, p.thumbnail, p.status, c.name AS categoryName, COALESCE(SUM(pv.stock), 0) AS totalStock
                 FROM products p
                 LEFT JOIN category_product c ON p.category_id = c.id
                 LEFT JOIN product_variants pv ON p.id = pv.product_id
-                WHERE p.name LIKE :keyword
+                WHERE (:keyword = '' OR p.name LIKE :keywordLike)
+                AND (:categoryId = 0 OR p.category_id = :categoryId)
                 GROUP BY p.id, p.name, p.price, p.thumbnail, p.status, c.name
                 ORDER BY p.created_at DESC, p.id DESC
                 LIMIT :pageSize OFFSET :offset""")
-                .bind("keyword", "%" + keyword + "%")
+                .bind("keyword", keyword)
+                .bind("keywordLike", "%" + keyword + "%")
+                .bind("categoryId", categoryId)
                 .bind("pageSize", pageSize)
                 .bind("offset",offset)
                 .mapToBean(Product.class)

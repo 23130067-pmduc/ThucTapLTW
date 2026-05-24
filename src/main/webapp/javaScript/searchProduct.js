@@ -3,6 +3,8 @@ const searchBtn = document.getElementById("searchBtn");
 const productTableBody = document.getElementById("productTableBody");
 const pagination = document.getElementById("productPagination");
 
+const categoryFilter = document.getElementById("categoryFilter");
+
 let searchTimeout;
 
 if (keywordInput){
@@ -16,6 +18,16 @@ if (keywordInput){
     })
 }
 
+
+
+if (categoryFilter) {
+    categoryFilter.addEventListener("change", function () {
+        searchProduct(1);
+    });
+}
+
+
+
 if (searchBtn){
     searchBtn.addEventListener("click", function (){
         searchProduct(1);
@@ -24,8 +36,11 @@ if (searchBtn){
 
 function searchProduct(page){
     const keyword = keywordInput.value.trim();
+    const categoryId = categoryFilter ? categoryFilter.value : 0;
 
-    fetch("product-admin?ajax=search&keyword=" + encodeURIComponent(keyword) + "&page=" + page)
+    fetch("product-admin?ajax=search&keyword=" + encodeURIComponent(keyword)
+        + "&categoryId=" + encodeURIComponent(categoryId)
+        + "&page=" + page)
         .then(response => response.json())
         .then(data => {
             renderProductTable(data.products);
@@ -39,7 +54,7 @@ function renderProductTable(products) {
     if (!products || products.length === 0) {
         productTableBody.innerHTML = `
             <tr>
-                <td colspan="8" class="empty-row" style="text-align:center; padding:24px;">
+                <td colspan="8" class="empty-row">
                     Không tìm thấy sản phẩm phù hợp
                 </td>
             </tr>

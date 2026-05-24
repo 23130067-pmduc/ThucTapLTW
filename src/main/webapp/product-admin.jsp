@@ -79,6 +79,14 @@
                    value="${keyword}">
           </div>
 
+          <select id="categoryFilter" class="filter-select">
+            <option value="0">Tất cả danh mục</option>
+
+            <c:forEach items="${categories}" var="c">
+              <option value="${c.id}">${c.name}</option>
+            </c:forEach>
+          </select>
+
           <button type="button" class="btn-search" id="searchBtn">
             <i class="fa-solid fa-magnifying-glass"></i>
             <span>Tìm</span>
