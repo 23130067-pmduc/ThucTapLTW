@@ -1,7 +1,10 @@
 package vn.edu.nlu.fit.thuctapltw.Controller;
 
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import vn.edu.nlu.fit.thuctapltw.DAO.CartItemDao;
 import vn.edu.nlu.fit.thuctapltw.Service.VoucherService;
 import vn.edu.nlu.fit.thuctapltw.model.CartItem;
@@ -26,13 +29,13 @@ public class ApplyVoucherController extends HttpServlet {
 
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("userlogin") == null) {
-            writeJson(response, false, "Vui lòng đăng nhập để sử dụng mã giảm giá.", 0, 0);
+            writeJson(response, false, "Vui lòng đăng nhập để sử dụng mã giảm giá.", 0, 0, 0, 0, "");
             return;
         }
 
         Integer cartId = (Integer) session.getAttribute("cartId");
         if (cartId == null) {
-            writeJson(response, false, "Không tìm thấy giỏ hàng.", 0, 0);
+            writeJson(response, false, "Không tìm thấy giỏ hàng.", 0, 0, 0, 0, "");
             return;
         }
 
@@ -40,21 +43,29 @@ public class ApplyVoucherController extends HttpServlet {
         double shippingFee = parseDouble(request.getParameter("shippingFee"));
 
         List<CartItem> cartItems = cartItemDao.getByCartId(cartId);
-        VoucherService.ApplyResult result = voucherService.applyOrderOrProductVoucher(voucherCode, cartItems);
+        VoucherService.ApplyResult result = voucherService.applyVoucher(voucherCode, cartItems, shippingFee);
 
         double subtotal = voucherService.calculateSubtotal(cartItems);
-        double discount = result.isSuccess() ? result.getDiscountAmount() : 0;
-        double finalAmount = Math.max(0, subtotal + shippingFee - discount);
+        double orderDiscount = result.isSuccess() ? result.getDiscountAmount() : 0;
+        double shippingDiscount = result.isSuccess() ? result.getShippingDiscountAmount() : 0;
+        double shippingAfterDiscount = Math.max(0, shippingFee - shippingDiscount);
+        double finalAmount = Math.max(0, subtotal + shippingAfterDiscount - orderDiscount);
+        String scope = result.isSuccess() && result.getVoucher() != null ? result.getVoucher().getVoucher_scope() : "";
 
-        writeJson(response, result.isSuccess(), result.getMessage(), discount, finalAmount);
+        writeJson(response, result.isSuccess(), result.getMessage(), orderDiscount, shippingDiscount, shippingAfterDiscount, finalAmount, scope);
     }
 
-    private void writeJson(HttpServletResponse response, boolean success, String message, double discount, double finalAmount) throws IOException {
+    private void writeJson(HttpServletResponse response, boolean success, String message, double discount, double shippingDiscount,
+                           double shippingFeeAfterDiscount, double finalAmount, String voucherScope) throws IOException {
         String json = "{" +
                 "\"success\":" + success + "," +
                 "\"message\":\"" + escapeJson(message) + "\"," +
                 "\"discount\":" + Math.round(discount) + "," +
-                "\"finalAmount\":" + Math.round(finalAmount) +
+                "\"shippingDiscount\":" + Math.round(shippingDiscount) + "," +
+                "\"totalDiscount\":" + Math.round(discount + shippingDiscount) + "," +
+                "\"shippingFeeAfterDiscount\":" + Math.round(shippingFeeAfterDiscount) + "," +
+                "\"finalAmount\":" + Math.round(finalAmount) + "," +
+                "\"voucherScope\":\"" + escapeJson(voucherScope) + "\"" +
                 "}";
         response.getWriter().write(json);
     }

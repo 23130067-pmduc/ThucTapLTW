@@ -175,6 +175,7 @@ public class Voucher implements Serializable {
 
     public String getTypeLabel() {
         if ("PRODUCT".equalsIgnoreCase(voucher_scope)) return "Giảm sản phẩm";
+        if ("SHIPPING".equalsIgnoreCase(voucher_scope)) return "Giảm vận chuyển";
         return "Giảm đơn hàng";
     }
 

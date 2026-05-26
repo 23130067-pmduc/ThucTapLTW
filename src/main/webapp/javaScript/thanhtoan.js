@@ -20,6 +20,8 @@ function updateHiddenFieldsFromRadio(radio) {
     const sumAddr = document.getElementById('summaryAddressInfo');
     if (sumAddr) sumAddr.innerText = rAddr;
 
+    setDiscountAmount(0);
+    setVoucherMessage('', '');
     fetchShippingFeeForSelectedAddress();
 }
 
@@ -83,6 +85,11 @@ function getContextPath() {
     }
 
     return `/${segments[0]}`;
+}
+
+function getOriginalShippingFee() {
+    const hiddenShippingFeeEl = document.getElementById('hiddenShippingFee');
+    return parseAmountFromText(hiddenShippingFeeEl ? hiddenShippingFeeEl.value : '0');
 }
 
 function updateSummaryAmounts(shippingFee) {
@@ -192,11 +199,11 @@ async function applyVoucher() {
     }
 
     const voucherCode = voucherInput.value.trim();
-    const currentShippingFee = parseAmountFromText(shippingFeeEl ? shippingFeeEl.value : '0');
+    const originalShippingFee = parseAmountFromText(shippingFeeEl ? shippingFeeEl.value : '0');
 
     if (!voucherCode) {
         setDiscountAmount(0);
-        updateSummaryAmounts(currentShippingFee);
+        updateSummaryAmounts(originalShippingFee);
         setVoucherMessage('Vui lòng nhập mã giảm giá.', 'error');
         return;
     }
@@ -206,7 +213,7 @@ async function applyVoucher() {
         const body = new URLSearchParams();
 
         body.append('voucherCode', voucherCode);
-        body.append('shippingFee', shippingFeeEl ? shippingFeeEl.value : '0');
+        body.append('shippingFee', String(originalShippingFee));
 
         const response = await fetch(`${contextPath}/apply-voucher`, {
             method: 'POST',
@@ -224,7 +231,12 @@ async function applyVoucher() {
         const data = await response.json();
 
         if (data.success) {
-            setDiscountAmount(data.discount);
+            setDiscountAmount(data.totalDiscount || data.discount || 0);
+
+            const shippingEl = document.getElementById('shippingFeeAmount');
+            if (shippingEl && data.voucherScope === 'SHIPPING') {
+                shippingEl.textContent = formatVnd(data.shippingFeeAfterDiscount || 0);
+            }
 
             const finalEl = document.getElementById('finalAmount');
             if (finalEl) {
@@ -234,12 +246,12 @@ async function applyVoucher() {
             setVoucherMessage(data.message, 'success');
         } else {
             setDiscountAmount(0);
-            updateSummaryAmounts(currentShippingFee);
+            updateSummaryAmounts(originalShippingFee);
             setVoucherMessage(data.message, 'error');
         }
     } catch (e) {
         setDiscountAmount(0);
-        updateSummaryAmounts(currentShippingFee);
+        updateSummaryAmounts(originalShippingFee);
         setVoucherMessage('Có lỗi khi áp dụng mã giảm giá.', 'error');
     }
 }

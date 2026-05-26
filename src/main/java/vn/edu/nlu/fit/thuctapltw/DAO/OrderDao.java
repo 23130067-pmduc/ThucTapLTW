@@ -145,8 +145,12 @@ public class OrderDao extends BaseDao {
 
     public int createOrder(int userId, String receiver, String phone, String address, String note, String paymentMethod, double totalPrice, double shippingFee, double discount) {
         double finalAmount = totalPrice + shippingFee - discount;
-        if (finalAmount < 0) finalAmount = 0;
+        if (finalAmount < 0) {
+            finalAmount = 0;
+        }
+
         double finalFinalAmount = finalAmount;
+
         return getJdbi().withHandle(h -> h.createUpdate("""
         INSERT INTO orders(user_id, receiver_name, phone, shipping_address, note, total_price, discount, shipping_fee, final_amount, payment_methods, payment_statuses, order_status, created_at)
         VALUES(:uid, :receiver, :phone, :address, :note, :total, :discount, :shippingFee, :finalAmount, :payment, 'UNPAID', 'PENDING', NOW())

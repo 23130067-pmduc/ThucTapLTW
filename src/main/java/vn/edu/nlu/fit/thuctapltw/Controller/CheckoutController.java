@@ -146,14 +146,14 @@ public class CheckoutController extends HttpServlet {
         Integer appliedVoucherId = null;
 
         if (voucherCode != null && !voucherCode.trim().isEmpty()) {
-            VoucherService.ApplyResult voucherResult = voucherService.applyOrderOrProductVoucher(voucherCode, cartItems);
+            VoucherService.ApplyResult voucherResult = voucherService.applyVoucher(voucherCode, cartItems, shippingFee);
 
             if (!voucherResult.isSuccess()) {
                 response.sendRedirect("checkout?error=invalid_voucher");
                 return;
             }
 
-            discount = voucherResult.getDiscountAmount();
+            discount = voucherResult.getTotalDiscountAmount();
             appliedVoucherId = voucherResult.getVoucher().getId();
         }
 
@@ -178,9 +178,6 @@ public class CheckoutController extends HttpServlet {
             variantDao.decreaseStock(variantId, qty);
         }
 
-        if (appliedVoucherId != null) {
-            voucherService.increaseUsedQuantity(appliedVoucherId);
-        }
         if (appliedVoucherId != null) {
             voucherService.increaseUsedQuantity(appliedVoucherId);
         }
