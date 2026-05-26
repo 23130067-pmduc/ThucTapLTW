@@ -147,7 +147,7 @@
 }
 
 .promo-section {
-    max-width: 1280px;
+    max-width: 1180px;
     margin: 28px auto;
     padding: 36px;
     background: #ffffff;
@@ -218,10 +218,6 @@
     gap: 12px;
     text-align: center;
     position: relative;
-}
-
-.shipping-coupon-left {
-    background: linear-gradient(180deg, #41b883, #2f80ed);
 }
 
 .coupon-left::before,
@@ -347,11 +343,9 @@
 
 .flash-products,
 .product-grid {
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 22px;
     width: 100%;
     box-sizing: border-box;
 }
@@ -484,10 +478,6 @@
     border-color: #C89F7B;
     transform: scale(1.05);
 }
-
-.product-card.hidden {
-    display: none !important;
-}
 .badge {
     position: absolute;
     top: 14px;
@@ -504,7 +494,6 @@
     background: linear-gradient(135deg, #ff4500, #ff6347);
     animation: pulse 1.5s infinite;
 }
-
 #load-more {
     display: block;
     margin: 60px auto 0;
@@ -512,6 +501,7 @@
     color: #666666;
     text-decoration: none;
     padding: 10px 25px;
+    border: 1px solid #5B3A29;
     border-radius: 25px;
     font-size: 15px;
     font-weight: 500;
@@ -519,7 +509,7 @@
     width: fit-content;
     position: relative;
     cursor: pointer;
-    border: none;
+    z-index: 1;
 }
 
 #load-more::before,
@@ -527,7 +517,7 @@
     content: "";
     position: absolute;
     top: 50%;
-    width: clamp(90px, calc((min(100vw, 1280px) - 250px) / 2), 500px);
+    width: clamp(90px, calc((min(100vw, 1180px) - 250px) / 2), 455px);
     height: 2px;
     background-color: #C89F7B;
     transform: translateY(-50%);
@@ -636,6 +626,11 @@
     .event-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    .flash-products,
+    .product-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
 }
 
 @media (max-width: 768px) {
@@ -667,7 +662,9 @@
     }
 
     .coupon-grid,
-    .event-grid {
+    .event-grid,
+    .flash-products,
+    .product-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
@@ -687,13 +684,13 @@
 }
 
 @media (max-width: 520px) {
-    .product-card {
-        width: 100%;
-        max-width: 320px;
+    .flash-products,
+    .product-grid {
+        grid-template-columns: 1fr;
     }
 
-    #load-more::before,
-    #load-more::after {
+    .load-more-wrapper::before,
+    .load-more-wrapper::after {
         display: none;
     }
 }

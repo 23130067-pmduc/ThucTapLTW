@@ -33,74 +33,37 @@
         <div class="section-heading">
             <div>
                 <span>Mã giảm giá</span>
-                <h2>Voucher đơn hàng và sản phẩm</h2>
+                <h2>Voucher nổi bật</h2>
             </div>
         </div>
 
-        <c:choose>
-            <c:when test="${not empty vouchers}">
-                <div class="coupon-grid">
-                    <c:forEach items="${vouchers}" var="voucher">
+        <div class="coupon-grid">
+            <c:choose>
+                <c:when test="${not empty vouchers}">
+                    <c:forEach items="${vouchers}" var="coupon">
                         <div class="coupon-card">
                             <div class="coupon-left">
-                                <span>${voucher.typeLabel}</span>
-                                <strong>${voucher.code}</strong>
+                                <span>${coupon.typeLabel}</span>
+                                <strong>${coupon.code}</strong>
                             </div>
                             <div class="coupon-right">
-                                <h3>${voucher.name}</h3>
-                                <p>${voucher.description}</p>
-                                <small>${voucher.conditionText}</small>
-                                <small>${voucher.expireText}</small>
-                                <button type="button" class="btn-copy-coupon" data-code="${voucher.code}">
+                                <h3>${coupon.name}</h3>
+                                <p>${coupon.discountText}</p>
+                                <p>${coupon.conditionText}</p>
+                                <small>${coupon.expireText}</small>
+                                <button type="button" class="btn-copy-coupon" data-code="${coupon.code}">
                                     Sao chép mã
                                 </button>
                             </div>
                         </div>
                     </c:forEach>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <div class="empty-promotion">Hiện chưa có mã giảm giá đơn hàng hoặc sản phẩm khả dụng.</div>
-            </c:otherwise>
-        </c:choose>
-    </section>
-
-    <section id="shipping-coupon-section" class="promo-section coupon-section">
-        <div class="section-heading">
-            <div>
-                <span>Freeship</span>
-                <h2>Voucher phí vận chuyển</h2>
-            </div>
+                </c:when>
+                <c:otherwise>
+                    <div class="empty-promotion">Hiện chưa có mã giảm giá khả dụng.</div>
+                </c:otherwise>
+            </c:choose>
         </div>
-
-        <c:choose>
-            <c:when test="${not empty shippingVouchers}">
-                <div class="coupon-grid">
-                    <c:forEach items="${shippingVouchers}" var="voucher">
-                        <div class="coupon-card">
-                            <div class="coupon-left shipping-coupon-left">
-                                <span>${voucher.typeLabel}</span>
-                                <strong>${voucher.code}</strong>
-                            </div>
-                            <div class="coupon-right">
-                                <h3>${voucher.name}</h3>
-                                <p>${voucher.description}</p>
-                                <small>${voucher.conditionText}</small>
-                                <small>${voucher.expireText}</small>
-                                <button type="button" class="btn-copy-coupon" data-code="${voucher.code}">
-                                    Sao chép mã
-                                </button>
-                            </div>
-                        </div>
-                    </c:forEach>
-                </div>
-            </c:when>
-            <c:otherwise>
-                <div class="empty-promotion">Hiện chưa có mã giảm phí vận chuyển khả dụng.</div>
-            </c:otherwise>
-        </c:choose>
     </section>
-
 
     <section class="promo-section event-section">
         <div class="section-heading">
@@ -205,7 +168,7 @@
 <script>
     const CONTEXT_PATH = '${pageContext.request.contextPath}';
 </script>
-<script src="${pageContext.request.contextPath}/javaScript/khuyenmai.js?v=2.3"></script>
+<script src="${pageContext.request.contextPath}/javaScript/khuyenmai.js?v=2.2"></script>
 
 <jsp:include page="/quick-add-modal.jsp" />
 <%@ include file="footer.jsp" %>

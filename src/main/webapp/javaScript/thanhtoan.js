@@ -9,6 +9,7 @@ function updateHiddenFieldsFromRadio(radio) {
     const hiddenName = document.getElementById('hiddenName');
     const hiddenPhone = document.getElementById('hiddenPhone');
     const hiddenAddress = document.getElementById('hiddenAddress');
+
     if (hiddenName) hiddenName.value = rName;
     if (hiddenPhone) hiddenPhone.value = rPhone;
     if (hiddenAddress) hiddenAddress.value = rAddr;
@@ -41,6 +42,7 @@ function toggleAddress() {
 function updatePaymentUI(radio) {
     document.querySelectorAll('.payment-method label').forEach((lbl) => lbl.classList.remove('active'));
     radio.closest('label').classList.add('active');
+
     const msg = document.getElementById('vnpay-message');
     if (msg) {
         msg.style.display = radio.value === 'VNPAY' ? 'block' : 'none';
@@ -48,11 +50,17 @@ function updatePaymentUI(radio) {
 }
 
 function openCheckoutModal() {
-    document.getElementById('checkoutAddressModal').style.display = 'flex';
+    const modal = document.getElementById('checkoutAddressModal');
+    if (modal) {
+        modal.style.display = 'flex';
+    }
 }
 
 function closeCheckoutModal() {
-    document.getElementById('checkoutAddressModal').style.display = 'none';
+    const modal = document.getElementById('checkoutAddressModal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 function parseAmountFromText(text) {
@@ -64,21 +72,36 @@ function formatVnd(value) {
     return `${Number(value || 0).toLocaleString('vi-VN')}₫`;
 }
 
+function getContextPath() {
+    if (window.APP_CONTEXT_PATH) {
+        return window.APP_CONTEXT_PATH;
+    }
+
+    const segments = window.location.pathname.split('/').filter(Boolean);
+    if (segments.length <= 1) {
+        return '';
+    }
+
+    return `/${segments[0]}`;
+}
+
 function updateSummaryAmounts(shippingFee) {
     const subtotalEl = document.getElementById('subtotalAmount');
     const shippingEl = document.getElementById('shippingFeeAmount');
     const finalEl = document.getElementById('finalAmount');
     const hiddenShippingFeeEl = document.getElementById('hiddenShippingFee');
+    const hiddenDiscountEl = document.getElementById('hiddenDiscount');
 
     if (!subtotalEl || !shippingEl || !finalEl) {
         return;
     }
 
     const subtotal = parseAmountFromText(subtotalEl.textContent);
-    const safeShippingFee = Number.isFinite(shippingFee) ? Math.max(0, Math.round(shippingFee)) : 0;
+    const safeShippingFee = Number.isFinite(Number(shippingFee)) ? Math.max(0, Math.round(Number(shippingFee))) : 0;
+    const currentDiscount = hiddenDiscountEl ? parseAmountFromText(hiddenDiscountEl.value) : 0;
 
     shippingEl.textContent = formatVnd(safeShippingFee);
-    finalEl.textContent = formatVnd(subtotal + safeShippingFee);
+    finalEl.textContent = formatVnd(Math.max(0, subtotal + safeShippingFee - currentDiscount));
 
     if (hiddenShippingFeeEl) {
         hiddenShippingFeeEl.value = String(safeShippingFee);
@@ -88,22 +111,13 @@ function updateSummaryAmounts(shippingFee) {
 function setShippingHint(message) {
     const hintEl = document.getElementById('shippingFeeHint');
     if (!hintEl) return;
-    hintEl.textContent = message || '';
-}
 
-function getContextPath() {
-    if (window.APP_CONTEXT_PATH) {
-        return window.APP_CONTEXT_PATH;
-    }
-    const segments = window.location.pathname.split('/').filter(Boolean);
-    if (segments.length <= 1) {
-        return '';
-    }
-    return `/${segments[0]}`;
+    hintEl.textContent = message || '';
 }
 
 async function fetchShippingFeeForSelectedAddress() {
     const selectedRadio = document.querySelector('input[name="selectedAddress"]:checked');
+
     if (!selectedRadio || !selectedRadio.value) {
         updateSummaryAmounts(0);
         setShippingHint('');
@@ -113,12 +127,17 @@ async function fetchShippingFeeForSelectedAddress() {
     try {
         const contextPath = getContextPath();
         const response = await fetch(`${contextPath}/ghn_fee?addressId=${encodeURIComponent(selectedRadio.value)}`, {
-            headers: { Accept: 'application/json' }
+            headers: {
+                Accept: 'application/json'
+            }
         });
 
-        if (!response.ok) throw new Error();
+        if (!response.ok) {
+            throw new Error('Không gọi được API phí vận chuyển');
+        }
 
         const data = await response.json();
+
         if (data.success && typeof data.fee === 'number') {
             updateSummaryAmounts(data.fee);
             setShippingHint('');
@@ -132,11 +151,121 @@ async function fetchShippingFeeForSelectedAddress() {
     }
 }
 
+function setVoucherMessage(message, type) {
+    const messageEl = document.getElementById('voucherMessage');
+    if (!messageEl) return;
+
+    messageEl.textContent = message || '';
+    messageEl.classList.remove('success', 'error');
+
+    if (type) {
+        messageEl.classList.add(type);
+    }
+}
+
+function setDiscountAmount(discount) {
+    const discountRow = document.getElementById('discountRow');
+    const discountAmountEl = document.getElementById('discountAmount');
+    const hiddenDiscountEl = document.getElementById('hiddenDiscount');
+
+    const safeDiscount = Math.max(0, Math.round(Number(discount) || 0));
+
+    if (discountRow) {
+        discountRow.style.display = safeDiscount > 0 ? 'flex' : 'none';
+    }
+
+    if (discountAmountEl) {
+        discountAmountEl.textContent = '-' + formatVnd(safeDiscount);
+    }
+
+    if (hiddenDiscountEl) {
+        hiddenDiscountEl.value = String(safeDiscount);
+    }
+}
+
+async function applyVoucher() {
+    const voucherInput = document.getElementById('voucherCode');
+    const shippingFeeEl = document.getElementById('hiddenShippingFee');
+
+    if (!voucherInput) {
+        return;
+    }
+
+    const voucherCode = voucherInput.value.trim();
+    const currentShippingFee = parseAmountFromText(shippingFeeEl ? shippingFeeEl.value : '0');
+
+    if (!voucherCode) {
+        setDiscountAmount(0);
+        updateSummaryAmounts(currentShippingFee);
+        setVoucherMessage('Vui lòng nhập mã giảm giá.', 'error');
+        return;
+    }
+
+    try {
+        const contextPath = getContextPath();
+        const body = new URLSearchParams();
+
+        body.append('voucherCode', voucherCode);
+        body.append('shippingFee', shippingFeeEl ? shippingFeeEl.value : '0');
+
+        const response = await fetch(`${contextPath}/apply-voucher`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                Accept: 'application/json'
+            },
+            body
+        });
+
+        if (!response.ok) {
+            throw new Error('Không gọi được API áp dụng voucher');
+        }
+
+        const data = await response.json();
+
+        if (data.success) {
+            setDiscountAmount(data.discount);
+
+            const finalEl = document.getElementById('finalAmount');
+            if (finalEl) {
+                finalEl.textContent = formatVnd(data.finalAmount);
+            }
+
+            setVoucherMessage(data.message, 'success');
+        } else {
+            setDiscountAmount(0);
+            updateSummaryAmounts(currentShippingFee);
+            setVoucherMessage(data.message, 'error');
+        }
+    } catch (e) {
+        setDiscountAmount(0);
+        updateSummaryAmounts(currentShippingFee);
+        setVoucherMessage('Có lỗi khi áp dụng mã giảm giá.', 'error');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function () {
     const checkedRadio = document.querySelector('input[name="selectedAddress"]:checked');
+
     if (checkedRadio) {
         updateHiddenFieldsFromRadio(checkedRadio);
     } else {
         updateSummaryAmounts(0);
+    }
+
+    const applyBtn = document.getElementById('applyVoucherBtn');
+    const voucherInput = document.getElementById('voucherCode');
+
+    if (applyBtn) {
+        applyBtn.addEventListener('click', applyVoucher);
+    }
+
+    if (voucherInput) {
+        voucherInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                applyVoucher();
+            }
+        });
     }
 });

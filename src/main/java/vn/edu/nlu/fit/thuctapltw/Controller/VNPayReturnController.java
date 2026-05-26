@@ -69,7 +69,7 @@ public class VNPayReturnController extends HttpServlet {
             return;
         }
 
-        orderDao.updatePaymentStatus(orderId, "PAID");
+        orderDao.updateStatus(orderId, "PAID");
 
         try {
             List<OrderItem> orderItems = orderItemDao.getByOrderId(orderId);

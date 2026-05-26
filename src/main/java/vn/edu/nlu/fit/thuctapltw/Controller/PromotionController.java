@@ -49,7 +49,6 @@ public class PromotionController extends HttpServlet {
         );
 
         request.setAttribute("vouchers", voucherService.getActiveOrderAndProductVouchers());
-        request.setAttribute("shippingVouchers", voucherService.getActiveShippingVouchers());
         request.setAttribute("promotionEvents", promotionEvents);
         request.setAttribute("flashSaleProducts", productDao.findFlashSaleProducts(4));
         request.setAttribute("discountProducts", productDao.findDiscountProducts());

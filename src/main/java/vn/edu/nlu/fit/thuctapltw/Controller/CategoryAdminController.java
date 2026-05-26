@@ -5,9 +5,6 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import vn.edu.nlu.fit.thuctapltw.Service.CategoryService;
 import vn.edu.nlu.fit.thuctapltw.model.Category;
-import com.google.gson.Gson;
-import java.util.HashMap;
-import java.util.Map;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,123 +22,15 @@ public class CategoryAdminController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String mode = request.getParameter("mode");
 
-        String ajax = request.getParameter("ajax");
-
-        if ("search".equalsIgnoreCase(ajax)) {
-            response.setContentType("application/json;charset=UTF-8");
-
-            int pageSize = 20;
-            int currentPage = 1;
-
-            String pageParam = request.getParameter("page");
-            String keyword = request.getParameter("keyword");
-
-            if (keyword == null) {
-                keyword = "";
-            }
-
-            keyword = keyword.trim();
-
-            if (pageParam != null) {
-                try {
-                    currentPage = Integer.parseInt(pageParam);
-                } catch (NumberFormatException e) {
-                    currentPage = 1;
-                }
-            }
-
-            if (currentPage < 1) {
-                currentPage = 1;
-            }
-
-            int total;
-            List<Category> categorys;
-
-
-            if (keyword.isEmpty()){
-                total = categoryService.countAllCategory();
-            } else {
-                total = categoryService.countCategoryByKeyword(keyword);
-            }
-
-            int totalPages = (int) Math.ceil((double) total / pageSize);
-
-            if (totalPages == 0) {
-                totalPages = 1;
-            }
-
-            if (currentPage > totalPages) {
-                currentPage = totalPages;
-            }
-
-            int offset = (currentPage - 1) * pageSize;
-
-            if (keyword.isEmpty()) {
-                categorys = categoryService.getCategoryByPage(pageSize, offset);
-            } else {
-                categorys = categoryService.searchCategoryByPage(keyword, pageSize, offset);
-            }
-
-            Map<String, Object> result = new HashMap<>();
-            result.put("categorys", categorys);
-            result.put("currentPage", currentPage);
-            result.put("totalPages", totalPages);
-            result.put("keyword", keyword);
-
-            String json = new Gson().toJson(result);
-            response.getWriter().write(json);
-            return;
-
-        }
-
-
         if(mode == null){
+            List<Category> categories = categoryService.findAllWithCountProduct();
 
-            int pageSize = 20;
-            int currentPage = 1;
-
-            String pageParam = request.getParameter("page");
-
-            if (pageParam != null){
-                try {
-                    currentPage = Integer.parseInt(pageParam);
-                } catch (NumberFormatException e){
-                    currentPage = 1;
-                }
-            }
-
-            if (currentPage < 1){
-                currentPage = 1;
-            }
-
-            int total = categoryService.countAllCategory();
-
-            int totalPages = (int) Math.ceil((double) total / pageSize);
-
-            if (totalPages == 0){
-                totalPages = 1;
-            }
-
-            if (currentPage > totalPages){
-                currentPage = totalPages;
-            }
-
-            int offset = (currentPage - 1) * pageSize;
-
-            List<Category> categorys = categoryService.getCategoryByPage(pageSize, offset);
-
-
+            int total = categories.size();
             int totalActive = categoryService.getCategoryActive();
-            int totalAllCategory = categoryService.countAllCategory();
 
-            request.setAttribute("categorys", categorys);
+            request.setAttribute("categories", categories);
             request.setAttribute("total", total);
-            request.setAttribute("totalAllCategory",totalAllCategory);
             request.setAttribute("totalActive", totalActive);
-
-            request.setAttribute("currentPage", currentPage);
-            request.setAttribute("totalPages", totalPages);
-            request.setAttribute("pageSize", pageSize);
 
             request.getRequestDispatcher("category-admin.jsp").forward(request,response);
             return;
@@ -154,7 +43,6 @@ public class CategoryAdminController extends HttpServlet {
 
             request.setAttribute("mode", mode);
             request.setAttribute("category", category);
-
 
             request.getRequestDispatcher("category-form.jsp").forward(request,response);
         }

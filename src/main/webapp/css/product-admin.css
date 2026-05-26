@@ -154,28 +154,18 @@
 }
 
 .col-name {
+    min-width: 300px;
     font-size: 16px;
     font-weight: 500;
     color: #1f2937;
     line-height: 1.45;
-    max-width: 420px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 .col-category {
     min-width: 140px;
     color: #4b5563;
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1.45;
 }
-
-.col-stock {
-    font-weight: 600;
-    color: #333;
-    text-align: center;
-}
-
 .col-price {
     white-space: nowrap;
     font-weight: 500;

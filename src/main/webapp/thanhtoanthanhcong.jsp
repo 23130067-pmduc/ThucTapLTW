@@ -22,14 +22,7 @@
         <div class="order-info">
             <h4>Đơn hàng của bạn đã được xác nhận</h4>
             <ul>
-                <c:choose>
-                    <c:when test="${order.paymentMethods == 'VNPAY'}">
-                        <li>✔ Đã thanh toán qua VNPay</li>
-                    </c:when>
-                    <c:otherwise>
-                        <li>✔ Thanh toán khi nhận hàng (COD)</li>
-                    </c:otherwise>
-                </c:choose>
+                <li>✔ Thanh toán khi nhận hàng (COD)</li>
                 <li>✔ Nhân viên giao hàng sẽ liên hệ trước</li>
                 <li>✔ Giao hàng tiêu chuẩn (3–5 ngày)</li>
             </ul>
@@ -51,11 +44,6 @@
         <h3>Tóm tắt đơn hàng</h3>
         <c:forEach var="item" items="${orderItems}">
             <div class="product-item">
-
-                <div class="checkout-product-thumb">
-                    <img src="${item.thumbnail}" alt="${item.productName}">
-                    <span class="checkout-product-qty">${item.quantity}</span>
-                </div>
 
                 <div class="product-info">
                     <b>${item.productName}</b><br>

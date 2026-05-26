@@ -115,9 +115,4 @@ public class ProductService {
     public int countNewProductThisWeek() {
         return productDao.countNewProductThisWeek();
     }
-
-
-    public void updateProductStatus(int id, String status) {
-        productDao.updateProductStatus(id, status);
-    }
 }
