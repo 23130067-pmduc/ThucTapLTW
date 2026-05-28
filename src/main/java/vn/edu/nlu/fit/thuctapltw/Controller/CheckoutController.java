@@ -20,7 +20,7 @@ import vn.edu.nlu.fit.thuctapltw.model.CartItem;
 import vn.edu.nlu.fit.thuctapltw.model.Order;
 import vn.edu.nlu.fit.thuctapltw.model.OrderItem;
 import vn.edu.nlu.fit.thuctapltw.model.User;
-
+import vn.edu.nlu.fit.thuctapltw.Service.VoucherService;
 import java.io.IOException;
 import java.util.List;
 
@@ -32,6 +32,7 @@ public class CheckoutController extends HttpServlet {
     private OrderItemDao orderItemDao;
     private ProductVariantDao variantDao;
     private GhnShippingService ghnShippingService;
+    private VoucherService voucherService;
 
     @Override
     public void init() {
@@ -41,6 +42,7 @@ public class CheckoutController extends HttpServlet {
         orderItemDao = new OrderItemDao();
         variantDao = new ProductVariantDao();
         ghnShippingService = new GhnShippingService();
+        voucherService = new VoucherService();
     }
 
     @Override
@@ -139,7 +141,23 @@ public class CheckoutController extends HttpServlet {
             return;
         }
         double shippingFee = shippingQuote.success() ? shippingQuote.fee() : 0;
+        String voucherCode = request.getParameter("voucherCode");
+        double discount = 0;
+        Integer appliedVoucherId = null;
 
+        if (voucherCode != null && !voucherCode.trim().isEmpty()) {
+            VoucherService.ApplyResult voucherResult = voucherService.applyOrderOrProductVoucher(voucherCode, cartItems);
+
+            if (!voucherResult.isSuccess()) {
+                response.sendRedirect("checkout?error=invalid_voucher");
+                return;
+            }
+
+            discount = voucherResult.getDiscountAmount();
+            appliedVoucherId = voucherResult.getVoucher().getId();
+        }
+
+        double finalPayAmount = Math.max(0, totalPrice + shippingFee - discount);
         int orderId = orderDao.createOrder(
                 user.getId(),
                 receiverName,
@@ -148,9 +166,9 @@ public class CheckoutController extends HttpServlet {
                 note,
                 paymentMethod,
                 totalPrice,
-                shippingFee
+                shippingFee,
+                discount
         );
-
         for (CartItem item : cartItems) {
             int variantId = item.getVariantId();
             int qty = item.getQuantity();
@@ -162,10 +180,14 @@ public class CheckoutController extends HttpServlet {
         session.setAttribute("lastOrderId", orderId);
 
         if ("VNPAY".equals(paymentMethod)) {
-            long amountVnd = Math.round(totalPrice + shippingFee);
+            long amountVnd = Math.round(finalPayAmount);
             String ipAddr = VNPayUtil.getClientIp(request);
             String returnUrl = VNPayUtil.buildReturnUrl(request);
             String payUrl = VNPayUtil.buildPaymentUrl(orderId, amountVnd, ipAddr, returnUrl);
+
+            if (appliedVoucherId != null) {
+                session.setAttribute("pendingOrderVoucherId_" + orderId, appliedVoucherId);
+            }
 
             response.sendRedirect(payUrl);
             return;
@@ -173,6 +195,9 @@ public class CheckoutController extends HttpServlet {
 
         for (CartItem item : cartItems) {
             variantDao.decreaseStock(item.getVariantId(), item.getQuantity());
+        }
+        if (appliedVoucherId != null) {
+            voucherService.markVoucherUsed(appliedVoucherId, orderId);
         }
 
         cartItemDao.clearCart(cartId);

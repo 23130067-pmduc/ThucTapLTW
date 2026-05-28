@@ -22,6 +22,11 @@
                 <strong>Thông báo:</strong> Vui lòng chọn hoặc thêm địa chỉ giao hàng trước khi thanh toán.
             </div>
         </c:if>
+        <c:if test="${param.error == 'invalid_voucher'}">
+            <div class="checkout-error-msg">
+                <strong>Thông báo:</strong> Mã giảm giá không hợp lệ hoặc không còn sử dụng được.
+            </div>
+        </c:if>
         <form action="checkout" method="post">
 
             <div class="checkout-left">
@@ -175,6 +180,10 @@
                     <div class="summary-row">
                         <span>Vận chuyển <i class="fa-regular fa-circle-question shipping-help-icon"></i></span>
                         <span id="shippingFeeAmount">Miễn phí</span>
+                    </div>
+                    <div class="summary-row discount-row" id="discountRow" style="display:none;">
+                        <span>Giảm giá</span>
+                        <span id="discountAmount">-0₫</span>
                     </div>
 
                     <div id="shippingFeeHint" style="color: red; font-size: 0.9em;"></div>
