@@ -559,3 +559,70 @@
     border: 1px solid #f5c6cb;
     border-radius: 4px;
 }
+.voucher-box {
+    margin-bottom: 10px;
+}
+
+.voucher-box input {
+    width: 100%;
+    height: 46px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 0 14px;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+    background: #fff;
+}
+
+.voucher-box input:focus {
+    border-color: #ff6b6b;
+    box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15);
+}
+
+.btn-apply-voucher {
+    width: 100%;
+    height: 46px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: all 0.25s ease;
+}
+
+.btn-apply-voucher:hover {
+    transform: translateY(-1px);
+    opacity: 0.95;
+    box-shadow: 0 6px 16px rgba(255, 107, 107, 0.25);
+}
+
+.btn-apply-voucher:active {
+    transform: scale(0.98);
+}
+
+.voucher-message {
+    display: none;
+    margin: 4px 0 8px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.voucher-message.show {
+    display: block;
+}
+
+.voucher-message.success {
+    color: #16a34a;
+}
+
+.voucher-message.error {
+    color: #dc2626;
+}
+
+.voucher-box {
+    margin-bottom: 8px;
+}

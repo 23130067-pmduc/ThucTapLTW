@@ -156,8 +156,24 @@ public class CheckoutController extends HttpServlet {
             discount = voucherResult.getDiscountAmount();
             appliedVoucherId = voucherResult.getVoucher().getId();
         }
+        String shippingVoucherCode = request.getParameter("shippingVoucherCode");
+        double shippingDiscount = 0;
+        Integer appliedShippingVoucherId = null;
 
-        double finalPayAmount = Math.max(0, totalPrice + shippingFee - discount);
+        if (shippingVoucherCode != null && !shippingVoucherCode.trim().isEmpty()) {
+            VoucherService.ApplyResult shippingVoucherResult =
+                    voucherService.applyShippingVoucher(shippingVoucherCode, totalPrice, shippingFee);
+
+            if (!shippingVoucherResult.isSuccess()) {
+                response.sendRedirect("checkout?error=invalid_shipping_voucher");
+                return;
+            }
+
+            shippingDiscount = shippingVoucherResult.getDiscountAmount();
+            appliedShippingVoucherId = shippingVoucherResult.getVoucher().getId();
+        }
+        double totalDiscount = discount + shippingDiscount;
+        double finalPayAmount = Math.max(0, totalPrice + shippingFee - totalDiscount);
         int orderId = orderDao.createOrder(
                 user.getId(),
                 receiverName,
@@ -167,7 +183,7 @@ public class CheckoutController extends HttpServlet {
                 paymentMethod,
                 totalPrice,
                 shippingFee,
-                discount
+                totalDiscount
         );
         for (CartItem item : cartItems) {
             int variantId = item.getVariantId();
@@ -176,7 +192,6 @@ public class CheckoutController extends HttpServlet {
 
             orderItemDao.insert(orderId, variantId, item.getProduct().getName(), item.getSize(), item.getColor(), qty, price, price * qty);
         }
-
         session.setAttribute("lastOrderId", orderId);
 
         if ("VNPAY".equals(paymentMethod)) {
@@ -189,9 +204,28 @@ public class CheckoutController extends HttpServlet {
                 session.setAttribute("pendingOrderVoucherId_" + orderId, appliedVoucherId);
             }
 
+            if (appliedShippingVoucherId != null) {
+                session.setAttribute("pendingShippingVoucherId_" + orderId, appliedShippingVoucherId);
+            }
+
             response.sendRedirect(payUrl);
             return;
         }
+
+        for (CartItem item : cartItems) {
+            variantDao.decreaseStock(item.getVariantId(), item.getQuantity());
+        }
+
+        if (appliedVoucherId != null) {
+            voucherService.markVoucherUsed(appliedVoucherId, orderId);
+        }
+
+        if (appliedShippingVoucherId != null) {
+            voucherService.markVoucherUsed(appliedShippingVoucherId, orderId);
+        }
+
+        cartItemDao.clearCart(cartId);
+        session.setAttribute("cartSize", 0);
 
         for (CartItem item : cartItems) {
             variantDao.decreaseStock(item.getVariantId(), item.getQuantity());

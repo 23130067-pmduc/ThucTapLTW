@@ -164,10 +164,18 @@
                 </div>
 
                 <div class="voucher-box">
-                    <input type="text" id="voucherCode" name="voucherCode" placeholder="Mã giảm giá">
-                    <button type="button" id="applyVoucherBtn">áp dụng</button>
+                    <input type="text" id="voucherCode" name="voucherCode" placeholder="Mã giảm giá sản phẩm / đơn hàng">
                 </div>
                 <p id="voucherMessage" class="voucher-message"></p>
+
+                <div class="voucher-box">
+                    <input type="text" id="shippingVoucherCode" name="shippingVoucherCode" placeholder="Mã giảm phí vận chuyển">
+                </div>
+                <p id="shippingVoucherMessage" class="voucher-message"></p>
+
+                <button type="button" id="applyAllVoucherBtn" class="btn-apply-voucher">
+                    Áp dụng mã giảm giá
+                </button>
 
                 <div class="order-summary">
                     <div class="summary-row">
@@ -186,6 +194,11 @@
                         <span id="discountAmount">-0₫</span>
                     </div>
 
+                    <div class="summary-row discount-row" id="shippingDiscountRow" style="display:none;">
+                        <span>Giảm vận chuyển</span>
+                        <span id="shippingDiscountAmount">-0₫</span>
+                    </div>
+
                     <div id="shippingFeeHint" style="color: red; font-size: 0.9em;"></div>
 
                     <div class="total">
@@ -197,6 +210,7 @@
                 </div>
                 <input type="hidden" name="shippingFee" id="hiddenShippingFee" value="0">
                 <input type="hidden" name="discount" id="hiddenDiscount" value="0">
+                <input type="hidden" name="shippingDiscount" id="hiddenShippingDiscount" value="0">
 
                 <button type="submit" class="btn-checkout">
                     XÁC NHẬN THANH TOÁN
