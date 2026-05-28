@@ -15,6 +15,7 @@ import vn.edu.nlu.fit.thuctapltw.Service.OrderEmailService;
 import vn.edu.nlu.fit.thuctapltw.Util.VNPayUtil;
 import vn.edu.nlu.fit.thuctapltw.model.Order;
 import vn.edu.nlu.fit.thuctapltw.model.OrderItem;
+import vn.edu.nlu.fit.thuctapltw.Service.VoucherService;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,6 +28,7 @@ public class VNPayReturnController extends HttpServlet {
     private OrderItemDao orderItemDao;
     private ProductVariantDao variantDao;
     private CartItemDao cartItemDao;
+    private VoucherService voucherService;
 
     @Override
     public void init() {
@@ -34,6 +36,7 @@ public class VNPayReturnController extends HttpServlet {
         orderItemDao = new OrderItemDao();
         variantDao = new ProductVariantDao();
         cartItemDao = new CartItemDao();
+        voucherService = new VoucherService();
     }
 
     @Override
@@ -79,9 +82,15 @@ public class VNPayReturnController extends HttpServlet {
 
             HttpSession session = request.getSession(true);
             Integer cartId = (Integer) session.getAttribute("cartId");
+            Integer appliedVoucherId = (Integer) session.getAttribute("pendingOrderVoucherId_" + orderId);
+
             if (cartId != null) {
                 cartItemDao.clearCart(cartId);
                 session.setAttribute("cartSize", 0);
+            }
+            if (appliedVoucherId != null) {
+                voucherService.markVoucherUsed(appliedVoucherId, orderId);
+                session.removeAttribute("pendingOrderVoucherId_" + orderId);
             }
 
             if (order != null) {

@@ -69,6 +69,7 @@ function updateSummaryAmounts(shippingFee) {
     const shippingEl = document.getElementById('shippingFeeAmount');
     const finalEl = document.getElementById('finalAmount');
     const hiddenShippingFeeEl = document.getElementById('hiddenShippingFee');
+    const hiddenDiscountEl = document.getElementById('hiddenDiscount');
 
     if (!subtotalEl || !shippingEl || !finalEl) {
         return;
@@ -76,9 +77,10 @@ function updateSummaryAmounts(shippingFee) {
 
     const subtotal = parseAmountFromText(subtotalEl.textContent);
     const safeShippingFee = Number.isFinite(shippingFee) ? Math.max(0, Math.round(shippingFee)) : 0;
+    const currentDiscount = hiddenDiscountEl ? parseAmountFromText(hiddenDiscountEl.value) : 0;
 
     shippingEl.textContent = formatVnd(safeShippingFee);
-    finalEl.textContent = formatVnd(subtotal + safeShippingFee);
+    finalEl.textContent = formatVnd(Math.max(0, subtotal + safeShippingFee - currentDiscount));
 
     if (hiddenShippingFeeEl) {
         hiddenShippingFeeEl.value = String(safeShippingFee);
@@ -138,5 +140,109 @@ document.addEventListener('DOMContentLoaded', function () {
         updateHiddenFieldsFromRadio(checkedRadio);
     } else {
         updateSummaryAmounts(0);
+    }
+});
+function setVoucherMessage(message, type) {
+    const messageEl = document.getElementById('voucherMessage');
+    if (!messageEl) return;
+
+    messageEl.textContent = message || '';
+    messageEl.classList.remove('success', 'error');
+
+    if (type) {
+        messageEl.classList.add(type);
+    }
+}
+
+function setDiscountAmount(discount) {
+    const discountRow = document.getElementById('discountRow');
+    const discountAmountEl = document.getElementById('discountAmount');
+    const hiddenDiscountEl = document.getElementById('hiddenDiscount');
+
+    const safeDiscount = Math.max(0, Math.round(Number(discount) || 0));
+
+    if (discountRow) {
+        discountRow.style.display = safeDiscount > 0 ? 'flex' : 'none';
+    }
+
+    if (discountAmountEl) {
+        discountAmountEl.textContent = '-' + formatVnd(safeDiscount);
+    }
+
+    if (hiddenDiscountEl) {
+        hiddenDiscountEl.value = String(safeDiscount);
+    }
+}
+
+async function applyVoucher() {
+    const voucherInput = document.getElementById('voucherCode');
+    const shippingFeeEl = document.getElementById('hiddenShippingFee');
+
+    if (!voucherInput) return;
+
+    const voucherCode = voucherInput.value.trim();
+    const currentShippingFee = parseAmountFromText(shippingFeeEl ? shippingFeeEl.value : '0');
+
+    if (!voucherCode) {
+        setDiscountAmount(0);
+        updateSummaryAmounts(currentShippingFee);
+        setVoucherMessage('Vui lòng nhập mã giảm giá.', 'error');
+        return;
+    }
+
+    try {
+        const contextPath = getContextPath();
+        const body = new URLSearchParams();
+
+        body.append('voucherCode', voucherCode);
+        body.append('shippingFee', shippingFeeEl ? shippingFeeEl.value : '0');
+
+        const response = await fetch(`${contextPath}/apply-voucher`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+                Accept: 'application/json'
+            },
+            body
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            setDiscountAmount(data.discount);
+
+            const finalEl = document.getElementById('finalAmount');
+            if (finalEl) {
+                finalEl.textContent = formatVnd(data.finalAmount);
+            }
+
+            setVoucherMessage(data.message, 'success');
+        } else {
+            setDiscountAmount(0);
+            updateSummaryAmounts(currentShippingFee);
+            setVoucherMessage(data.message, 'error');
+        }
+    } catch (e) {
+        setDiscountAmount(0);
+        updateSummaryAmounts(currentShippingFee);
+        setVoucherMessage('Có lỗi khi áp dụng mã giảm giá.', 'error');
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    const applyBtn = document.getElementById('applyVoucherBtn');
+    const voucherInput = document.getElementById('voucherCode');
+
+    if (applyBtn) {
+        applyBtn.addEventListener('click', applyVoucher);
+    }
+
+    if (voucherInput) {
+        voucherInput.addEventListener('keydown', function (event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                applyVoucher();
+            }
+        });
     }
 });
