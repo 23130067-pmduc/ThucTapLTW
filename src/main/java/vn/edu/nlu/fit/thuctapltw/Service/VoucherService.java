@@ -132,4 +132,27 @@ public class VoucherService {
             return discountAmount;
         }
     }
+    public ApplyResult applyShippingVoucher(String code, double subtotal, double shippingFee) {
+        if (code == null || code.trim().isEmpty()) {
+            return ApplyResult.fail("Vui lòng nhập mã giảm giá vận chuyển.");
+        }
+
+        Voucher voucher = voucherDao.findActiveShippingVoucherByCode(code.trim());
+        if (voucher == null) {
+            return ApplyResult.fail("Mã giảm giá vận chuyển không tồn tại, đã hết hạn hoặc đã hết lượt sử dụng.");
+        }
+
+        if (subtotal < voucher.getMin_order_value()) {
+            return ApplyResult.fail("Đơn hàng chưa đạt giá trị tối thiểu để dùng mã vận chuyển này.");
+        }
+
+        if (shippingFee <= 0) {
+            return ApplyResult.fail("Đơn hàng hiện chưa có phí vận chuyển để áp dụng mã.");
+        }
+
+        double discount = calculateDiscount(voucher, shippingFee);
+        discount = Math.min(discount, shippingFee);
+
+        return ApplyResult.success(voucher, Math.round(discount), "Áp dụng mã giảm giá vận chuyển thành công.");
+    }
 }

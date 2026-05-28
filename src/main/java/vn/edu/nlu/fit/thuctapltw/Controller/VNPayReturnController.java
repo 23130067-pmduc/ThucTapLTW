@@ -83,7 +83,12 @@ public class VNPayReturnController extends HttpServlet {
             HttpSession session = request.getSession(true);
             Integer cartId = (Integer) session.getAttribute("cartId");
             Integer appliedVoucherId = (Integer) session.getAttribute("pendingOrderVoucherId_" + orderId);
+            Integer appliedShippingVoucherId = (Integer) session.getAttribute("pendingShippingVoucherId_" + orderId);
 
+            if (appliedShippingVoucherId != null) {
+                voucherService.markVoucherUsed(appliedShippingVoucherId, orderId);
+                session.removeAttribute("pendingShippingVoucherId_" + orderId);
+            }
             if (cartId != null) {
                 cartItemDao.clearCart(cartId);
                 session.setAttribute("cartSize", 0);
