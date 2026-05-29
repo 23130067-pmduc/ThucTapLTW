@@ -626,3 +626,71 @@
 .voucher-box {
     margin-bottom: 8px;
 }
+.order-summary {
+    margin-top: 18px;
+    padding: 18px 16px;
+    border-radius: 14px;
+    background: #fffaf6;
+    border: 1px solid #f3dfd0;
+}
+
+.summary-title {
+    margin: 0 0 14px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #3b2418;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #4a3428;
+}
+
+.summary-row span:first-child {
+    color: #6b5a50;
+}
+
+.summary-row span:last-child {
+    font-weight: 600;
+    color: #2f1d14;
+    text-align: right;
+}
+
+.discount-row span:first-child,
+.discount-row span:last-child {
+    color: #e53935;
+}
+
+.shipping-fee-hint {
+    margin-top: 6px;
+    font-size: 13px;
+    color: #dc2626;
+}
+
+.summary-divider {
+    height: 1px;
+    background: #ead6c8;
+    margin: 14px 0;
+}
+
+.summary-row.total {
+    margin-bottom: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.summary-row.total span:first-child {
+    color: #2f1d14;
+}
+
+.final-price-wrap,
+#finalAmount {
+    font-size: 20px;
+    font-weight: 800;
+    color: #e53935;
+}
