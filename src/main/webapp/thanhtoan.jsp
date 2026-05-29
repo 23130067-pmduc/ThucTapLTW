@@ -178,34 +178,41 @@
                 </button>
 
                 <div class="order-summary">
+                    <h4 class="summary-title">Chi tiết thanh toán</h4>
+
                     <div class="summary-row">
-                        <span>Tổng phụ</span>
+                        <span>Tổng tiền sản phẩm</span>
                         <span id="subtotalAmount" data-subtotal="${total}">
-                        <fmt:formatNumber value="${total}" type="number"/>₫
-                    </span>
+            <fmt:formatNumber value="${total}" type="number"/>₫
+        </span>
                     </div>
 
                     <div class="summary-row">
-                        <span>Vận chuyển <i class="fa-regular fa-circle-question shipping-help-icon"></i></span>
+                        <span>Phí vận chuyển</span>
                         <span id="shippingFeeAmount">Miễn phí</span>
                     </div>
+
                     <div class="summary-row discount-row" id="discountRow" style="display:none;">
-                        <span>Giảm giá</span>
+                        <span>Giảm giá sản phẩm / đơn hàng</span>
                         <span id="discountAmount">-0₫</span>
                     </div>
 
                     <div class="summary-row discount-row" id="shippingDiscountRow" style="display:none;">
-                        <span>Giảm vận chuyển</span>
+                        <span>Giảm phí vận chuyển</span>
                         <span id="shippingDiscountAmount">-0₫</span>
                     </div>
 
-                    <div id="shippingFeeHint" style="color: red; font-size: 0.9em;"></div>
+                    <div id="shippingFeeHint" class="shipping-fee-hint"></div>
 
-                    <div class="total">
-                        <span>Tổng</span>
-                        <span class="final-price-wrap"><span id="finalAmount">
-                        <fmt:formatNumber value="${total}" type="number"/>₫
-                    </span></span>
+                    <div class="summary-divider"></div>
+
+                    <div class="summary-row total">
+                        <span>Tổng thanh toán</span>
+                        <span class="final-price-wrap">
+            <span id="finalAmount">
+                <fmt:formatNumber value="${total}" type="number"/>₫
+            </span>
+        </span>
                     </div>
                 </div>
                 <input type="hidden" name="shippingFee" id="hiddenShippingFee" value="0">
