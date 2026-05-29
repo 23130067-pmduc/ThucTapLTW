@@ -106,24 +106,73 @@
         <div class="section-heading">
             <div>
                 <span>Sự kiện</span>
-                <h2>Khuyến mãi theo mùa</h2>
+                <h2>Khuyến mãi đang diễn ra</h2>
             </div>
+            <p>Các chương trình sale có thời gian bắt đầu và kết thúc rõ ràng.</p>
         </div>
 
-        <div class="event-grid">
-            <c:forEach items="${promotionEvents}" var="event">
-                <div class="event-card">
-                    <div class="event-icon">
-                        <i class="fa-solid ${event.icon}"></i>
-                    </div>
-                    <span>${event.tag}</span>
-                    <h3>${event.title}</h3>
-                    <p>${event.description}</p>
-                    <a href="${pageContext.request.contextPath}/san-pham">Xem sản phẩm</a>
+        <c:choose>
+            <c:when test="${not empty promotionEvents}">
+                <div class="event-grid">
+                    <c:forEach items="${promotionEvents}" var="event">
+                        <div class="event-card">
+                            <div class="event-icon">
+                                <i class="fa-solid ${event.icon}"></i>
+                            </div>
+                            <span>${event.discountLabel}</span>
+                            <h3>${event.title}</h3>
+                            <p>${event.description}</p>
+                            <small class="event-date"><i class="fa-regular fa-clock"></i> ${event.dateRangeText}</small>
+                            <a href="#event-products-${event.id}">Xem sản phẩm</a>
+                        </div>
+                    </c:forEach>
                 </div>
-            </c:forEach>
-        </div>
+            </c:when>
+            <c:otherwise>
+                <div class="empty-promotion">Hiện chưa có sự kiện khuyến mãi nào đang diễn ra.</div>
+            </c:otherwise>
+        </c:choose>
     </section>
+
+    <c:if test="${not empty promotionEvents}">
+        <c:forEach items="${promotionEvents}" var="event">
+            <section id="event-products-${event.id}" class="promo-section event-product-section">
+                <div class="section-heading flash-heading">
+                    <div>
+                        <span>${event.discountLabel}</span>
+                        <h2><i class="fa-solid ${event.icon}"></i> ${event.title}</h2>
+                    </div>
+                    <p>${event.dateRangeText}</p>
+                </div>
+
+                <c:choose>
+                    <c:when test="${not empty event.products}">
+                        <div class="flash-products">
+                            <c:forEach items="${event.products}" var="p">
+                                <div class="product-card">
+                                    <span class="badge event-badge">EVENT -${p.discountPercent}%</span>
+                                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover"></a>
+                                    <img src="${p.thumbnail}" alt="${p.name}">
+                                    <h3>${p.name}</h3>
+                                    <p class="price">
+                                        <span class="new-price"><fmt:formatNumber value="${p.sale_price}" type="number" groupingUsed="true"/>đ</span>
+                                        <span class="old-price"><fmt:formatNumber value="${p.price}" type="number" groupingUsed="true"/>đ</span>
+                                    </p>
+                                    <div class="button">
+                                        <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="btn-detail">Xem chi tiết</a>
+                                        <button class="btn-add" data-product-id="${p.id}">Thêm vào giỏ hàng</button>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="empty-promotion">Sự kiện này hiện chưa có sản phẩm khuyến mãi.</div>
+                    </c:otherwise>
+                </c:choose>
+            </section>
+        </c:forEach>
+    </c:if>
 
     <section id="flash-sale-section" class="promo-section flash-sale">
         <div class="section-heading flash-heading">

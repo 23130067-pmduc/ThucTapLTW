@@ -697,3 +697,22 @@
         display: none;
     }
 }
+
+.event-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 4px 0 12px;
+    color: #a27355;
+    font-weight: 800;
+    font-size: 13px;
+}
+
+.event-product-section {
+    background: linear-gradient(180deg, #ffffff 0%, #fff8f0 100%);
+    border: 1px solid #ffe0ce;
+}
+
+.badge.event-badge {
+    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+}
