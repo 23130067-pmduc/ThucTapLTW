@@ -79,6 +79,22 @@ body {
     font-weight: 600;
 }
 
+.nav .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav .nav-item i {
+    width: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.nav .nav-item span {
+    flex: 1;
+}
+
 .image-content {
     flex: 1;
     overflow-y: auto;
