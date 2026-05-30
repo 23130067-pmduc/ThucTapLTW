@@ -101,6 +101,8 @@
                             </div>
 
                             <div class="order-actions-row">
+                                <a href="${pageContext.request.contextPath}/chitietorder?id=${o.id}"
+                                   class="order-action-btn btn-detail">Xem chi tiết</a>
                                 <c:choose>
                                     <c:when test="${o.orderStatus == 'PENDING'}">
                                         <form action="${pageContext.request.contextPath}/don-mua" method="post">
