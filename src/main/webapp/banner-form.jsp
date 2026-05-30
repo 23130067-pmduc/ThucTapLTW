@@ -40,10 +40,27 @@
 
         <div class="col">
           <label>Liên kết đến</label>
-          <input type="text" name="navigateTo"
-                 value="${banner.navigateTo}"
-                 placeholder="san-pham"
-                 <c:if test="${mode == 'view'}">readonly</c:if>>
+          <select name="navigateTo" <c:if test="${mode == 'view'}">disabled</c:if>>
+            <option value="trang-chu" ${banner.navigateTo == 'trang-chu' ? 'selected' : ''}>
+              Trang chủ
+            </option>
+
+            <option value="san-pham" ${banner.navigateTo == 'san-pham' ? 'selected' : ''}>
+              Sản phẩm
+            </option>
+
+            <option value="khuyen-mai" ${banner.navigateTo == 'khuyen-mai' ? 'selected' : ''}>
+              Khuyến mãi
+            </option>
+
+            <option value="tin-tuc" ${banner.navigateTo == 'tin-tuc' ? 'selected' : ''}>
+              Tin tức
+            </option>
+
+            <option value="lien-he" ${banner.navigateTo == 'lien-he' ? 'selected' : ''}>
+              Liên hệ
+            </option>
+          </select>
         </div>
       </div>
 
