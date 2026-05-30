@@ -5,10 +5,9 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import vn.edu.nlu.fit.thuctapltw.Service.BannerService;
 import vn.edu.nlu.fit.thuctapltw.model.Banner;
+import vn.edu.nlu.fit.thuctapltw.Util.CloudinaryUtil;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 @WebServlet(name = "BannerAdminController", value = "/banner-admin")
@@ -112,27 +111,11 @@ public class BannerAdminController extends HttpServlet {
 
 
 
-        String uploadDir = getServletContext().getRealPath("/uploads/shopquanao/banner/");
-
-        File dir = new File(uploadDir);
-        if (!dir.exists()){
-            dir.mkdirs();
-        }
-
         Part filePart = request.getPart("imageFile");
-        String fileName = "";
-
-        if (filePart != null && filePart.getSubmittedFileName() != null) {
-            fileName = Path.of(filePart.getSubmittedFileName())
-                    .getFileName().toString();
-        }
 
         if ("create".equals(action)){
-            String imageUrl = null;
-            if (!fileName.isEmpty()) {
-                filePart.write(uploadDir + fileName);
-                imageUrl = "./uploads/shopquanao/banner/" + fileName;
-            }
+            String imageUrl = CloudinaryUtil.uploadImage(filePart, "sunnybear/banner");
+
 
             Banner banner = new Banner();
 
@@ -156,9 +139,10 @@ public class BannerAdminController extends HttpServlet {
             Banner oldBanner = bannerService.getBannerById(id);
             String imageUrl = oldBanner.getImageUrl();
 
-            if (!fileName.isEmpty()) {
-                filePart.write(uploadDir + fileName);
-                imageUrl = "./uploads/shopquanao/banner/" + fileName;
+            String newImageUrl = CloudinaryUtil.uploadImage(filePart, "sunnybear/banner");
+
+            if (newImageUrl != null) {
+                imageUrl = newImageUrl;
             }
 
             Banner banner = new Banner();
