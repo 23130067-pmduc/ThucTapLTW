@@ -416,3 +416,20 @@ body, .admin {
 .icon-btn.view:hover {
     background: rgba(34, 139, 230, 0.1);
 }
+
+/* Sidebar icon alignment */
+.nav .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav .nav-item i {
+    width: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.nav .nav-item span {
+    flex: 1;
+}

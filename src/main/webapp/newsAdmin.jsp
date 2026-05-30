@@ -17,16 +17,16 @@
         <p>ADMIN</p>
 
         <div class="nav">
-            <a href="${pageContext.request.contextPath}/dashboard" class="nav-item">Dashboard</a>
-            <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">Sản phẩm</a>
-            <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">Danh mục</a>
-            <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">Đơn hàng</a>
-            <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">Người dùng</a>
-            <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">Banner</a>
-            <a href="${pageContext.request.contextPath}/news-admin" class="nav-item active">Tin tức</a>
-            <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">Thông báo</a>
-            <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">Liên hệ</a>
-            <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">Hồ sơ</a>
+            <a href="${pageContext.request.contextPath}/dashboard" class="nav-item"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
+            <a href="${pageContext.request.contextPath}/product-admin" class="nav-item"><i class="fa-solid fa-shirt"></i><span>Sản phẩm</span></a>
+            <a href="${pageContext.request.contextPath}/category-admin" class="nav-item"><i class="fa-solid fa-list"></i><span>Danh mục</span></a>
+            <a href="${pageContext.request.contextPath}/order-admin" class="nav-item"><i class="fa-solid fa-receipt"></i><span>Đơn hàng</span></a>
+            <a href="${pageContext.request.contextPath}/user-admin" class="nav-item"><i class="fa-solid fa-users"></i><span>Người dùng</span></a>
+            <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item"><i class="fa-solid fa-image"></i><span>Banner</span></a>
+            <a href="${pageContext.request.contextPath}/news-admin" class="nav-item active"><i class="fa-solid fa-newspaper"></i><span>Tin tức</span></a>
+            <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item"><i class="fa-solid fa-bell"></i><span>Thông báo</span></a>
+            <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item"><i class="fa-solid fa-envelope"></i><span>Liên hệ</span></a>
+            <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item"><i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span></a>
 
         </div>
     </aside>
