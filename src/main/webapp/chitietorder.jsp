@@ -34,6 +34,33 @@
             </a>
         </div>
 
+        <div class="order-detail-status-bar">
+            <div
+                    class="status-step ${order.orderStatus == 'PENDING' || order.orderStatus == 'SHIPPING' || order.orderStatus == 'COMPLETED' ? 'done' : ''} ${order.orderStatus == 'PENDING' ? 'current' : ''}">
+                <div class="step-icon"><i class="fas fa-clock"></i></div>
+                <div class="step-label">Chờ xác nhận</div>
+            </div>
+            <div
+                    class="step-line ${order.orderStatus == 'SHIPPING' || order.orderStatus == 'COMPLETED' ? 'done' : ''}">
+            </div>
+            <div
+                    class="status-step ${order.orderStatus == 'SHIPPING' || order.orderStatus == 'COMPLETED' ? 'done' : ''} ${order.orderStatus == 'SHIPPING' ? 'current' : ''}">
+                <div class="step-icon"><i class="fas fa-truck"></i></div>
+                <div class="step-label">Đang giao</div>
+            </div>
+            <div class="step-line ${order.orderStatus == 'COMPLETED' ? 'done' : ''}"></div>
+            <div class="status-step ${order.orderStatus == 'COMPLETED' ? 'done current' : ''}">
+                <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="step-label">Đã giao</div>
+            </div>
+        </div>
+
+        <c:if test="${order.orderStatus == 'CANCELLED'}">
+            <div class="order-cancelled-notice">
+                <i class="fas fa-times-circle"></i> Đơn hàng này đã bị huỷ
+            </div>
+        </c:if>
+
         <div class="order-detail-grid">
             <div class="order-detail-card">
                 <div class="detail-card-title"><i class="fas fa-map-marker-alt"></i> Thông tin giao

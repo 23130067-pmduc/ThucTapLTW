@@ -3,7 +3,7 @@
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
 
 <%
-    request.setAttribute("pageCss", "donmua.css");
+    request.setAttribute("pageCss", "donmua.css?v=" + System.currentTimeMillis());
     request.setAttribute("pageTitle", "Đơn hàng của tôi");
 %>
 
