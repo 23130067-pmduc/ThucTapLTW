@@ -427,3 +427,22 @@
     background: #4caf50;
     color: #fff;
 }
+.order-actions-row .order-action-btn.btn-detail,
+.order-actions-row .order-action-btn.btn-detail:link,
+.order-actions-row .order-action-btn.btn-detail:visited {
+    color: #5B3A29;
+    border-color: #c0aa90;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 40px;
+}
+
+.order-actions-row .order-action-btn.btn-detail:hover {
+    background: #5B3A29;
+    color: #fff;
+    border-color: #5B3A29;
+    text-decoration: none;
+}
