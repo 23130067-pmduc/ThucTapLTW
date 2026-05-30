@@ -89,7 +89,7 @@
                                         </c:otherwise>
                                     </c:choose>
                                 </td>
-                                <td class="actions">
+                                <td class="banner-actions">
                                     <a href="banner-admin?mode=view&id=${b.id}"
                                        class="icon-btn view" title="Xem chi tiết">
                                         <i class="fa fa-eye"></i>

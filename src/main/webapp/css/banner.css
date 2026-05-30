@@ -87,10 +87,16 @@
     color: #c62828;
 }
 
-.actions {
-    display: flex;
+.banner-actions {
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.banner-actions .icon-btn {
+    display: inline-flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
 
 .icon-btn {
