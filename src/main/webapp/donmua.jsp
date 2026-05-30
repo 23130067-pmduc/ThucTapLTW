@@ -62,12 +62,14 @@
                             </div>
 
                             <div class="order-products-wrapper">
+                                <c:set var="imgFallback" value="${pageContext.request.contextPath}/img/gau.png"/>
                                 <c:forEach var="i" items="${o.items}">
                                     <div class="order-product-item">
                                         <div class="order-product-left">
                                             <div class="order-product-thumb">
-                                                <img src="${pageContext.request.contextPath}/${not empty i.thumbnail ? i.thumbnail : 'img/aox.webp'}"
-                                                     alt="${i.productName}">
+                                                <img src="${not empty i.thumbnail ? i.thumbnail : imgFallback}"
+                                                     alt="${i.productName}"
+                                                     onerror="this.src='${pageContext.request.contextPath}/img/gau.png'">
                                             </div>
                                             <div class="order-product-info">
                                                 <h4>${i.productName}</h4>
