@@ -1,5 +1,9 @@
 package vn.edu.nlu.fit.thuctapltw.Controller;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,7 +19,10 @@ import vn.edu.nlu.fit.thuctapltw.model.Product;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "ProductAdminController", value = "/product-admin")
 @MultipartConfig(
@@ -43,6 +50,88 @@ public class ProductAdminController extends HttpServlet {
 
 
         String mode = request.getParameter("mode");
+
+        String ajax = request.getParameter("ajax");
+
+        if ("search".equals(ajax)) {
+            response.setContentType("application/json;charset=UTF-8");
+
+
+            String categoryParam = request.getParameter("categoryId");
+            int categoryId = 0;
+
+            if (categoryParam != null && !categoryParam.isEmpty() ) {
+                try {
+                    categoryId = Integer.parseInt(categoryParam);
+                } catch (NumberFormatException e) {
+                    categoryId = 0;
+                }
+            }
+
+            String status = request.getParameter("status");
+
+            if (status == null){
+                status = "";
+            }
+
+            status = status.trim();
+
+            int pageSize = 20;
+            int currentPage = 1;
+
+            String pageParam = request.getParameter("page");
+            String keyword = request.getParameter("keyword");
+
+            if (keyword == null) {
+                keyword = "";
+            }
+
+            keyword = keyword.trim();
+
+            if (pageParam != null) {
+                try {
+                    currentPage = Integer.parseInt(pageParam);
+                } catch (NumberFormatException e) {
+                    currentPage = 1;
+                }
+            }
+            if (currentPage < 1) {
+                currentPage = 1;
+            }
+
+
+            int total = productService.countProductByFilter(keyword , categoryId, status);
+
+            int totalPages = (int) Math.ceil((double) total / pageSize);
+
+            if (totalPages == 0){
+                totalPages = 1;
+            }
+
+            if (currentPage > totalPages) {
+                currentPage = totalPages;
+            }
+
+            int offset = (currentPage - 1) * pageSize;
+
+            List<Product> products = productService.searchProductByFilter(keyword, categoryId, status, pageSize, offset);
+
+
+            Map<String, Object> result = new HashMap<>();
+            result.put("products", products);
+            result.put("currentPage", currentPage);
+            result.put("totalPages", totalPages);
+            result.put("keyword", keyword);
+
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>)
+                            (src, typeOfSrc, context) -> new JsonPrimitive(src.toString()))
+                    .create();
+
+            String json = gson.toJson(result);
+            response.getWriter().write(json);
+            return;
+        }
 
         if (mode == null) {
 
@@ -83,6 +172,8 @@ public class ProductAdminController extends HttpServlet {
             int inactiveProducts = productService.countInactiveProducts();
             int newProductThisWeek = productService.countNewProductThisWeek();
 
+            List<Category> categories = categoryDao.findAll();
+
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("pageSize", pageSize);
@@ -92,6 +183,8 @@ public class ProductAdminController extends HttpServlet {
             request.setAttribute("activeProducts",activeProducts);
             request.setAttribute("inactiveProducts",inactiveProducts);
             request.setAttribute("newProductThisWeek",newProductThisWeek);
+
+            request.setAttribute("categories", categories);
 
             request.getRequestDispatcher("/product-admin.jsp").forward(request, response);
             return;

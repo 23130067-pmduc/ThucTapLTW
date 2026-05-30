@@ -41,8 +41,8 @@ function renderCategoryTable(categorys) {
     if (!categorys || categorys.length === 0) {
         categoryTableBody.innerHTML = `
             <tr>
-                <td colspan="6" style="text-align:center; padding:24px;">
-                    Không tìm thấy danh mục phù hợp
+                <td colspan="8" class="empty-row" style="text-align:center; padding:24px;">
+                    Không tìm thấy sản phẩm phù hợp
                 </td>
             </tr>
         `;

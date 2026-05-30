@@ -73,6 +73,33 @@
     background: #fff;
 }
 
+
+
+.filter-select {
+    width: 180px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+}
+
+.filter-select:focus,
+.search-box input:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.filter-select:hover {
+    border-color: #4caf50;
+}
+
+
+
+
 .btn-search {
     padding: 10px 16px;
     border: none;
@@ -248,10 +275,11 @@
     background: rgba(224, 49, 49, 0.1);
 }
 
-.empty-row {
+.product-table .empty-row {
     text-align: center;
-    color: #777;
-    font-style: italic;
+    padding: 28px 0;
+    color: #555;
+    font-style: normal;
 }
 
 .pagination {

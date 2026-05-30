@@ -120,4 +120,12 @@ public class ProductService {
     public void updateProductStatus(int id, String status) {
         productDao.updateProductStatus(id, status);
     }
+
+    public int countProductByFilter(String keyword, int categoryId, String status) {
+        return productDao.countProductByFilter(keyword, categoryId, status);
+    }
+
+    public List<Product> searchProductByFilter(String keyword, int categoryId, String status, int pageSize, int offset) {
+        return productDao.searchProductByFilter(keyword, categoryId, status, pageSize, offset);
+    }
 }

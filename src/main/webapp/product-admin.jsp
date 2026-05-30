@@ -79,7 +79,21 @@
                    value="${keyword}">
           </div>
 
-          <button type="submit" class="btn-search">
+          <select id="categoryFilter" class="filter-select">
+            <option value="0">Tất cả danh mục</option>
+
+            <c:forEach items="${categories}" var="c">
+              <option value="${c.id}">${c.name}</option>
+            </c:forEach>
+          </select>
+
+          <select id="statusFilter" class="filter-select">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Đang bán">Đang bán</option>
+            <option value="Ngừng bán">Ngừng bán</option>
+          </select>
+
+          <button type="button" class="btn-search" id="searchBtn">
             <i class="fa-solid fa-magnifying-glass"></i>
             <span>Tìm</span>
           </button>
@@ -108,7 +122,7 @@
           </tr>
           </thead>
 
-          <tbody>
+          <tbody id="productTableBody">
           <c:if test="${empty products}">
             <tr>
               <td colspan="8" class="empty-row">Chưa có sản phẩm nào</td>
@@ -194,6 +208,8 @@
           </tbody>
         </table>
 
+
+
         <c:set var="startPage" value="${currentPage - 2}" />
         <c:set var="endPage" value="${currentPage + 2}" />
 
@@ -206,7 +222,7 @@
         </c:if>
 
         <c:if test="${totalPages > 1}">
-          <div class="pagination">
+          <div class="pagination" id="productPagination">
 
             <c:if test="${currentPage > 1}">
               <a class="page-btn" href="product-admin?page=${currentPage - 1}">
@@ -280,5 +296,8 @@
     document.getElementById("statusModal").style.display = "none";
   }
 </script>
+
+<script src="javaScript/searchProduct.js"></script>
+
 </body>
 </html>
