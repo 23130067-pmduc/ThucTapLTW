@@ -419,3 +419,20 @@ body {
 .image-table th:nth-child(5) {
     white-space: nowrap;
 }
+
+/* Sidebar icon alignment */
+.nav .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav .nav-item i {
+    width: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.nav .nav-item span {
+    flex: 1;
+}

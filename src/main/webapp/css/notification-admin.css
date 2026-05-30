@@ -430,3 +430,20 @@ body, .admin {
     color: #c62828;
     border: 1px solid #f5c6cb;
 }
+
+/* Sidebar icon alignment */
+.nav .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.nav .nav-item i {
+    width: 20px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.nav .nav-item span {
+    flex: 1;
+}
