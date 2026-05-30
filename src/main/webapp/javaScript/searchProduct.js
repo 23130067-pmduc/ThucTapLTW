@@ -4,6 +4,7 @@ const productTableBody = document.getElementById("productTableBody");
 const pagination = document.getElementById("productPagination");
 
 const categoryFilter = document.getElementById("categoryFilter");
+const statusFilter = document.getElementById("statusFilter");
 
 let searchTimeout;
 
@@ -26,6 +27,11 @@ if (categoryFilter) {
     });
 }
 
+if (statusFilter) {
+    statusFilter.addEventListener("change", function () {
+        searchProduct(1);
+    });
+}
 
 
 if (searchBtn){
@@ -37,9 +43,11 @@ if (searchBtn){
 function searchProduct(page){
     const keyword = keywordInput.value.trim();
     const categoryId = categoryFilter ? categoryFilter.value : 0;
+    const status = statusFilter ? statusFilter.value : "";
 
     fetch("product-admin?ajax=search&keyword=" + encodeURIComponent(keyword)
         + "&categoryId=" + encodeURIComponent(categoryId)
+        + "&status=" + encodeURIComponent(status)
         + "&page=" + page)
         .then(response => response.json())
         .then(data => {
@@ -159,19 +167,26 @@ function renderPagination(currentPage, totalPages) {
         return;
     }
 
+    let startPage = currentPage - 2;
+    let endPage = currentPage + 2;
+
+    if (startPage < 1) {
+        startPage = 1;
+    }
+
+    if (endPage > totalPages) {
+        endPage = totalPages;
+    }
+
     if (currentPage > 1) {
         pagination.insertAdjacentHTML("beforeend", `
             <button type="button" class="page-btn" onclick="searchProduct(${currentPage - 1})">
                 Trước
             </button>
         `);
-    } else {
-        pagination.insertAdjacentHTML("beforeend", `
-            <span class="page-btn disabled">Trước</span>
-        `);
     }
 
-    for (let i = 1; i <= totalPages; i++) {
+    for (let i = startPage; i <= endPage; i++) {
         pagination.insertAdjacentHTML("beforeend", `
             <button type="button"
                     class="page-btn ${i === currentPage ? "active" : ""}"
@@ -186,10 +201,6 @@ function renderPagination(currentPage, totalPages) {
             <button type="button" class="page-btn" onclick="searchProduct(${currentPage + 1})">
                 Sau
             </button>
-        `);
-    } else {
-        pagination.insertAdjacentHTML("beforeend", `
-            <span class="page-btn disabled">Sau</span>
         `);
     }
 }

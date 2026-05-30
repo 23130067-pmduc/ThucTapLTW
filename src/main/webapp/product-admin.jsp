@@ -87,6 +87,12 @@
             </c:forEach>
           </select>
 
+          <select id="statusFilter" class="filter-select">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Đang bán">Đang bán</option>
+            <option value="Ngừng bán">Ngừng bán</option>
+          </select>
+
           <button type="button" class="btn-search" id="searchBtn">
             <i class="fa-solid fa-magnifying-glass"></i>
             <span>Tìm</span>

@@ -68,6 +68,14 @@ public class ProductAdminController extends HttpServlet {
                 }
             }
 
+            String status = request.getParameter("status");
+
+            if (status == null){
+                status = "";
+            }
+
+            status = status.trim();
+
             int pageSize = 20;
             int currentPage = 1;
 
@@ -92,7 +100,7 @@ public class ProductAdminController extends HttpServlet {
             }
 
 
-            int total = productService.countProductByFilter(keyword , categoryId);
+            int total = productService.countProductByFilter(keyword , categoryId, status);
 
             int totalPages = (int) Math.ceil((double) total / pageSize);
 
@@ -106,7 +114,7 @@ public class ProductAdminController extends HttpServlet {
 
             int offset = (currentPage - 1) * pageSize;
 
-            List<Product> products = productService.searchProductByFilter(keyword, categoryId, pageSize, offset);
+            List<Product> products = productService.searchProductByFilter(keyword, categoryId, status, pageSize, offset);
 
 
             Map<String, Object> result = new HashMap<>();
