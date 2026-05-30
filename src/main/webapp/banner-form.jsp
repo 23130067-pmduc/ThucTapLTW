@@ -81,20 +81,32 @@
       <div class="row">
         <div class="col">
           <label>Ảnh banner</label>
-          <c:if test="${mode != 'view'}">
-            <input type="file"
-                   name="imageFile"
-                   accept="image/*"
-                   <c:if test="${mode == 'add'}">required</c:if>>
-          </c:if>
 
-          <div class="preview">
+          <label class="banner-upload-box ${mode == 'view' ? 'view-only' : ''}" for="${mode == 'view' ? '' : 'imageFile'}">
+
+            <c:if test="${mode != 'view'}">
+              <input type="file"
+                     id="imageFile"
+                     name="imageFile"
+                     accept="image/*"
+                     <c:if test="${mode == 'add'}">required</c:if>>
+            </c:if>
+
             <img id="previewImg"
                  src="${banner.imageUrl}"
                  alt="Preview"
-                 style="${mode == 'add' ? 'display:none' : 'display:block'}; max-width:300px;">
+                 class="banner-upload-preview"
+                 style="${mode == 'add' ? 'display:none' : 'display:block'};">
 
-          </div>
+            <div id="uploadPlaceholder"
+                 class="banner-upload-placeholder"
+                 style="${mode == 'add' ? 'display:flex' : 'display:none'};">
+              <span>+ Chọn ảnh banner</span>
+              <small>JPG, PNG, WEBP</small>
+            </div>
+
+          </label>
+
         </div>
       </div>
     </div>
@@ -120,5 +132,29 @@
 
 
 </div>
+
+<script>
+  const imageFileInput = document.getElementById("imageFile");
+  const previewImg = document.getElementById("previewImg");
+  const uploadPlaceholder = document.getElementById("uploadPlaceholder");
+
+  if (imageFileInput && previewImg) {
+    imageFileInput.addEventListener("change", function () {
+      const file = this.files[0];
+
+      if (!file) {
+        return;
+      }
+
+      previewImg.src = URL.createObjectURL(file);
+      previewImg.style.display = "block";
+
+      if (uploadPlaceholder) {
+        uploadPlaceholder.style.display = "none";
+      }
+    });
+  }
+</script>
+
 </body>
 </html>
