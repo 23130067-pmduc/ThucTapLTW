@@ -83,14 +83,14 @@ public class InventoryTransactionService {
         return inventoryTransactionDao.createTransaction(type, supplierName, note, createdBy, variantIds, quantities);
     }
 
-    public boolean updateStatusIfPending(int id, String status) {
+    public String updateStatusIfPending(int id, String status) {
         if (id <= 0 || status == null) {
-            return false;
+            return "INVALID_STATUS";
         }
 
         String normalizedStatus = status.trim().toUpperCase();
         if (!"COMPLETED".equals(normalizedStatus) && !"CANCELLED".equals(normalizedStatus)) {
-            return false;
+            return "INVALID_STATUS";
         }
 
         return inventoryTransactionDao.updateStatusIfPending(id, normalizedStatus);

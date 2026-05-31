@@ -177,18 +177,118 @@ public class InventoryTransactionDao extends BaseDao {
         });
     }
 
-    public boolean updateStatusIfPending(int id, String status) {
-        int affectedRows = getJdbi().withHandle(handle -> handle.createUpdate("""
-                UPDATE inventory_transactions
-                SET status = :status,
-                    updated_at = NOW()
-                WHERE id = :id
-                  AND status = 'PENDING'
-                """)
-                .bind("id", id)
-                .bind("status", status)
-                .execute());
-        return affectedRows > 0;
+    public String updateStatusIfPending(int id, String status) {
+        return getJdbi().inTransaction(handle -> {
+            InventoryTransaction transaction = handle.createQuery("""
+                    SELECT id, type, status
+                    FROM inventory_transactions
+                    WHERE id = :id
+                    FOR UPDATE
+                    """)
+                    .bind("id", id)
+                    .mapToBean(InventoryTransaction.class)
+                    .findOne()
+                    .orElse(null);
+
+            if (transaction == null) {
+                return "NOT_FOUND";
+            }
+
+            if (!"PENDING".equals(transaction.getStatus())) {
+                return "ALREADY_PROCESSED";
+            }
+
+            if ("CANCELLED".equals(status)) {
+                int affectedRows = handle.createUpdate("""
+                        UPDATE inventory_transactions
+                        SET status = 'CANCELLED',
+                            updated_at = NOW()
+                        WHERE id = :id
+                          AND status = 'PENDING'
+                        """)
+                        .bind("id", id)
+                        .execute();
+
+                return affectedRows > 0 ? "SUCCESS" : "FAILED";
+            }
+
+            if (!"COMPLETED".equals(status)) {
+                return "INVALID_STATUS";
+            }
+
+            List<Map<String, Object>> details = handle.createQuery("""
+                    SELECT product_variant_id, quantity
+                    FROM inventory_transaction_details
+                    WHERE transaction_id = :transactionId
+                    """)
+                    .bind("transactionId", id)
+                    .mapToMap()
+                    .list();
+
+            if ("EXPORT".equals(transaction.getType())) {
+                for (Map<String, Object> detail : details) {
+                    int variantId = ((Number) detail.get("product_variant_id")).intValue();
+                    int quantity = ((Number) detail.get("quantity")).intValue();
+
+                    Integer currentStock = handle.createQuery("""
+                            SELECT stock
+                            FROM product_variants
+                            WHERE id = :variantId
+                            FOR UPDATE
+                            """)
+                            .bind("variantId", variantId)
+                            .mapTo(Integer.class)
+                            .findOne()
+                            .orElse(null);
+
+                    if (currentStock == null || currentStock < quantity) {
+                        return "INSUFFICIENT_STOCK";
+                    }
+                }
+
+                for (Map<String, Object> detail : details) {
+                    int variantId = ((Number) detail.get("product_variant_id")).intValue();
+                    int quantity = ((Number) detail.get("quantity")).intValue();
+
+                    handle.createUpdate("""
+                            UPDATE product_variants
+                            SET stock = stock - :quantity
+                            WHERE id = :variantId
+                            """)
+                            .bind("quantity", quantity)
+                            .bind("variantId", variantId)
+                            .execute();
+                }
+            } else if ("IMPORT".equals(transaction.getType())) {
+                for (Map<String, Object> detail : details) {
+                    int variantId = ((Number) detail.get("product_variant_id")).intValue();
+                    int quantity = ((Number) detail.get("quantity")).intValue();
+
+                    handle.createUpdate("""
+                            UPDATE product_variants
+                            SET stock = stock + :quantity
+                            WHERE id = :variantId
+                            """)
+                            .bind("quantity", quantity)
+                            .bind("variantId", variantId)
+                            .execute();
+                }
+            } else {
+                return "INVALID_TYPE";
+            }
+
+            int affectedRows = handle.createUpdate("""
+                    UPDATE inventory_transactions
+                    SET status = 'COMPLETED',
+                        updated_at = NOW()
+                    WHERE id = :id
+                      AND status = 'PENDING'
+                    """)
+                    .bind("id", id)
+                    .execute();
+
+            return affectedRows > 0 ? "SUCCESS" : "FAILED";
+        });
     }
 
 }

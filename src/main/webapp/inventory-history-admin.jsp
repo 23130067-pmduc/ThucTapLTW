@@ -48,10 +48,13 @@
         </header>
 
         <c:if test="${param.success == 'status_updated'}">
-            <div class="alert alert-success">Cập nhật trạng thái phiếu thành công.</div>
+            <div class="alert alert-success">Cập nhật trạng thái phiếu và tồn kho thành công.</div>
         </c:if>
         <c:if test="${param.error == 'already_processed'}">
             <div class="alert alert-warning">Phiếu này đã được xử lý nên không thể đổi trạng thái.</div>
+        </c:if>
+        <c:if test="${param.error == 'insufficient_stock'}">
+            <div class="alert alert-danger">Không thể hoàn thành phiếu xuất vì số lượng tồn kho hiện tại không đủ.</div>
         </c:if>
         <c:if test="${param.error == 'invalid_status' || param.error == 'status_update_failed'}">
             <div class="alert alert-danger">Không thể cập nhật trạng thái phiếu. Vui lòng thử lại.</div>

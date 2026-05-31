@@ -43,9 +43,13 @@ public class InventoryTransactionStatusController extends HttpServlet {
             return;
         }
 
-        boolean updated = inventoryTransactionService.updateStatusIfPending(transactionId, status);
-        if (updated) {
+        String result = inventoryTransactionService.updateStatusIfPending(transactionId, status);
+        if ("SUCCESS".equals(result)) {
             response.sendRedirect(request.getContextPath() + redirect + appendParam(redirect, "success=status_updated"));
+        } else if ("INSUFFICIENT_STOCK".equals(result)) {
+            response.sendRedirect(request.getContextPath() + redirect + appendParam(redirect, "error=insufficient_stock"));
+        } else if ("ALREADY_PROCESSED".equals(result)) {
+            response.sendRedirect(request.getContextPath() + redirect + appendParam(redirect, "error=already_processed"));
         } else {
             response.sendRedirect(request.getContextPath() + redirect + appendParam(redirect, "error=status_update_failed"));
         }
