@@ -354,3 +354,54 @@
 .inventory-table tr.out-stock-row:hover {
     background: #ffe8e8;
 }
+.inventory-toolbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.btn-import,
+.btn-export {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-import {
+    background: #40c057;
+}
+
+.btn-import:hover {
+    background: #37b24d;
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.btn-export {
+    background: #f59f00;
+}
+
+.btn-export:hover {
+    background: #f08c00;
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+.btn-import i,
+.btn-export i {
+    font-size: 15px;
+}

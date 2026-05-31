@@ -47,6 +47,16 @@
             </div>
         </header>
 
+        <c:if test="${param.success == 'status_updated'}">
+            <div class="alert alert-success">Cập nhật trạng thái phiếu thành công.</div>
+        </c:if>
+        <c:if test="${param.error == 'already_processed'}">
+            <div class="alert alert-warning">Phiếu này đã được xử lý nên không thể đổi trạng thái.</div>
+        </c:if>
+        <c:if test="${param.error == 'invalid_status' || param.error == 'status_update_failed'}">
+            <div class="alert alert-danger">Không thể cập nhật trạng thái phiếu. Vui lòng thử lại.</div>
+        </c:if>
+
         <div class="detail-summary">
             <div class="summary-card">
                 <span class="label">Mã phiếu</span>
@@ -72,6 +82,39 @@
                 <strong>${transaction.totalQuantity}</strong>
             </div>
         </div>
+
+        <c:if test="${transaction.status == 'PENDING'}">
+            <div class="status-action-box">
+                <div>
+                    <h3>Xử lý trạng thái phiếu</h3>
+                    <p>Phiếu đang ở trạng thái Đang xử lý. Bạn có thể chuyển sang Hoàn thành hoặc Hủy phiếu.</p>
+                </div>
+
+                <div class="status-action-buttons">
+                    <form method="post"
+                          action="${pageContext.request.contextPath}/inventory-transaction-status"
+                          onsubmit="return confirm('Xác nhận hoàn thành phiếu ${transaction.code}?');">
+                        <input type="hidden" name="transactionId" value="${transaction.id}">
+                        <input type="hidden" name="status" value="COMPLETED">
+                        <input type="hidden" name="redirect" value="/inventory-history-detail?id=${transaction.id}">
+                        <button type="submit" class="btn-complete">
+                            <i class="fa-solid fa-check"></i> Hoàn thành phiếu
+                        </button>
+                    </form>
+
+                    <form method="post"
+                          action="${pageContext.request.contextPath}/inventory-transaction-status"
+                          onsubmit="return confirm('Xác nhận hủy phiếu ${transaction.code}?');">
+                        <input type="hidden" name="transactionId" value="${transaction.id}">
+                        <input type="hidden" name="status" value="CANCELLED">
+                        <input type="hidden" name="redirect" value="/inventory-history-detail?id=${transaction.id}">
+                        <button type="submit" class="btn-cancel-status">
+                            <i class="fa-solid fa-xmark"></i> Hủy phiếu
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </c:if>
 
         <div class="detail-info-grid">
             <div class="info-box">
