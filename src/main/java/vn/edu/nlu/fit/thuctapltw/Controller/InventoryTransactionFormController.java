@@ -14,6 +14,7 @@ import vn.edu.nlu.fit.thuctapltw.model.User;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @WebServlet(name = "InventoryTransactionFormController", value = "/inventory-transaction-form")
 public class InventoryTransactionFormController extends HttpServlet {
@@ -68,6 +69,20 @@ public class InventoryTransactionFormController extends HttpServlet {
         if (variantIds.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/inventory-transaction-form?type=" + type + "&error=empty_items");
             return;
+        }
+
+        if ("EXPORT".equals(type)) {
+            Map<Integer, String> stockErrors = inventoryTransactionService.validateExportStock(variantIds, quantities);
+            if (!stockErrors.isEmpty()) {
+                request.setAttribute("type", type);
+                request.setAttribute("typeText", "Xuất kho");
+                request.setAttribute("inventoryItems", inventoryService.searchInventory("", "", 2000, 0));
+                request.setAttribute("stockErrors", stockErrors.values());
+                request.setAttribute("supplierName", supplierName);
+                request.setAttribute("note", note);
+                request.getRequestDispatcher("/inventory-transaction-form.jsp").forward(request, response);
+                return;
+            }
         }
 
         Integer createdBy = getCurrentUserId(request);
