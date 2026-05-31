@@ -156,4 +156,18 @@ public class InventoryTransactionDao extends BaseDao {
         });
     }
 
+    public boolean updateStatusIfPending(int id, String status) {
+        int affectedRows = getJdbi().withHandle(handle -> handle.createUpdate("""
+                UPDATE inventory_transactions
+                SET status = :status,
+                    updated_at = NOW()
+                WHERE id = :id
+                  AND status = 'PENDING'
+                """)
+                .bind("id", id)
+                .bind("status", status)
+                .execute());
+        return affectedRows > 0;
+    }
+
 }
