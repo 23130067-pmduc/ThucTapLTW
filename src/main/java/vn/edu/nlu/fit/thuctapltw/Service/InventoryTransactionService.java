@@ -35,4 +35,9 @@ public class InventoryTransactionService {
     public InventoryTransaction getById(int id) {
         return inventoryTransactionDao.getById(id);
     }
+
+    public int createTransaction(String type, String supplierName, String note, Integer createdBy, List<Integer> variantIds, List<Integer> quantities) {
+        return inventoryTransactionDao.createTransaction(type, supplierName, note, createdBy, variantIds, quantities);
+    }
+
 }

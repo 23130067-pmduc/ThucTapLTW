@@ -69,9 +69,19 @@
                 <a href="${pageContext.request.contextPath}/inventory-admin" class="btn-reset">Làm mới</a>
             </form>
 
-            <a href="${pageContext.request.contextPath}/inventory-history-admin" class="btn-history">
-                <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhập xuất
-            </a>
+            <div class="inventory-toolbar-actions">
+                <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=IMPORT" class="btn-import">
+                    <i class="fa-solid fa-circle-plus"></i> Nhập kho
+                </a>
+
+                <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=EXPORT" class="btn-export">
+                    <i class="fa-solid fa-circle-minus"></i> Xuất kho
+                </a>
+
+                <a href="${pageContext.request.contextPath}/inventory-history-admin" class="btn-history">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhập xuất
+                </a>
+            </div>
         </div>
 
         <div class="inventory-result-info">

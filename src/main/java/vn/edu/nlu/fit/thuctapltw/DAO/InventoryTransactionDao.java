@@ -112,4 +112,48 @@ public class InventoryTransactionDao extends BaseDao {
                 .orElse(null));
     }
 
+
+    public int createTransaction(String type, String supplierName, String note, Integer createdBy, List<Integer> variantIds, List<Integer> quantities) {
+        int totalQuantity = quantities.stream().mapToInt(Integer::intValue).sum();
+        String prefix = "IMPORT".equals(type) ? "PN" : "PX";
+
+        return getJdbi().inTransaction(handle -> {
+            int transactionId = handle.createUpdate("""
+                    INSERT INTO inventory_transactions(code, type, total_quantity, status, supplier_name, note, created_by, created_at)
+                    VALUES('', :type, :totalQuantity, 'PENDING', :supplierName, :note, :createdBy, NOW())
+                    """)
+                    .bind("type", type)
+                    .bind("totalQuantity", totalQuantity)
+                    .bind("supplierName", supplierName == null || supplierName.isBlank() ? null : supplierName.trim())
+                    .bind("note", note == null || note.isBlank() ? null : note.trim())
+                    .bind("createdBy", createdBy)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(int.class)
+                    .one();
+
+            String code = prefix + String.format("%05d", transactionId);
+            handle.createUpdate("""
+                    UPDATE inventory_transactions
+                    SET code = :code
+                    WHERE id = :id
+                    """)
+                    .bind("code", code)
+                    .bind("id", transactionId)
+                    .execute();
+
+            for (int i = 0; i < variantIds.size(); i++) {
+                handle.createUpdate("""
+                        INSERT INTO inventory_transaction_details(transaction_id, product_variant_id, quantity, note)
+                        VALUES(:transactionId, :productVariantId, :quantity, NULL)
+                        """)
+                        .bind("transactionId", transactionId)
+                        .bind("productVariantId", variantIds.get(i))
+                        .bind("quantity", quantities.get(i))
+                        .execute();
+            }
+
+            return transactionId;
+        });
+    }
+
 }
