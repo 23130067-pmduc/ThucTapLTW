@@ -131,7 +131,7 @@
           </c:if>
 
           <c:forEach items="${products}" var="p">
-            <tr>
+            <tr class="${p.totalStock == 0 ? 'product-out-stock-row' : (p.totalStock <= 10 ? 'product-low-stock-row' : '')}">
               <td class="col-id">${p.id}</td>
 
               <td class="col-image">
@@ -149,7 +149,19 @@
 
               <td class="col-category">${p.categoryName}</td>
 
-              <td class="col-stock">${p.totalStock}</td>
+              <td class="col-stock">
+                <c:choose>
+                  <c:when test="${p.totalStock == 0}">
+                    <span class="stock-badge stock-out">Hết hàng</span>
+                  </c:when>
+                  <c:when test="${p.totalStock <= 10}">
+                    <span class="stock-badge stock-low">Sắp hết (${p.totalStock})</span>
+                  </c:when>
+                  <c:otherwise>
+                    <span class="stock-badge stock-ok">${p.totalStock}</span>
+                  </c:otherwise>
+                </c:choose>
+              </td>
 
               <td class="col-status">
                 <span class="status-badge ${p.status == 'Đang bán' ? 'active' : 'inactive'}">
