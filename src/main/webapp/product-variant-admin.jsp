@@ -131,7 +131,7 @@
                     <c:choose>
                         <c:when test="${not empty variants}">
                             <c:forEach items="${variants}" var="variant">
-                                <tr>
+                                <tr class="${variant.stock == 0 ? 'variant-out-stock-row' : (variant.stock <= 10 ? 'variant-low-stock-row' : '')}">
                                     <td>${variant.id}</td>
                                     <td>${variant.sizeName}</td>
                                     <td>${variant.colorName}</td>
@@ -142,7 +142,7 @@
                                             <c:when test="${variant.stock == 0}">
                                                 <span class="status status-out">Hết hàng</span>
                                             </c:when>
-                                            <c:when test="${variant.stock < 10}">
+                                            <c:when test="${variant.stock <= 10}">
                                                 <span class="status status-low">Sắp hết (${variant.stock})</span>
                                             </c:when>
                                             <c:otherwise>

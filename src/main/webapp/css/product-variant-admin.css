@@ -457,3 +457,21 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Low stock warning */
+.variant-low-stock-row {
+    background: #fffdf0;
+}
+
+.variant-out-stock-row {
+    background: #fff5f5;
+}
+
+.variant-table tr.variant-low-stock-row:hover {
+    background: #fff8db;
+}
+
+.variant-table tr.variant-out-stock-row:hover {
+    background: #ffe8e8;
+}

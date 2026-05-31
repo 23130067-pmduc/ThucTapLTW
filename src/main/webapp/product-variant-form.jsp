@@ -81,7 +81,7 @@
                             <c:when test="${variant.stock == 0}">
                                 <input type="text" value="Hết hàng" readonly>
                             </c:when>
-                            <c:when test="${variant.stock < 10}">
+                            <c:when test="${variant.stock <= 10}">
                                 <input type="text" value="Sắp hết hàng" readonly>
                             </c:when>
                             <c:otherwise>

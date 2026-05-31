@@ -126,46 +126,6 @@
     background: #1971c2;
 }
 
-
-.inventory-toolbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.btn-import,
-.btn-export {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.btn-import {
-    background: #2f9e44;
-}
-
-.btn-import:hover {
-    background: #2b8a3e;
-    text-decoration: none;
-}
-
-.btn-export {
-    background: #f08c00;
-}
-
-.btn-export:hover {
-    background: #e67700;
-    text-decoration: none;
-}
-
 .inventory-table-wrapper {
     background: #fff;
     border-radius: 12px;
@@ -328,47 +288,7 @@
         width: 260px;
     }
 
-    
-.inventory-toolbar-actions {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.btn-import,
-.btn-export {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 8px;
-    color: #fff;
-    font-weight: 600;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-}
-
-.btn-import {
-    background: #2f9e44;
-}
-
-.btn-import:hover {
-    background: #2b8a3e;
-    text-decoration: none;
-}
-
-.btn-export {
-    background: #f08c00;
-}
-
-.btn-export:hover {
-    background: #e67700;
-    text-decoration: none;
-}
-
-.inventory-table-wrapper {
+    .inventory-table-wrapper {
         overflow-x: auto;
     }
 }
@@ -425,4 +345,12 @@
     background: #4caf50;
     border-color: #4caf50;
     color: #fff;
+}
+
+.inventory-table tr.low-stock-row:hover {
+    background: #fff8db;
+}
+
+.inventory-table tr.out-stock-row:hover {
+    background: #ffe8e8;
 }
