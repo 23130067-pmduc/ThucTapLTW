@@ -91,27 +91,23 @@
                 </div>
 
                 <div class="status-action-buttons">
-                    <form method="post"
-                          action="${pageContext.request.contextPath}/inventory-transaction-status"
-                          onsubmit="return confirm('Xác nhận hoàn thành phiếu ${transaction.code}?');">
-                        <input type="hidden" name="transactionId" value="${transaction.id}">
-                        <input type="hidden" name="status" value="COMPLETED">
-                        <input type="hidden" name="redirect" value="/inventory-history-detail?id=${transaction.id}">
-                        <button type="submit" class="btn-complete">
-                            <i class="fa-solid fa-check"></i> Hoàn thành phiếu
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="btn-complete js-open-status-modal"
+                            data-transaction-id="${transaction.id}"
+                            data-status="COMPLETED"
+                            data-redirect="/inventory-history-detail?id=${transaction.id}"
+                            data-message="Bạn có chắc muốn hoàn thành phiếu ${transaction.code} không?">
+                        <i class="fa-solid fa-check"></i> Hoàn thành phiếu
+                    </button>
 
-                    <form method="post"
-                          action="${pageContext.request.contextPath}/inventory-transaction-status"
-                          onsubmit="return confirm('Xác nhận hủy phiếu ${transaction.code}?');">
-                        <input type="hidden" name="transactionId" value="${transaction.id}">
-                        <input type="hidden" name="status" value="CANCELLED">
-                        <input type="hidden" name="redirect" value="/inventory-history-detail?id=${transaction.id}">
-                        <button type="submit" class="btn-cancel-status">
-                            <i class="fa-solid fa-xmark"></i> Hủy phiếu
-                        </button>
-                    </form>
+                    <button type="button"
+                            class="btn-cancel-status js-open-status-modal"
+                            data-transaction-id="${transaction.id}"
+                            data-status="CANCELLED"
+                            data-redirect="/inventory-history-detail?id=${transaction.id}"
+                            data-message="Bạn có chắc muốn hủy phiếu ${transaction.code} không?">
+                        <i class="fa-solid fa-xmark"></i> Hủy phiếu
+                    </button>
                 </div>
             </div>
         </c:if>
@@ -209,5 +205,25 @@
         </div>
     </section>
 </div>
+
+<div id="statusModal" class="status-modal-overlay" aria-hidden="true">
+    <div class="status-modal-box" role="dialog" aria-modal="true">
+        <h3>Xác nhận thao tác</h3>
+        <p id="statusModalMessage">Bạn có chắc muốn thực hiện thao tác này không?</p>
+
+        <form method="post" action="${pageContext.request.contextPath}/inventory-transaction-status">
+            <input type="hidden" name="transactionId" id="statusTransactionId">
+            <input type="hidden" name="status" id="statusValue">
+            <input type="hidden" name="redirect" id="statusRedirect" value="/inventory-history-admin">
+
+            <div class="status-modal-actions">
+                <button type="button" class="status-btn-cancel js-close-status-modal">Hủy</button>
+                <button type="submit" class="status-btn-confirm">Đồng ý</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${pageContext.request.contextPath}/javaScript/inventory-status-modal.js"></script>
 </body>
 </html>

@@ -3,6 +3,7 @@ package vn.edu.nlu.fit.thuctapltw.DAO;
 import vn.edu.nlu.fit.thuctapltw.model.InventoryTransaction;
 
 import java.util.List;
+import java.util.Map;
 
 public class InventoryTransactionDao extends BaseDao {
     public List<InventoryTransaction> searchTransactions(String keyword, String type, String status, int limit, int offset) {
@@ -110,6 +111,26 @@ public class InventoryTransactionDao extends BaseDao {
                 .mapToBean(InventoryTransaction.class)
                 .findOne()
                 .orElse(null));
+    }
+
+    public Map<Integer, Integer> getVariantStockMap(List<Integer> variantIds) {
+        if (variantIds == null || variantIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT id, stock
+                FROM product_variants
+                WHERE id IN (<variantIds>)
+                """)
+                .bindList("variantIds", variantIds)
+                .mapToMap()
+                .list()
+                .stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        row -> ((Number) row.get("id")).intValue(),
+                        row -> ((Number) row.get("stock")).intValue()
+                )));
     }
 
 

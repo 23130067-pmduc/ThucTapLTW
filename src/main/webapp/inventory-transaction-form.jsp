@@ -51,6 +51,17 @@
             <div class="alert-error">Vui lòng thêm ít nhất một sản phẩm vào phiếu.</div>
         </c:if>
 
+        <c:if test="${not empty stockErrors}">
+            <div class="alert-error">
+                <strong>Không thể tạo phiếu xuất kho:</strong>
+                <ul>
+                    <c:forEach items="${stockErrors}" var="error">
+                        <li>${error}</li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </c:if>
+
         <form action="${pageContext.request.contextPath}/inventory-transaction-form" method="post" id="transactionForm">
             <input type="hidden" name="type" value="${type}">
 
@@ -63,12 +74,12 @@
 
                     <div class="form-group supplier-group ${type == 'EXPORT' ? 'is-hidden' : ''}">
                         <label>Nhà cung cấp</label>
-                        <input type="text" name="supplierName" placeholder="Nhập tên nhà cung cấp">
+                        <input type="text" name="supplierName" placeholder="Nhập tên nhà cung cấp" value="${supplierName}">
                     </div>
 
                     <div class="form-group full-width">
                         <label>Ghi chú</label>
-                        <textarea name="note" rows="3" placeholder="Nhập ghi chú cho phiếu nếu có"></textarea>
+                        <textarea name="note" rows="3" placeholder="Nhập ghi chú cho phiếu nếu có">${note}</textarea>
                     </div>
                 </div>
             </section>
@@ -133,83 +144,13 @@
         </form>
     </section>
 </div>
-
-<script>
-    (() => {
-        const variantSelect = document.getElementById('variantSelect');
-        const quantityInput = document.getElementById('quantityInput');
-        const addItemBtn = document.getElementById('addItemBtn');
-        const selectedItemsBody = document.getElementById('selectedItemsBody');
-        const emptyRow = document.getElementById('emptyRow');
-        const transactionForm = document.getElementById('transactionForm');
-
-        function showEmptyRowIfNeeded() {
-            const hasItem = selectedItemsBody.querySelector('.selected-item-row') !== null;
-            emptyRow.style.display = hasItem ? 'none' : '';
-        }
-
-        function addItem() {
-            const option = variantSelect.options[variantSelect.selectedIndex];
-            const variantId = variantSelect.value;
-            const quantity = Number(quantityInput.value);
-
-            if (!variantId) {
-                alert('Vui lòng chọn sản phẩm cần nhập/xuất.');
-                return;
-            }
-
-            if (!quantity || quantity <= 0) {
-                alert('Số lượng phải lớn hơn 0.');
-                return;
-            }
-
-            const oldRow = selectedItemsBody.querySelector('tr[data-variant-id="' + variantId + '"]');
-            if (oldRow) {
-                const quantityField = oldRow.querySelector('input[name="quantities"]');
-                const quantityText = oldRow.querySelector('.quantity-text');
-                const newQuantity = Number(quantityField.value) + quantity;
-                quantityField.value = newQuantity;
-                quantityText.textContent = newQuantity;
-                variantSelect.value = '';
-                quantityInput.value = 1;
-                return;
-            }
-
-            const row = document.createElement('tr');
-            row.className = 'selected-item-row';
-            row.dataset.variantId = variantId;
-            row.innerHTML =
-                '<td>#' + variantId + '<input type="hidden" name="variantIds" value="' + variantId + '"></td>' +
-                '<td>' + (option.dataset.name || '-') + '</td>' +
-                '<td>' + (option.dataset.color || '-') + '</td>' +
-                '<td>' + (option.dataset.size || '-') + '</td>' +
-                '<td>' + (option.dataset.stock || '0') + '</td>' +
-                '<td><span class="quantity-text">' + quantity + '</span><input type="hidden" name="quantities" value="' + quantity + '"></td>' +
-                '<td><button type="button" class="btn-remove-item"><i class="fa-solid fa-trash"></i></button></td>';
-
-            selectedItemsBody.appendChild(row);
-            variantSelect.value = '';
-            quantityInput.value = 1;
-            showEmptyRowIfNeeded();
-        }
-
-        addItemBtn.addEventListener('click', addItem);
-
-        selectedItemsBody.addEventListener('click', (event) => {
-            const removeBtn = event.target.closest('.btn-remove-item');
-            if (removeBtn) {
-                removeBtn.closest('tr').remove();
-                showEmptyRowIfNeeded();
-            }
-        });
-
-        transactionForm.addEventListener('submit', (event) => {
-            if (!selectedItemsBody.querySelector('.selected-item-row')) {
-                event.preventDefault();
-                alert('Vui lòng thêm ít nhất một sản phẩm vào phiếu.');
-            }
-        });
-    })();
-</script>
+<div id="notifyBox" class="notify-box">
+    <div class="notify-content">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span id="notifyMessage"></span>
+    </div>
+</div>
+<script></script>window.transactionType = '${type}';</script>
+<script src="${pageContext.request.contextPath}/javaScript/inventory-transaction-form.js"></script
 </body>
 </html>

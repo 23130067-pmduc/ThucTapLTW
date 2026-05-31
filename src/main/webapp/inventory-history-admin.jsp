@@ -150,8 +150,9 @@
                                     <button type="button"
                                             class="history-action-btn complete js-open-status-modal"
                                             title="Hoàn thành phiếu"
-                                            data-id="${item.id}"
+                                            data-transaction-id="${item.id}"
                                             data-status="COMPLETED"
+                                            data-redirect="/inventory-history-admin"
                                             data-message="Bạn có chắc muốn hoàn thành phiếu ${item.code} không?">
                                         <i class="fa-solid fa-check"></i>
                                     </button>
@@ -159,8 +160,9 @@
                                     <button type="button"
                                             class="history-action-btn cancel js-open-status-modal"
                                             title="Hủy phiếu"
-                                            data-id="${item.id}"
+                                            data-transaction-id="${item.id}"
                                             data-status="CANCELLED"
+                                            data-redirect="/inventory-history-admin"
                                             data-message="Bạn có chắc muốn hủy phiếu ${item.code} không?">
                                         <i class="fa-solid fa-xmark"></i>
                                     </button>
@@ -232,14 +234,17 @@
         </div>
     </section>
 </div>
+
+
 <div id="statusModal" class="status-modal-overlay" aria-hidden="true">
     <div class="status-modal-box" role="dialog" aria-modal="true">
         <h3>Xác nhận thao tác</h3>
         <p id="statusModalMessage">Bạn có chắc muốn thực hiện thao tác này không?</p>
 
         <form method="post" action="${pageContext.request.contextPath}/inventory-transaction-status">
-            <input type="hidden" name="id" id="statusTransactionId">
+            <input type="hidden" name="transactionId" id="statusTransactionId">
             <input type="hidden" name="status" id="statusValue">
+            <input type="hidden" name="redirect" id="statusRedirect" value="/inventory-history-admin">
 
             <div class="status-modal-actions">
                 <button type="button" class="status-btn-cancel js-close-status-modal">Hủy</button>
@@ -249,36 +254,6 @@
     </div>
 </div>
 
-<script>
-    const statusModal = document.getElementById('statusModal');
-    const statusMessage = document.getElementById('statusModalMessage');
-    const statusTransactionId = document.getElementById('statusTransactionId');
-    const statusValue = document.getElementById('statusValue');
-
-    document.querySelectorAll('.js-open-status-modal').forEach(button => {
-        button.addEventListener('click', () => {
-            statusTransactionId.value = button.dataset.id;
-            statusValue.value = button.dataset.status;
-            statusMessage.textContent = button.dataset.message;
-
-            statusModal.classList.add('show');
-            statusModal.setAttribute('aria-hidden', 'false');
-        });
-    });
-
-    document.querySelectorAll('.js-close-status-modal').forEach(button => {
-        button.addEventListener('click', () => {
-            statusModal.classList.remove('show');
-            statusModal.setAttribute('aria-hidden', 'true');
-        });
-    });
-
-    statusModal.addEventListener('click', event => {
-        if (event.target === statusModal) {
-            statusModal.classList.remove('show');
-            statusModal.setAttribute('aria-hidden', 'true');
-        }
-    });
-</script>
+<script src="${pageContext.request.contextPath}/javaScript/inventory-status-modal.js"></script>
 </body>
 </html>
