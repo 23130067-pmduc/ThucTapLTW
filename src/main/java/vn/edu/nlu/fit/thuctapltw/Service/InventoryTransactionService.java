@@ -31,4 +31,8 @@ public class InventoryTransactionService {
     public int countPending() {
         return inventoryTransactionDao.countByStatus("PENDING");
     }
+
+    public InventoryTransaction getById(int id) {
+        return inventoryTransactionDao.getById(id);
+    }
 }

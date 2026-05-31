@@ -89,4 +89,27 @@ public class InventoryTransactionDao extends BaseDao {
                 .mapTo(int.class)
                 .one());
     }
+
+    public InventoryTransaction getById(int id) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT it.id,
+                       it.code,
+                       it.type,
+                       it.total_quantity,
+                       it.status,
+                       it.supplier_name,
+                       it.note,
+                       it.created_by,
+                       COALESCE(u.full_name, u.username, 'Chưa xác định') AS created_by_name,
+                       DATE_FORMAT(it.created_at, '%d/%m/%Y %H:%i') AS created_at_text
+                FROM inventory_transactions it
+                LEFT JOIN users u ON it.created_by = u.id
+                WHERE it.id = :id
+                """)
+                .bind("id", id)
+                .mapToBean(InventoryTransaction.class)
+                .findOne()
+                .orElse(null));
+    }
+
 }

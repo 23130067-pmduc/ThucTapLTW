@@ -1,0 +1,255 @@
+.inventory-detail-page {
+    background: #f5f7fb;
+}
+
+.inventory-detail-content .topbar h1 {
+    font-size: 26px;
+    color: #333;
+    font-weight: 700;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #f1f3f5;
+    color: #333;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    background: #e9ecef;
+    transform: translateX(-2px);
+}
+
+.detail-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.summary-card,
+.info-box,
+.detail-table-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.summary-card {
+    padding: 18px;
+}
+
+.summary-card .label {
+    display: block;
+    margin-bottom: 10px;
+    color: #666;
+    font-size: 14px;
+}
+
+.summary-card strong {
+    color: #A9C87D;
+    font-size: 24px;
+}
+
+.type-badge,
+.status-badge,
+.quantity-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-weight: 700;
+}
+
+.type-badge,
+.status-badge {
+    padding: 8px 12px;
+    font-size: 13px;
+}
+
+.type-import {
+    background: #e7f5ff;
+    color: #1c7ed6;
+}
+
+.type-export {
+    background: #fff4e6;
+    color: #f08c00;
+}
+
+.status-pending {
+    background: #fff3bf;
+    color: #f08c00;
+}
+
+.status-completed {
+    background: #ebfbee;
+    color: #2f9e44;
+}
+
+.status-cancelled {
+    background: #ffe3e3;
+    color: #e03131;
+}
+
+.detail-info-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.info-box {
+    padding: 20px;
+}
+
+.info-box h3 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: #222;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-row span,
+.note-text {
+    color: #666;
+}
+
+.info-row strong {
+    color: #222;
+    text-align: right;
+}
+
+.note-text {
+    margin: 0;
+    line-height: 1.7;
+}
+
+.detail-table-wrapper {
+    padding: 16px;
+}
+
+.table-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.table-title h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #222;
+}
+
+.table-title span {
+    color: #666;
+    font-size: 14px;
+}
+
+.detail-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.detail-table th,
+.detail-table td {
+    padding: 13px 14px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+    vertical-align: middle;
+}
+
+.detail-table th {
+    background: #f3f6fa;
+    font-weight: 700;
+}
+
+.detail-table tr:hover {
+    background: #f9fbff;
+}
+
+.product-thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    background: #fff;
+}
+
+.product-info strong {
+    display: block;
+    max-width: 320px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-info small {
+    display: block;
+    margin-top: 5px;
+    color: #777;
+}
+
+.quantity-badge {
+    min-width: 54px;
+    padding: 7px 12px;
+    font-size: 14px;
+}
+
+.quantity-import {
+    background: #ebfbee;
+    color: #2f9e44;
+}
+
+.quantity-export {
+    background: #fff4e6;
+    color: #f08c00;
+}
+
+.detail-empty {
+    text-align: center;
+    color: #777;
+    padding: 26px;
+}
+
+@media (max-width: 1100px) {
+    .detail-summary,
+    .detail-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-table-wrapper {
+        overflow-x: auto;
+    }
+}

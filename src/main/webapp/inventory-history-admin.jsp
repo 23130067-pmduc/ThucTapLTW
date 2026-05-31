@@ -96,12 +96,13 @@
                     <th>Trạng thái</th>
                     <th>Người tạo</th>
                     <th>Thời gian</th>
+                    <th>Hành động</th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:if test="${empty transactions}">
                     <tr>
-                        <td colspan="7" class="history-empty">Chưa có lịch sử nhập xuất kho</td>
+                        <td colspan="8" class="history-empty">Chưa có lịch sử nhập xuất kho</td>
                     </tr>
                 </c:if>
 
@@ -127,12 +128,36 @@
                         </td>
                         <td>${item.createdByName}</td>
                         <td>${item.createdAtText}</td>
+                        <td>
+                            <a href="${pageContext.request.contextPath}/inventory-history-detail?id=${item.id}"
+                               class="icon-btn view"
+                               title="Xem chi tiết">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                        </td>
                     </tr>
                 </c:forEach>
                 </tbody>
             </table>
 
             <c:if test="${totalPages > 1}">
+                <c:set var="startPage" value="${currentPage - 2}" />
+                <c:set var="endPage" value="${currentPage + 2}" />
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="startPage" value="1" />
+                    <c:set var="endPage" value="5" />
+                </c:if>
+
+                <c:if test="${endPage > totalPages}">
+                    <c:set var="endPage" value="${totalPages}" />
+                    <c:set var="startPage" value="${totalPages - 4}" />
+                </c:if>
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="startPage" value="1" />
+                </c:if>
+
                 <div class="pagination">
                     <c:if test="${currentPage > 1}">
                         <c:url var="prevUrl" value="/inventory-history-admin">
@@ -144,7 +169,7 @@
                         <a href="${prevUrl}" class="page-link">Trước</a>
                     </c:if>
 
-                    <c:forEach begin="1" end="${totalPages}" var="pageNumber">
+                    <c:forEach begin="${startPage}" end="${endPage}" var="pageNumber">
                         <c:choose>
                             <c:when test="${pageNumber == currentPage}">
                                 <span class="page-link active">${pageNumber}</span>
