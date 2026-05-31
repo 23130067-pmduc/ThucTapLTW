@@ -68,6 +68,10 @@
 
                 <a href="${pageContext.request.contextPath}/inventory-admin" class="btn-reset">Làm mới</a>
             </form>
+
+            <a href="${pageContext.request.contextPath}/inventory-history-admin" class="btn-history">
+                <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhập xuất
+            </a>
         </div>
 
         <div class="inventory-result-info">
@@ -155,6 +159,23 @@
             </table>
 
             <c:if test="${totalPages > 1}">
+                <c:set var="startPage" value="${currentPage - 2}" />
+                <c:set var="endPage" value="${currentPage + 2}" />
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="startPage" value="1" />
+                    <c:set var="endPage" value="5" />
+                </c:if>
+
+                <c:if test="${endPage > totalPages}">
+                    <c:set var="endPage" value="${totalPages}" />
+                    <c:set var="startPage" value="${totalPages - 4}" />
+                </c:if>
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="startPage" value="1" />
+                </c:if>
+
                 <div class="pagination">
                     <c:if test="${currentPage > 1}">
                         <c:url var="prevUrl" value="/inventory-admin">
@@ -162,23 +183,19 @@
                             <c:param name="keyword" value="${keyword}" />
                             <c:param name="stockStatus" value="${stockStatus}" />
                         </c:url>
-                        <a href="${prevUrl}" class="page-link">Trước</a>
+                        <a class="page-btn" href="${prevUrl}">Trước</a>
                     </c:if>
 
-                    <c:forEach begin="1" end="${totalPages}" var="pageNumber">
-                        <c:choose>
-                            <c:when test="${pageNumber == currentPage}">
-                                <span class="page-link active">${pageNumber}</span>
-                            </c:when>
-                            <c:otherwise>
-                                <c:url var="pageUrl" value="/inventory-admin">
-                                    <c:param name="page" value="${pageNumber}" />
-                                    <c:param name="keyword" value="${keyword}" />
-                                    <c:param name="stockStatus" value="${stockStatus}" />
-                                </c:url>
-                                <a href="${pageUrl}" class="page-link">${pageNumber}</a>
-                            </c:otherwise>
-                        </c:choose>
+                    <c:forEach begin="${startPage}" end="${endPage}" var="i">
+                        <c:url var="pageUrl" value="/inventory-admin">
+                            <c:param name="page" value="${i}" />
+                            <c:param name="keyword" value="${keyword}" />
+                            <c:param name="stockStatus" value="${stockStatus}" />
+                        </c:url>
+
+                        <a class="page-btn ${i == currentPage ? 'active' : ''}" href="${pageUrl}">
+                                ${i}
+                        </a>
                     </c:forEach>
 
                     <c:if test="${currentPage < totalPages}">
@@ -187,7 +204,7 @@
                             <c:param name="keyword" value="${keyword}" />
                             <c:param name="stockStatus" value="${stockStatus}" />
                         </c:url>
-                        <a href="${nextUrl}" class="page-link">Sau</a>
+                        <a class="page-btn" href="${nextUrl}">Sau</a>
                     </c:if>
                 </div>
             </c:if>
