@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -62,7 +63,21 @@
                     <small class="form-note">Hỗ trợ file jpg, jpeg, png, webp.</small>
                     <c:if test="${not empty news.thumbnail}">
                         <div class="preview">
-                            <img src="${pageContext.request.contextPath}/${news.thumbnail}" alt="Thumbnail hiện tại">
+                            <c:set var="thumbUrl" value="${news.thumbnail}" />
+                                    <c:choose>
+                                        <c:when test="${empty thumbUrl}">
+                                            <img src="${pageContext.request.contextPath}/img/gau.png" alt="Thumbnail hiện tại">
+                                        </c:when>
+                                        <c:when test="${fn:startsWith(thumbUrl, 'http://') || fn:startsWith(thumbUrl, 'https://')}">
+                                            <img src="${thumbUrl}" alt="Thumbnail hiện tại">
+                                        </c:when>
+                                        <c:when test="${fn:startsWith(thumbUrl, '/')}">
+                                            <img src="${pageContext.request.contextPath}${thumbUrl}" alt="Thumbnail hiện tại">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="${pageContext.request.contextPath}/${thumbUrl}" alt="Thumbnail hiện tại">
+                                        </c:otherwise>
+                                    </c:choose>
                         </div>
                     </c:if>
                 </div>

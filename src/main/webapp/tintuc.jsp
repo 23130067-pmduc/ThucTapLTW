@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <%
     request.setAttribute("pageTitle", "Tin tức - SunnyBear");
@@ -23,7 +24,21 @@
                 <c:forEach var="news" items="${newsList}">
                     <div class="newsItem">
                         <a href="${pageContext.request.contextPath}/tin-tuc?slug=${news.slug}">
-                            <img src="${pageContext.request.contextPath}/${news.thumbnail}" alt="${news.title}">
+                            <c:set var="thumbUrl" value="${news.thumbnail}" />
+                                    <c:choose>
+                                        <c:when test="${empty thumbUrl}">
+                                            <img src="${pageContext.request.contextPath}/img/gau.png" alt="${news.title}">
+                                        </c:when>
+                                        <c:when test="${fn:startsWith(thumbUrl, 'http://') || fn:startsWith(thumbUrl, 'https://')}">
+                                            <img src="${thumbUrl}" alt="${news.title}">
+                                        </c:when>
+                                        <c:when test="${fn:startsWith(thumbUrl, '/')}">
+                                            <img src="${pageContext.request.contextPath}${thumbUrl}" alt="${news.title}">
+                                        </c:when>
+                                        <c:otherwise>
+                                            <img src="${pageContext.request.contextPath}/${thumbUrl}" alt="${news.title}">
+                                        </c:otherwise>
+                                    </c:choose>
                         </a>
 
                         <div class="news-content">

@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -115,7 +116,21 @@
                         <td>#${item.variantId}</td>
                         <td>
                             <div class="inventory-product-info">
-                                <img src="${pageContext.request.contextPath}/${item.thumbnail}" alt="${item.productName}">
+                                <c:set var="thumbUrl" value="${item.thumbnail}" />
+                                <c:choose>
+                                    <c:when test="${empty thumbUrl}">
+                                        <img src="${pageContext.request.contextPath}/img/gau.png" alt="${item.productName}">
+                                    </c:when>
+                                    <c:when test="${fn:startsWith(thumbUrl, 'http://') || fn:startsWith(thumbUrl, 'https://')}">
+                                        <img src="${thumbUrl}" alt="${item.productName}">
+                                    </c:when>
+                                    <c:when test="${fn:startsWith(thumbUrl, '/')}">
+                                        <img src="${pageContext.request.contextPath}${thumbUrl}" alt="${item.productName}">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="${pageContext.request.contextPath}/${thumbUrl}" alt="${item.productName}">
+                                    </c:otherwise>
+                                </c:choose>
                                 <div>
                                     <strong>${item.productName}</strong>
                                     <small>Mã SP: #${item.productId}</small>

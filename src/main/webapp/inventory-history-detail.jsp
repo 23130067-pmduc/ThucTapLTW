@@ -1,5 +1,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -176,7 +177,21 @@
                 <c:forEach items="${details}" var="detail">
                     <tr>
                         <td>
-                            <img src="${pageContext.request.contextPath}/${detail.thumbnail}" alt="${detail.productName}" class="product-thumb">
+                            <c:set var="thumbUrl" value="${detail.thumbnail}" />
+                            <c:choose>
+                                <c:when test="${empty thumbUrl}">
+                                    <img src="${pageContext.request.contextPath}/img/gau.png" alt="${detail.productName}" class="product-thumb">
+                                </c:when>
+                                <c:when test="${fn:startsWith(thumbUrl, 'http://') || fn:startsWith(thumbUrl, 'https://')}">
+                                    <img src="${thumbUrl}" alt="${detail.productName}" class="product-thumb">
+                                </c:when>
+                                <c:when test="${fn:startsWith(thumbUrl, '/')}">
+                                    <img src="${pageContext.request.contextPath}${thumbUrl}" alt="${detail.productName}" class="product-thumb">
+                                </c:when>
+                                <c:otherwise>
+                                    <img src="${pageContext.request.contextPath}/${thumbUrl}" alt="${detail.productName}" class="product-thumb">
+                                </c:otherwise>
+                            </c:choose>
                         </td>
                         <td>
                             <div class="product-info">

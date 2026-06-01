@@ -86,8 +86,21 @@
             <c:forEach items="${items}" var="i">
                 <tr>
                     <td>
-                        <img src="${pageContext.request.contextPath}/${i.thumbnail}" class="order-detail-thumb"
-                             onerror="this.src='${pageContext.request.contextPath}/img/no-image.png'">
+                        <c:set var="thumbUrl" value="${i.thumbnail}" />
+                        <c:choose>
+                            <c:when test="${empty thumbUrl}">
+                                <img src="${pageContext.request.contextPath}/img/gau.png" class="order-detail-thumb" onerror="this.src='${pageContext.request.contextPath}/img/gau.png'">
+                            </c:when>
+                            <c:when test="${fn:startsWith(thumbUrl, 'http://') || fn:startsWith(thumbUrl, 'https://')}">
+                                <img src="${thumbUrl}" class="order-detail-thumb" onerror="this.src='${pageContext.request.contextPath}/img/gau.png'">
+                            </c:when>
+                            <c:when test="${fn:startsWith(thumbUrl, '/')}">
+                                <img src="${pageContext.request.contextPath}${thumbUrl}" class="order-detail-thumb" onerror="this.src='${pageContext.request.contextPath}/img/gau.png'">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="${pageContext.request.contextPath}/${thumbUrl}" class="order-detail-thumb" onerror="this.src='${pageContext.request.contextPath}/img/gau.png'">
+                            </c:otherwise>
+                        </c:choose>
                     </td>
                     <td>${i.productName}</td>
                     <td>${i.size}</td>

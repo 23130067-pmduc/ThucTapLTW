@@ -81,6 +81,40 @@ public class NewsDao extends BaseDao {
         );
     }
 
+    public List<News> getAllNewsPaginated(int page, int pageSize) {
+        int offset = (page - 1) * pageSize;
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT * FROM news ORDER BY created_at DESC LIMIT :limit OFFSET :offset")
+                        .bind("limit", pageSize)
+                        .bind("offset", offset)
+                        .mapToBean(News.class)
+                        .list()
+        );
+    }
+
+    public List<News> searchAllNewsPaginated(String keyword, int page, int pageSize) {
+        String pattern = "%" + keyword + "%";
+        int offset = (page - 1) * pageSize;
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT * FROM news WHERE title LIKE :keyword OR short_description LIKE :keyword ORDER BY created_at DESC LIMIT :limit OFFSET :offset")
+                        .bind("keyword", pattern)
+                        .bind("limit", pageSize)
+                        .bind("offset", offset)
+                        .mapToBean(News.class)
+                        .list()
+        );
+    }
+
+    public int countSearchAllNews(String keyword) {
+        String pattern = "%" + keyword + "%";
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("SELECT COUNT(*) FROM news WHERE title LIKE :keyword OR short_description LIKE :keyword")
+                        .bind("keyword", pattern)
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+
     public List<News> getNewsByAuthor(int authorId) {
         return getJdbi().withHandle(handle ->
                 handle.createQuery("SELECT * FROM news WHERE author_id = :authorId AND status = 1 ORDER BY created_at DESC")

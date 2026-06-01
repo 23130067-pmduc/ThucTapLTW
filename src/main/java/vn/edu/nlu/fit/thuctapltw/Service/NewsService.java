@@ -44,6 +44,31 @@ public class NewsService {
         return newsDao.searchAllNews(keyword.trim());
     }
 
+    public List<News> getAdminNewsPage(String keyword, int page, int pageSize) {
+        if (page < 1) {
+            page = 1;
+        }
+        if (keyword == null || keyword.isBlank()) {
+            return newsDao.getAllNewsPaginated(page, pageSize);
+        }
+        return newsDao.searchAllNewsPaginated(keyword.trim(), page, pageSize);
+    }
+
+    public int countAdminNews(String keyword) {
+        if (keyword == null || keyword.isBlank()) {
+            return newsDao.countAllNews();
+        }
+        return newsDao.countSearchAllNews(keyword.trim());
+    }
+
+    public int getAdminTotalPages(String keyword, int pageSize) {
+        int totalItems = countAdminNews(keyword);
+        if (totalItems == 0) {
+            return 1;
+        }
+        return (int) Math.ceil((double) totalItems / pageSize);
+    }
+
     public Optional<News> getAdminNewsById(int id) {
         return newsDao.getNewsById(id);
     }

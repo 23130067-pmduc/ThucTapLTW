@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ taglib uri="jakarta.tags.fmt" prefix="fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -43,7 +44,21 @@
         </p>
 
         <div class="article-thumbnail">
-            <img src="${pageContext.request.contextPath}/${news.thumbnail}" alt="${news.title}">
+            <c:set var="newsThumbUrl" value="${news.thumbnail}" />
+            <c:choose>
+                <c:when test="${empty newsThumbUrl}">
+                    <img src="${pageContext.request.contextPath}/img/gau.png" alt="${news.title}">
+                </c:when>
+                <c:when test="${fn:startsWith(newsThumbUrl, 'http://') || fn:startsWith(newsThumbUrl, 'https://')}">
+                    <img src="${newsThumbUrl}" alt="${news.title}">
+                </c:when>
+                <c:when test="${fn:startsWith(newsThumbUrl, '/')}">
+                    <img src="${pageContext.request.contextPath}${newsThumbUrl}" alt="${news.title}">
+                </c:when>
+                <c:otherwise>
+                    <img src="${pageContext.request.contextPath}/${newsThumbUrl}" alt="${news.title}">
+                </c:otherwise>
+            </c:choose>
         </div>
 
         <p class="article-lead">${news.shortDescription}</p>
@@ -63,7 +78,21 @@
                     <c:if test="${status.index < 2}">
                         <div class="related-item">
                             <a href="${pageContext.request.contextPath}/tin-tuc?slug=${related.slug}">
-                                <img src="${pageContext.request.contextPath}/${related.thumbnail}" alt="${related.title}">
+                                <c:set var="relatedThumbUrl" value="${related.thumbnail}" />
+                                <c:choose>
+                                    <c:when test="${empty relatedThumbUrl}">
+                                        <img src="${pageContext.request.contextPath}/img/gau.png" alt="${related.title}">
+                                    </c:when>
+                                    <c:when test="${fn:startsWith(relatedThumbUrl, 'http://') || fn:startsWith(relatedThumbUrl, 'https://')}">
+                                        <img src="${relatedThumbUrl}" alt="${related.title}">
+                                    </c:when>
+                                    <c:when test="${fn:startsWith(relatedThumbUrl, '/')}">
+                                        <img src="${pageContext.request.contextPath}${relatedThumbUrl}" alt="${related.title}">
+                                    </c:when>
+                                    <c:otherwise>
+                                        <img src="${pageContext.request.contextPath}/${relatedThumbUrl}" alt="${related.title}">
+                                    </c:otherwise>
+                                </c:choose>
                                 <div class="related-info">
                                     <h4>${related.title}</h4>
                                     <p class="related-date">

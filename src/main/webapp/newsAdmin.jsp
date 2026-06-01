@@ -65,6 +65,10 @@
             </a>
         </div>
 
+        <div class="news-result-info">
+            Hiển thị ${newsList.size()} / ${totalItems} bài viết
+        </div>
+
         <div class="news-table-wrapper">
             <table class="news-table">
                 <thead>
@@ -129,6 +133,58 @@
                 </c:choose>
                 </tbody>
             </table>
+
+            <c:if test="${totalPages > 1}">
+                <c:set var="startPage" value="${currentPage - 2}" />
+                <c:set var="endPage" value="${currentPage + 2}" />
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="startPage" value="1" />
+                    <c:set var="endPage" value="5" />
+                </c:if>
+
+                <c:if test="${endPage > totalPages}">
+                    <c:set var="endPage" value="${totalPages}" />
+                    <c:set var="startPage" value="${totalPages - 4}" />
+                </c:if>
+
+                <c:if test="${startPage < 1}">
+                    <c:set var="startPage" value="1" />
+                </c:if>
+
+                <div class="pagination">
+                    <c:if test="${currentPage > 1}">
+                        <c:url var="prevUrl" value="/news-admin">
+                            <c:param name="page" value="${currentPage - 1}" />
+                            <c:param name="keyword" value="${keyword}" />
+                        </c:url>
+                        <a href="${prevUrl}" class="page-link">Trước</a>
+                    </c:if>
+
+                    <c:forEach begin="${startPage}" end="${endPage}" var="pageNumber">
+                        <c:choose>
+                            <c:when test="${pageNumber == currentPage}">
+                                <span class="page-link active">${pageNumber}</span>
+                            </c:when>
+                            <c:otherwise>
+                                <c:url var="pageUrl" value="/news-admin">
+                                    <c:param name="page" value="${pageNumber}" />
+                                    <c:param name="keyword" value="${keyword}" />
+                                </c:url>
+                                <a href="${pageUrl}" class="page-link">${pageNumber}</a>
+                            </c:otherwise>
+                        </c:choose>
+                    </c:forEach>
+
+                    <c:if test="${currentPage < totalPages}">
+                        <c:url var="nextUrl" value="/news-admin">
+                            <c:param name="page" value="${currentPage + 1}" />
+                            <c:param name="keyword" value="${keyword}" />
+                        </c:url>
+                        <a href="${nextUrl}" class="page-link">Sau</a>
+                    </c:if>
+                </div>
+            </c:if>
         </div>
     </section>
 </div>

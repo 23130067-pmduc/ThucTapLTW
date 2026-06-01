@@ -120,7 +120,7 @@
                             <div class="order-product-thumb">
                                 <img src="${not empty i.thumbnail ? i.thumbnail : imgFallback}"
                                      alt="${i.productName}"
-                                     onerror="this.src='${pageContext.request.contextPath}/img/aox.webp'">
+                                     onerror="this.src='${pageContext.request.contextPath}/img/gau.png'">
                             </div>
                             <div class="order-product-info">
                                 <h4>${i.productName}</h4>

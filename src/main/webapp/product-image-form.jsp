@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -53,7 +54,18 @@
 
                 <c:if test="${mode != 'add' && image.imageUrl != null}">
                     <div class="image-preview">
-                        <img src="${pageContext.request.contextPath}/${image.imageUrl}" alt="Current Image" id="currentImage">
+                        <c:set var="imageUrl" value="${image.imageUrl}" />
+                        <c:choose>
+                            <c:when test="${fn:startsWith(imageUrl, 'http://') || fn:startsWith(imageUrl, 'https://')}">
+                                <img src="${imageUrl}" alt="Current Image" id="currentImage">
+                            </c:when>
+                            <c:when test="${fn:startsWith(imageUrl, '/')}">
+                                <img src="${pageContext.request.contextPath}${imageUrl}" alt="Current Image" id="currentImage">
+                            </c:when>
+                            <c:otherwise>
+                                <img src="${pageContext.request.contextPath}/${imageUrl}" alt="Current Image" id="currentImage">
+                            </c:otherwise>
+                        </c:choose>
                     </div>
                 </c:if>
 
