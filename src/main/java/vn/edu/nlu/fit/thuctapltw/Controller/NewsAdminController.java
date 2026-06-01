@@ -24,6 +24,7 @@ import java.util.UUID;
 @WebServlet(name = "NewsAdminServlet", value = "/news-admin")
 @MultipartConfig(maxFileSize = 10 * 1024 * 1024, maxRequestSize = 20 * 1024 * 1024)
 public class NewsAdminController extends HttpServlet {
+    private static final int PAGE_SIZE = 5;
     private NewsService newsService;
 
     @Override
@@ -56,11 +57,23 @@ public class NewsAdminController extends HttpServlet {
         }
 
         String keyword = safeTrim(request.getParameter("keyword"));
-        List<News> newsList = newsService.getAdminNews(keyword);
+        int currentPage = parsePage(request.getParameter("page"));
+        List<News> newsList = newsService.getAdminNewsPage(keyword, currentPage, PAGE_SIZE);
+        int totalItems = newsService.countAdminNews(keyword);
+        int totalPages = newsService.getAdminTotalPages(keyword, PAGE_SIZE);
         Map<String, Integer> stats = newsService.getAdminStats();
+
+        if (currentPage > totalPages && totalPages > 0) {
+            currentPage = totalPages;
+            newsList = newsService.getAdminNewsPage(keyword, currentPage, PAGE_SIZE);
+        }
 
         request.setAttribute("newsList", newsList);
         request.setAttribute("keyword", keyword == null ? "" : keyword);
+        request.setAttribute("currentPage", currentPage);
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("totalItems", totalItems);
+        request.setAttribute("pageSize", PAGE_SIZE);
         request.setAttribute("total", stats.getOrDefault("total", 0));
         request.setAttribute("totalActive", stats.getOrDefault("active", 0));
         request.setAttribute("totalHidden", stats.getOrDefault("hidden", 0));
@@ -183,6 +196,15 @@ public class NewsAdminController extends HttpServlet {
             }
         }
         return 1;
+    }
+
+    private int parsePage(String rawPage) {
+        try {
+            int page = Integer.parseInt(rawPage);
+            return Math.max(page, 1);
+        } catch (Exception e) {
+            return 1;
+        }
     }
 
     private int parseId(String rawId) {

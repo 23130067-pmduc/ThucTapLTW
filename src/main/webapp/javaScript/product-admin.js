@@ -7,7 +7,7 @@ function confirmDelete(productId, productName) {
 
 function handleImageError(img) {
     img.onerror = null;
-    img.src = 'img/no-image.png';
+    img.src = 'img/gau.png';
 }
 
 document.addEventListener('DOMContentLoaded', function () {

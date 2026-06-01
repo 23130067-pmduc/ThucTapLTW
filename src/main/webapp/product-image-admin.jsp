@@ -1,5 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -135,7 +136,18 @@
                                     <td>${status.index + 1}</td>
                                     <td>${img.id}</td>
                                     <td>
-                                        <img src="${pageContext.request.contextPath}/${img.imageUrl}" alt="Product Image" class="product-thumbnail">
+                                        <c:set var="imageUrl" value="${img.imageUrl}" />
+                                        <c:choose>
+                                            <c:when test="${fn:startsWith(imageUrl, 'http://') || fn:startsWith(imageUrl, 'https://')}">
+                                                <img src="${imageUrl}" alt="Product Image" class="product-thumbnail">
+                                            </c:when>
+                                            <c:when test="${fn:startsWith(imageUrl, '/')}">
+                                                <img src="${pageContext.request.contextPath}${imageUrl}" alt="Product Image" class="product-thumbnail">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="${pageContext.request.contextPath}/${imageUrl}" alt="Product Image" class="product-thumbnail">
+                                            </c:otherwise>
+                                        </c:choose>
                                     </td>
                                     <td>
                                         <c:choose>

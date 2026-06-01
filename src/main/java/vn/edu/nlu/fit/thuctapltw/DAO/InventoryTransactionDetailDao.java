@@ -24,7 +24,7 @@ public class InventoryTransactionDetailDao extends BaseDao {
                                ORDER BY pi.is_main DESC, pi.id ASC
                                LIMIT 1
                            ),
-                           'img/no-image.png'
+                           'img/gau.png'
                        ) AS thumbnail,
                        itd.quantity,
                        itd.note
