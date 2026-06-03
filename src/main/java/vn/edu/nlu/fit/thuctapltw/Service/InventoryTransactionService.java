@@ -3,6 +3,7 @@ package vn.edu.nlu.fit.thuctapltw.Service;
 import vn.edu.nlu.fit.thuctapltw.DAO.InventoryTransactionDao;
 import vn.edu.nlu.fit.thuctapltw.model.InventoryTransaction;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -79,8 +80,30 @@ public class InventoryTransactionService {
     }
 
 
-    public int createTransaction(String type, String supplierName, String note, Integer createdBy, List<Integer> variantIds, List<Integer> quantities) {
-        return inventoryTransactionDao.createTransaction(type, supplierName, note, createdBy, variantIds, quantities);
+    public Map<Integer, String> validateImportCost(List<Integer> variantIds, List<BigDecimal> unitCosts) {
+        Map<Integer, String> errors = new LinkedHashMap<>();
+
+        if (variantIds == null || unitCosts == null || variantIds.isEmpty()) {
+            return errors;
+        }
+
+        int length = Math.min(variantIds.size(), unitCosts.size());
+        for (int i = 0; i < length; i++) {
+            int variantId = variantIds.get(i);
+            BigDecimal unitCost = unitCosts.get(i);
+
+            if (variantId > 0 && (unitCost == null || unitCost.compareTo(BigDecimal.ZERO) <= 0)) {
+                errors.put(variantId, "Biến thể #" + variantId + " cần nhập giá nhập lớn hơn 0.");
+            }
+        }
+
+        return errors;
+    }
+
+
+    public int createTransaction(String type, String supplierName, String note, Integer createdBy,
+                                 List<Integer> variantIds, List<Integer> quantities, List<BigDecimal> unitCosts) {
+        return inventoryTransactionDao.createTransaction(type, supplierName, note, createdBy, variantIds, quantities, unitCosts);
     }
 
     public String updateStatusIfPending(int id, String status) {

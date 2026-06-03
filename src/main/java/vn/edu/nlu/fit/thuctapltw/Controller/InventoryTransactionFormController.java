@@ -12,6 +12,7 @@ import vn.edu.nlu.fit.thuctapltw.model.InventoryItem;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +33,7 @@ public class InventoryTransactionFormController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         String type = normalizeType(request.getParameter("type"));
-        List<InventoryItem> inventoryItems = inventoryService.searchInventory("", "", 2000, 0);
+        List<InventoryItem> inventoryItems = inventoryService.getInventoryItemsForTransaction();
 
         request.setAttribute("type", type);
         request.setAttribute("typeText", "IMPORT".equals(type) ? "Nhập kho" : "Xuất kho");
@@ -49,9 +50,11 @@ public class InventoryTransactionFormController extends HttpServlet {
         String note = getValue(request.getParameter("note"));
         String[] variantIdParams = request.getParameterValues("variantIds");
         String[] quantityParams = request.getParameterValues("quantities");
+        String[] unitCostParams = request.getParameterValues("unitCosts");
 
         List<Integer> variantIds = new ArrayList<>();
         List<Integer> quantities = new ArrayList<>();
+        List<BigDecimal> unitCosts = new ArrayList<>();
 
         if (variantIdParams != null && quantityParams != null) {
             int length = Math.min(variantIdParams.length, quantityParams.length);
@@ -62,6 +65,11 @@ public class InventoryTransactionFormController extends HttpServlet {
                 if (variantId > 0 && quantity > 0) {
                     variantIds.add(variantId);
                     quantities.add(quantity);
+
+                    if ("IMPORT".equals(type)) {
+                        String costValue = unitCostParams != null && i < unitCostParams.length ? unitCostParams[i] : "0";
+                        unitCosts.add(parsePositiveDecimal(costValue));
+                    }
                 }
             }
         }
@@ -71,12 +79,26 @@ public class InventoryTransactionFormController extends HttpServlet {
             return;
         }
 
+        if ("IMPORT".equals(type)) {
+            Map<Integer, String> costErrors = inventoryTransactionService.validateImportCost(variantIds, unitCosts);
+            if (!costErrors.isEmpty()) {
+                request.setAttribute("type", type);
+                request.setAttribute("typeText", "Nhập kho");
+                request.setAttribute("inventoryItems", inventoryService.getInventoryItemsForTransaction());
+                request.setAttribute("costErrors", costErrors.values());
+                request.setAttribute("supplierName", supplierName);
+                request.setAttribute("note", note);
+                request.getRequestDispatcher("/inventory-transaction-form.jsp").forward(request, response);
+                return;
+            }
+        }
+
         if ("EXPORT".equals(type)) {
             Map<Integer, String> stockErrors = inventoryTransactionService.validateExportStock(variantIds, quantities);
             if (!stockErrors.isEmpty()) {
                 request.setAttribute("type", type);
                 request.setAttribute("typeText", "Xuất kho");
-                request.setAttribute("inventoryItems", inventoryService.searchInventory("", "", 2000, 0));
+                request.setAttribute("inventoryItems", inventoryService.getInventoryItemsForTransaction());
                 request.setAttribute("stockErrors", stockErrors.values());
                 request.setAttribute("supplierName", supplierName);
                 request.setAttribute("note", note);
@@ -86,7 +108,7 @@ public class InventoryTransactionFormController extends HttpServlet {
         }
 
         Integer createdBy = getCurrentUserId(request);
-        int transactionId = inventoryTransactionService.createTransaction(type, supplierName, note, createdBy, variantIds, quantities);
+        int transactionId = inventoryTransactionService.createTransaction(type, supplierName, note, createdBy, variantIds, quantities, unitCosts);
 
         response.sendRedirect(request.getContextPath() + "/inventory-history-detail?id=" + transactionId + "&created=true");
     }
@@ -108,6 +130,18 @@ public class InventoryTransactionFormController extends HttpServlet {
             return Math.max(number, 0);
         } catch (Exception e) {
             return 0;
+        }
+    }
+
+    private BigDecimal parsePositiveDecimal(String value) {
+        try {
+            if (value == null || value.isBlank()) {
+                return BigDecimal.ZERO;
+            }
+            BigDecimal number = new BigDecimal(value.trim().replace(",", ""));
+            return number.compareTo(BigDecimal.ZERO) > 0 ? number : BigDecimal.ZERO;
+        } catch (Exception e) {
+            return BigDecimal.ZERO;
         }
     }
 

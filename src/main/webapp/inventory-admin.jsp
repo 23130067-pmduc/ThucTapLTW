@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -53,7 +53,7 @@
         <div class="inventory-toolbar">
             <form action="${pageContext.request.contextPath}/inventory-admin" method="get" class="inventory-search-form">
                 <input type="text" name="keyword" class="inventory-search-input"
-                       placeholder="Tìm tên sản phẩm, danh mục..."
+                       placeholder="Tìm ID biến thể, ID sản phẩm, tên, danh mục..."
                        value="${keyword}">
 
                 <select name="stockStatus" class="inventory-filter-select">
@@ -62,6 +62,10 @@
                     <option value="OUT" ${stockStatus == 'OUT' ? 'selected' : ''}>Hết hàng</option>
                     <option value="AVAILABLE" ${stockStatus == 'AVAILABLE' ? 'selected' : ''}>Còn nhiều hàng</option>
                 </select>
+
+
+                <input type="hidden" name="sortField" value="${sortField}">
+                <input type="hidden" name="sortDir" value="${sortDir}">
 
                 <button type="submit" class="btn-search">
                     <i class="fa-solid fa-magnifying-glass"></i> Tìm
@@ -79,6 +83,10 @@
                     <i class="fa-solid fa-circle-minus"></i> Xuất kho
                 </a>
 
+                <a href="${pageContext.request.contextPath}/inventory-batch-admin" class="btn-batch">
+                    <i class="fa-solid fa-layer-group"></i> Lô nhập hàng
+                </a>
+
                 <a href="${pageContext.request.contextPath}/inventory-history-admin" class="btn-history">
                     <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhập xuất
                 </a>
@@ -93,13 +101,81 @@
             <table class="inventory-table">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Sản phẩm</th>
+                    <th>
+                        <c:choose>
+                            <c:when test="${sortField == 'id' && sortDir == 'asc'}">
+                                <c:url var="idSortUrl" value="/inventory-admin">
+                                    <c:param name="page" value="1" />
+                                    <c:param name="keyword" value="${keyword}" />
+                                    <c:param name="stockStatus" value="${stockStatus}" />
+                                    <c:param name="sortField" value="id" />
+                                    <c:param name="sortDir" value="desc" />
+                                </c:url>
+                            </c:when>
+                            <c:when test="${sortField == 'id' && sortDir == 'desc'}">
+                                <c:url var="idSortUrl" value="/inventory-admin">
+                                    <c:param name="page" value="1" />
+                                    <c:param name="keyword" value="${keyword}" />
+                                    <c:param name="stockStatus" value="${stockStatus}" />
+                                </c:url>
+                            </c:when>
+                            <c:otherwise>
+                                <c:url var="idSortUrl" value="/inventory-admin">
+                                    <c:param name="page" value="1" />
+                                    <c:param name="keyword" value="${keyword}" />
+                                    <c:param name="stockStatus" value="${stockStatus}" />
+                                    <c:param name="sortField" value="id" />
+                                    <c:param name="sortDir" value="asc" />
+                                </c:url>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <a href="${idSortUrl}" class="sort-header">
+                            <span>ID</span>
+                            <i class="fa-solid ${sortField == 'id' ? (sortDir == 'asc' ? 'fa-arrow-up-short-wide' : 'fa-arrow-down-wide-short') : 'fa-sort'}"></i>
+                        </a>
+                    </th>
+                    <th>
+                        <c:choose>
+                            <c:when test="${sortField == 'productName' && sortDir == 'asc'}">
+                                <c:url var="nameSortUrl" value="/inventory-admin">
+                                    <c:param name="page" value="1" />
+                                    <c:param name="keyword" value="${keyword}" />
+                                    <c:param name="stockStatus" value="${stockStatus}" />
+                                    <c:param name="sortField" value="productName" />
+                                    <c:param name="sortDir" value="desc" />
+                                </c:url>
+                            </c:when>
+                            <c:when test="${sortField == 'productName' && sortDir == 'desc'}">
+                                <c:url var="nameSortUrl" value="/inventory-admin">
+                                    <c:param name="page" value="1" />
+                                    <c:param name="keyword" value="${keyword}" />
+                                    <c:param name="stockStatus" value="${stockStatus}" />
+                                </c:url>
+                            </c:when>
+                            <c:otherwise>
+                                <c:url var="nameSortUrl" value="/inventory-admin">
+                                    <c:param name="page" value="1" />
+                                    <c:param name="keyword" value="${keyword}" />
+                                    <c:param name="stockStatus" value="${stockStatus}" />
+                                    <c:param name="sortField" value="productName" />
+                                    <c:param name="sortDir" value="asc" />
+                                </c:url>
+                            </c:otherwise>
+                        </c:choose>
+
+                        <a href="${nameSortUrl}" class="sort-header">
+                            <span>Sản phẩm</span>
+                            <i class="fa-solid ${sortField == 'productName' ? (sortDir == 'asc' ? 'fa-arrow-up-a-z' : 'fa-arrow-down-z-a') : 'fa-sort'}"></i>
+                        </a>
+                    </th>
                     <th>Danh mục</th>
                     <th>Màu</th>
                     <th>Size</th>
-                    <th>Giá</th>
+                    <th>Giá bán</th>
+                    <th>Giá nhập gần nhất</th>
                     <th>Tồn kho</th>
+                    <th>Tồn theo lô</th>
                     <th>Trạng thái</th>
                     <th>Hành động</th>
                 </tr>
@@ -107,7 +183,7 @@
                 <tbody>
                 <c:if test="${empty inventoryItems}">
                     <tr>
-                        <td colspan="9" class="inventory-empty">Không có dữ liệu kho hàng</td>
+                        <td colspan="11" class="inventory-empty">Không có dữ liệu kho hàng</td>
                     </tr>
                 </c:if>
 
@@ -150,8 +226,23 @@
                                 </c:otherwise>
                             </c:choose>
                         </td>
+                        <td class="latest-cost-cell">
+                            <c:choose>
+                                <c:when test="${empty item.latestUnitCost}">-</c:when>
+                                <c:otherwise>
+                                    <strong><fmt:formatNumber value="${item.latestUnitCost}" pattern="#,#00" /> đ</strong>
+                                    <small>
+                                        <c:if test="${not empty item.latestImportDateText}">${item.latestImportDateText}</c:if>
+                                        <c:if test="${not empty item.latestBatchCode}"> - ${item.latestBatchCode}</c:if>
+                                    </small>
+                                </c:otherwise>
+                            </c:choose>
+                        </td>
                         <td>
                             <span class="stock-number ${item.stock == 0 ? 'stock-out' : (item.stock <= 10 ? 'stock-low' : 'stock-ok')}">${item.stock}</span>
+                        </td>
+                        <td>
+                            <span class="batch-stock-number ${item.remainingBatchQuantity == item.stock ? 'batch-stock-ok' : 'batch-stock-warning'}">${item.remainingBatchQuantity}</span>
                         </td>
                         <td>
                             <c:choose>
@@ -207,6 +298,8 @@
                             <c:param name="page" value="${currentPage - 1}" />
                             <c:param name="keyword" value="${keyword}" />
                             <c:param name="stockStatus" value="${stockStatus}" />
+                            <c:param name="sortField" value="${sortField}" />
+                            <c:param name="sortDir" value="${sortDir}" />
                         </c:url>
                         <a class="page-btn" href="${prevUrl}">Trước</a>
                     </c:if>
@@ -216,6 +309,8 @@
                             <c:param name="page" value="${i}" />
                             <c:param name="keyword" value="${keyword}" />
                             <c:param name="stockStatus" value="${stockStatus}" />
+                            <c:param name="sortField" value="${sortField}" />
+                            <c:param name="sortDir" value="${sortDir}" />
                         </c:url>
 
                         <a class="page-btn ${i == currentPage ? 'active' : ''}" href="${pageUrl}">
@@ -228,6 +323,8 @@
                             <c:param name="page" value="${currentPage + 1}" />
                             <c:param name="keyword" value="${keyword}" />
                             <c:param name="stockStatus" value="${stockStatus}" />
+                            <c:param name="sortField" value="${sortField}" />
+                            <c:param name="sortDir" value="${sortDir}" />
                         </c:url>
                         <a class="page-btn" href="${nextUrl}">Sau</a>
                     </c:if>

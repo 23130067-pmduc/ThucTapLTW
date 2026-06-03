@@ -8,8 +8,8 @@ import java.util.List;
 public class InventoryService {
     private final InventoryDao inventoryDao = new InventoryDao();
 
-    public List<InventoryItem> searchInventory(String keyword, String stockStatus, int limit, int offset) {
-        return inventoryDao.searchInventory(keyword, stockStatus, limit, offset);
+    public List<InventoryItem> searchInventory(String keyword, String stockStatus, String sortField, String sortDir, int limit, int offset) {
+        return inventoryDao.searchInventory(keyword, stockStatus, sortField, sortDir, limit, offset);
     }
 
     public int countInventoryByFilter(String keyword, String stockStatus) {
@@ -30,5 +30,9 @@ public class InventoryService {
 
     public int sumStock() {
         return inventoryDao.sumStock();
+    }
+
+    public List<InventoryItem> getInventoryItemsForTransaction() {
+        return inventoryDao.getInventoryItemsForTransaction();
     }
 }

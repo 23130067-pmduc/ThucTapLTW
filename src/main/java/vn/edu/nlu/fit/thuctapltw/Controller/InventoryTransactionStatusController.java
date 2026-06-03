@@ -48,6 +48,8 @@ public class InventoryTransactionStatusController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + redirect + appendParam(redirect, "success=status_updated"));
         } else if ("INSUFFICIENT_STOCK".equals(result)) {
             response.sendRedirect(request.getContextPath() + redirect + appendParam(redirect, "error=insufficient_stock"));
+        } else if ("MISSING_UNIT_COST".equals(result)) {
+            response.sendRedirect(request.getContextPath() + redirect + appendParam(redirect, "error=missing_unit_cost"));
         } else if ("ALREADY_PROCESSED".equals(result)) {
             response.sendRedirect(request.getContextPath() + redirect + appendParam(redirect, "error=already_processed"));
         } else {

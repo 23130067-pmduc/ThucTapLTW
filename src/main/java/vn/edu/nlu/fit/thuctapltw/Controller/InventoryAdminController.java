@@ -26,6 +26,18 @@ public class InventoryAdminController extends HttpServlet {
 
         String keyword = getValue(request.getParameter("keyword"));
         String stockStatus = getValue(request.getParameter("stockStatus"));
+        String sortField = getValue(request.getParameter("sortField"));
+        String sortDir = getValue(request.getParameter("sortDir"));
+
+        if (!"id".equals(sortField) && !"productName".equals(sortField)) {
+            sortField = "";
+        }
+
+        if (!"asc".equalsIgnoreCase(sortDir) && !"desc".equalsIgnoreCase(sortDir)) {
+            sortDir = "";
+        } else {
+            sortDir = sortDir.toLowerCase();
+        }
 
         int pageSize = 20;
         int currentPage = parsePage(request.getParameter("page"));
@@ -42,11 +54,13 @@ public class InventoryAdminController extends HttpServlet {
         }
 
         int offset = (currentPage - 1) * pageSize;
-        List<InventoryItem> inventoryItems = inventoryService.searchInventory(keyword, stockStatus, pageSize, offset);
+        List<InventoryItem> inventoryItems = inventoryService.searchInventory(keyword, stockStatus, sortField, sortDir, pageSize, offset);
 
         request.setAttribute("inventoryItems", inventoryItems);
         request.setAttribute("keyword", keyword);
         request.setAttribute("stockStatus", stockStatus);
+        request.setAttribute("sortField", sortField);
+        request.setAttribute("sortDir", sortDir);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("pageSize", pageSize);
