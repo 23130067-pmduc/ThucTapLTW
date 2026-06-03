@@ -61,18 +61,22 @@ public class InventoryTransactionService {
             return errors;
         }
 
-        Map<Integer, Integer> stockMap = inventoryTransactionDao.getVariantStockMap(
-                requestedQuantityMap.keySet().stream().toList()
-        );
+        List<Integer> ids = requestedQuantityMap.keySet().stream().toList();
+        Map<Integer, Integer> stockMap = inventoryTransactionDao.getVariantStockMap(ids);
+        Map<Integer, Integer> availableBatchQuantityMap = inventoryTransactionDao.getAvailableBatchQuantityMap(ids);
 
         for (Map.Entry<Integer, Integer> entry : requestedQuantityMap.entrySet()) {
             int variantId = entry.getKey();
             int requestedQuantity = entry.getValue();
             int currentStock = stockMap.getOrDefault(variantId, 0);
+            int availableBatchQuantity = availableBatchQuantityMap.getOrDefault(variantId, 0);
 
             if (requestedQuantity > currentStock) {
                 errors.put(variantId, "Biến thể #" + variantId + " chỉ còn " + currentStock
                         + " sản phẩm, không thể xuất " + requestedQuantity + " sản phẩm.");
+            } else if (requestedQuantity > availableBatchQuantity) {
+                errors.put(variantId, "Biến thể #" + variantId + " chỉ còn " + availableBatchQuantity
+                        + " sản phẩm có lô nhập hợp lệ, không thể xuất " + requestedQuantity + " sản phẩm theo FIFO.");
             }
         }
 

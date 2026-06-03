@@ -135,6 +135,29 @@ public class InventoryTransactionDao extends BaseDao {
     }
 
 
+    public Map<Integer, Integer> getAvailableBatchQuantityMap(List<Integer> variantIds) {
+        if (variantIds == null || variantIds.isEmpty()) {
+            return Map.of();
+        }
+
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT product_variant_id, CAST(COALESCE(SUM(remaining_quantity), 0) AS SIGNED) AS available_quantity
+                FROM inventory_batches
+                WHERE product_variant_id IN (<variantIds>)
+                  AND remaining_quantity > 0
+                GROUP BY product_variant_id
+                """)
+                .bindList("variantIds", variantIds)
+                .mapToMap()
+                .list()
+                .stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        row -> ((Number) row.get("product_variant_id")).intValue(),
+                        row -> ((Number) row.get("available_quantity")).intValue()
+                )));
+    }
+
+
     public int createTransaction(String type, String supplierName, String note, Integer createdBy,
                                  List<Integer> variantIds, List<Integer> quantities, List<BigDecimal> unitCosts) {
         int totalQuantity = quantities.stream().mapToInt(Integer::intValue).sum();
@@ -253,11 +276,113 @@ public class InventoryTransactionDao extends BaseDao {
                     if (currentStock == null || currentStock < quantity) {
                         return "INSUFFICIENT_STOCK";
                     }
+
+                    Integer availableBatchQuantity = handle.createQuery("""
+                            SELECT CAST(COALESCE(SUM(remaining_quantity), 0) AS SIGNED)
+                            FROM inventory_batches
+                            WHERE product_variant_id = :variantId
+                              AND remaining_quantity > 0
+                            """)
+                            .bind("variantId", variantId)
+                            .mapTo(Integer.class)
+                            .one();
+
+                    if (availableBatchQuantity == null || availableBatchQuantity < quantity) {
+                        return "INSUFFICIENT_BATCH_STOCK";
+                    }
                 }
 
                 for (Map<String, Object> detail : details) {
+                    int detailId = ((Number) detail.get("id")).intValue();
                     int variantId = ((Number) detail.get("product_variant_id")).intValue();
                     int quantity = ((Number) detail.get("quantity")).intValue();
+                    int remainingToExport = quantity;
+                    BigDecimal totalCost = BigDecimal.ZERO;
+
+                    List<Map<String, Object>> batches = handle.createQuery("""
+                            SELECT id, remaining_quantity, unit_cost
+                            FROM inventory_batches
+                            WHERE product_variant_id = :variantId
+                              AND remaining_quantity > 0
+                            ORDER BY created_at ASC, id ASC
+                            FOR UPDATE
+                            """)
+                            .bind("variantId", variantId)
+                            .mapToMap()
+                            .list();
+
+                    for (Map<String, Object> batch : batches) {
+                        if (remainingToExport <= 0) {
+                            break;
+                        }
+
+                        int batchId = ((Number) batch.get("id")).intValue();
+                        int batchRemainingQuantity = ((Number) batch.get("remaining_quantity")).intValue();
+                        BigDecimal batchUnitCost = (BigDecimal) batch.get("unit_cost");
+                        int usedQuantity = Math.min(remainingToExport, batchRemainingQuantity);
+                        BigDecimal usedTotalCost = batchUnitCost.multiply(BigDecimal.valueOf(usedQuantity));
+
+                        handle.createUpdate("""
+                                UPDATE inventory_batches
+                                SET remaining_quantity = remaining_quantity - :usedQuantity,
+                                    updated_at = NOW()
+                                WHERE id = :batchId
+                                  AND remaining_quantity >= :usedQuantity
+                                """)
+                                .bind("usedQuantity", usedQuantity)
+                                .bind("batchId", batchId)
+                                .execute();
+
+                        handle.createUpdate("""
+                                INSERT INTO inventory_batch_usages(
+                                    transaction_id,
+                                    transaction_detail_id,
+                                    batch_id,
+                                    product_variant_id,
+                                    quantity,
+                                    unit_cost,
+                                    total_cost,
+                                    created_at
+                                ) VALUES (
+                                    :transactionId,
+                                    :transactionDetailId,
+                                    :batchId,
+                                    :productVariantId,
+                                    :quantity,
+                                    :unitCost,
+                                    :totalCost,
+                                    NOW()
+                                )
+                                """)
+                                .bind("transactionId", id)
+                                .bind("transactionDetailId", detailId)
+                                .bind("batchId", batchId)
+                                .bind("productVariantId", variantId)
+                                .bind("quantity", usedQuantity)
+                                .bind("unitCost", batchUnitCost)
+                                .bind("totalCost", usedTotalCost)
+                                .execute();
+
+                        totalCost = totalCost.add(usedTotalCost);
+                        remainingToExport -= usedQuantity;
+                    }
+
+                    if (remainingToExport > 0) {
+                        return "INSUFFICIENT_BATCH_STOCK";
+                    }
+
+                    BigDecimal averageCost = quantity > 0
+                            ? totalCost.divide(BigDecimal.valueOf(quantity), 2, java.math.RoundingMode.HALF_UP)
+                            : BigDecimal.ZERO;
+
+                    handle.createUpdate("""
+                            UPDATE inventory_transaction_details
+                            SET unit_cost = :averageCost
+                            WHERE id = :detailId
+                            """)
+                            .bind("averageCost", averageCost)
+                            .bind("detailId", detailId)
+                            .execute();
 
                     handle.createUpdate("""
                             UPDATE product_variants
@@ -267,43 +392,6 @@ public class InventoryTransactionDao extends BaseDao {
                             .bind("quantity", quantity)
                             .bind("variantId", variantId)
                             .execute();
-
-                    int quantityToConsume = quantity;
-                    List<Map<String, Object>> batches = handle.createQuery("""
-                            SELECT id, remaining_quantity
-                            FROM inventory_batches
-                            WHERE product_variant_id = :variantId
-                              AND remaining_quantity > 0
-                            ORDER BY COALESCE(imported_at, created_at) ASC, id ASC
-                            FOR UPDATE
-                            """)
-                            .bind("variantId", variantId)
-                            .mapToMap()
-                            .list();
-
-                    for (Map<String, Object> batch : batches) {
-                        if (quantityToConsume <= 0) {
-                            break;
-                        }
-
-                        int batchId = ((Number) batch.get("id")).intValue();
-                        int remainingQuantity = ((Number) batch.get("remaining_quantity")).intValue();
-                        int usedQuantity = Math.min(quantityToConsume, remainingQuantity);
-
-                        int newRemainingQuantity = remainingQuantity - usedQuantity;
-                        handle.createUpdate("""
-                                UPDATE inventory_batches
-                                SET remaining_quantity = :newRemainingQuantity,
-                                    status = CASE WHEN :newRemainingQuantity <= 0 THEN 'SOLD_OUT' ELSE status END,
-                                    updated_at = NOW()
-                                WHERE id = :batchId
-                                """)
-                                .bind("newRemainingQuantity", newRemainingQuantity)
-                                .bind("batchId", batchId)
-                                .execute();
-
-                        quantityToConsume -= usedQuantity;
-                    }
                 }
             } else if ("IMPORT".equals(transaction.getType())) {
                 for (Map<String, Object> detail : details) {
@@ -337,8 +425,6 @@ public class InventoryTransactionDao extends BaseDao {
                                 import_quantity,
                                 remaining_quantity,
                                 unit_cost,
-                                status,
-                                imported_at,
                                 created_at
                             ) VALUES (
                                 :batchCode,
@@ -348,8 +434,6 @@ public class InventoryTransactionDao extends BaseDao {
                                 :importQuantity,
                                 :remainingQuantity,
                                 :unitCost,
-                                'ACTIVE',
-                                NOW(),
                                 NOW()
                             )
                             """)
