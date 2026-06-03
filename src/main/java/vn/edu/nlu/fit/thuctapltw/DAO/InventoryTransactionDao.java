@@ -2,6 +2,7 @@ package vn.edu.nlu.fit.thuctapltw.DAO;
 
 import vn.edu.nlu.fit.thuctapltw.model.InventoryTransaction;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -134,7 +135,8 @@ public class InventoryTransactionDao extends BaseDao {
     }
 
 
-    public int createTransaction(String type, String supplierName, String note, Integer createdBy, List<Integer> variantIds, List<Integer> quantities) {
+    public int createTransaction(String type, String supplierName, String note, Integer createdBy,
+                                 List<Integer> variantIds, List<Integer> quantities, List<BigDecimal> unitCosts) {
         int totalQuantity = quantities.stream().mapToInt(Integer::intValue).sum();
         String prefix = "IMPORT".equals(type) ? "PN" : "PX";
 
@@ -163,13 +165,19 @@ public class InventoryTransactionDao extends BaseDao {
                     .execute();
 
             for (int i = 0; i < variantIds.size(); i++) {
+                BigDecimal unitCost = BigDecimal.ZERO;
+                if ("IMPORT".equals(type) && unitCosts != null && i < unitCosts.size() && unitCosts.get(i) != null) {
+                    unitCost = unitCosts.get(i);
+                }
+
                 handle.createUpdate("""
-                        INSERT INTO inventory_transaction_details(transaction_id, product_variant_id, quantity, note)
-                        VALUES(:transactionId, :productVariantId, :quantity, NULL)
+                        INSERT INTO inventory_transaction_details(transaction_id, product_variant_id, quantity, unit_cost, note)
+                        VALUES(:transactionId, :productVariantId, :quantity, :unitCost, NULL)
                         """)
                         .bind("transactionId", transactionId)
                         .bind("productVariantId", variantIds.get(i))
                         .bind("quantity", quantities.get(i))
+                        .bind("unitCost", unitCost)
                         .execute();
             }
 
@@ -177,10 +185,11 @@ public class InventoryTransactionDao extends BaseDao {
         });
     }
 
+
     public String updateStatusIfPending(int id, String status) {
         return getJdbi().inTransaction(handle -> {
             InventoryTransaction transaction = handle.createQuery("""
-                    SELECT id, type, status
+                    SELECT id, code, type, status
                     FROM inventory_transactions
                     WHERE id = :id
                     FOR UPDATE
@@ -217,7 +226,7 @@ public class InventoryTransactionDao extends BaseDao {
             }
 
             List<Map<String, Object>> details = handle.createQuery("""
-                    SELECT product_variant_id, quantity
+                    SELECT id, product_variant_id, quantity, unit_cost
                     FROM inventory_transaction_details
                     WHERE transaction_id = :transactionId
                     """)
@@ -258,11 +267,56 @@ public class InventoryTransactionDao extends BaseDao {
                             .bind("quantity", quantity)
                             .bind("variantId", variantId)
                             .execute();
+
+                    int quantityToConsume = quantity;
+                    List<Map<String, Object>> batches = handle.createQuery("""
+                            SELECT id, remaining_quantity
+                            FROM inventory_batches
+                            WHERE product_variant_id = :variantId
+                              AND remaining_quantity > 0
+                            ORDER BY COALESCE(imported_at, created_at) ASC, id ASC
+                            FOR UPDATE
+                            """)
+                            .bind("variantId", variantId)
+                            .mapToMap()
+                            .list();
+
+                    for (Map<String, Object> batch : batches) {
+                        if (quantityToConsume <= 0) {
+                            break;
+                        }
+
+                        int batchId = ((Number) batch.get("id")).intValue();
+                        int remainingQuantity = ((Number) batch.get("remaining_quantity")).intValue();
+                        int usedQuantity = Math.min(quantityToConsume, remainingQuantity);
+
+                        int newRemainingQuantity = remainingQuantity - usedQuantity;
+                        handle.createUpdate("""
+                                UPDATE inventory_batches
+                                SET remaining_quantity = :newRemainingQuantity,
+                                    status = CASE WHEN :newRemainingQuantity <= 0 THEN 'SOLD_OUT' ELSE status END,
+                                    updated_at = NOW()
+                                WHERE id = :batchId
+                                """)
+                                .bind("newRemainingQuantity", newRemainingQuantity)
+                                .bind("batchId", batchId)
+                                .execute();
+
+                        quantityToConsume -= usedQuantity;
+                    }
                 }
             } else if ("IMPORT".equals(transaction.getType())) {
                 for (Map<String, Object> detail : details) {
+                    int detailId = ((Number) detail.get("id")).intValue();
                     int variantId = ((Number) detail.get("product_variant_id")).intValue();
                     int quantity = ((Number) detail.get("quantity")).intValue();
+                    BigDecimal unitCost = detail.get("unit_cost") == null
+                            ? BigDecimal.ZERO
+                            : (BigDecimal) detail.get("unit_cost");
+
+                    if (unitCost.compareTo(BigDecimal.ZERO) <= 0) {
+                        return "MISSING_UNIT_COST";
+                    }
 
                     handle.createUpdate("""
                             UPDATE product_variants
@@ -271,6 +325,41 @@ public class InventoryTransactionDao extends BaseDao {
                             """)
                             .bind("quantity", quantity)
                             .bind("variantId", variantId)
+                            .execute();
+
+                    String batchCode = transaction.getCode() + "-BT" + detailId;
+                    handle.createUpdate("""
+                            INSERT INTO inventory_batches(
+                                batch_code,
+                                transaction_id,
+                                transaction_detail_id,
+                                product_variant_id,
+                                import_quantity,
+                                remaining_quantity,
+                                unit_cost,
+                                status,
+                                imported_at,
+                                created_at
+                            ) VALUES (
+                                :batchCode,
+                                :transactionId,
+                                :transactionDetailId,
+                                :productVariantId,
+                                :importQuantity,
+                                :remainingQuantity,
+                                :unitCost,
+                                'ACTIVE',
+                                NOW(),
+                                NOW()
+                            )
+                            """)
+                            .bind("batchCode", batchCode)
+                            .bind("transactionId", id)
+                            .bind("transactionDetailId", detailId)
+                            .bind("productVariantId", variantId)
+                            .bind("importQuantity", quantity)
+                            .bind("remainingQuantity", quantity)
+                            .bind("unitCost", unitCost)
                             .execute();
                 }
             } else {
@@ -290,5 +379,6 @@ public class InventoryTransactionDao extends BaseDao {
             return affectedRows > 0 ? "SUCCESS" : "FAILED";
         });
     }
+
 
 }

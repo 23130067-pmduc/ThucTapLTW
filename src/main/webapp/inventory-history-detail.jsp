@@ -1,6 +1,7 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -57,7 +58,11 @@
         <c:if test="${param.error == 'insufficient_stock'}">
             <div class="alert alert-danger">Không thể hoàn thành phiếu xuất vì số lượng tồn kho hiện tại không đủ.</div>
         </c:if>
-        <c:if test="${param.error == 'invalid_status' || param.error == 'status_update_failed'}">
+                <c:if test="${param.error == 'missing_unit_cost'}">
+            <div class="alert alert-danger">Không thể hoàn thành phiếu nhập vì phiếu chưa có giá nhập hợp lệ.</div>
+        </c:if>
+
+<c:if test="${param.error == 'invalid_status' || param.error == 'status_update_failed'}">
             <div class="alert alert-danger">Không thể cập nhật trạng thái phiếu. Vui lòng thử lại.</div>
         </c:if>
 
@@ -164,13 +169,17 @@
                     <th>Màu</th>
                     <th>Size</th>
                     <th>Số lượng</th>
+                    <c:if test="${transaction.type == 'IMPORT'}">
+                        <th>Giá nhập</th>
+                        <th>Thành tiền nhập</th>
+                    </c:if>
                     <th>Ghi chú</th>
                 </tr>
                 </thead>
                 <tbody>
                 <c:if test="${empty details}">
                     <tr>
-                        <td colspan="7" class="detail-empty">Phiếu này chưa có sản phẩm chi tiết.</td>
+                        <td colspan="${transaction.type == 'IMPORT' ? 9 : 7}" class="detail-empty">Phiếu này chưa có sản phẩm chi tiết.</td>
                     </tr>
                 </c:if>
 
@@ -210,6 +219,24 @@
                                 </c:choose>
                             </span>
                         </td>
+                        <c:if test="${transaction.type == 'IMPORT'}">
+                            <td>
+                                <c:choose>
+                                    <c:when test="${empty detail.unitCost}">-</c:when>
+                                    <c:otherwise>
+                                        <span class="unit-cost-badge">
+                                            <fmt:formatNumber value="${detail.unitCost}" pattern="#,#00" /> đ
+                                        </span>
+                                    </c:otherwise>
+                                </c:choose>
+                            </td>
+                            <td>
+                                <c:choose>
+                                    <c:when test="${empty detail.lineTotal}">-</c:when>
+                                    <c:otherwise><fmt:formatNumber value="${detail.lineTotal}" pattern="#,#00" /> đ</c:otherwise>
+                                </c:choose>
+                            </td>
+                        </c:if>
                         <td>
                             <c:choose>
                                 <c:when test="${empty detail.note}">-</c:when>

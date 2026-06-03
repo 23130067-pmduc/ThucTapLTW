@@ -2,6 +2,8 @@ package vn.edu.nlu.fit.thuctapltw.model;
 
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
+import java.math.BigDecimal;
+
 public class InventoryItem {
     @ColumnName("variant_id")
     private int variantId;
@@ -31,6 +33,18 @@ public class InventoryItem {
 
     @ColumnName("product_status")
     private String productStatus;
+
+    @ColumnName("latest_unit_cost")
+    private BigDecimal latestUnitCost;
+
+    @ColumnName("latest_batch_code")
+    private String latestBatchCode;
+
+    @ColumnName("latest_import_date_text")
+    private String latestImportDateText;
+
+    @ColumnName("remaining_batch_quantity")
+    private int remainingBatchQuantity;
 
     public InventoryItem() {
     }
@@ -113,6 +127,39 @@ public class InventoryItem {
 
     public void setSalePrice(double salePrice) {
         this.salePrice = salePrice;
+    }
+
+
+    public BigDecimal getLatestUnitCost() {
+        return latestUnitCost;
+    }
+
+    public void setLatestUnitCost(BigDecimal latestUnitCost) {
+        this.latestUnitCost = latestUnitCost;
+    }
+
+    public String getLatestBatchCode() {
+        return latestBatchCode;
+    }
+
+    public void setLatestBatchCode(String latestBatchCode) {
+        this.latestBatchCode = latestBatchCode;
+    }
+
+    public String getLatestImportDateText() {
+        return latestImportDateText;
+    }
+
+    public void setLatestImportDateText(String latestImportDateText) {
+        this.latestImportDateText = latestImportDateText;
+    }
+
+    public int getRemainingBatchQuantity() {
+        return remainingBatchQuantity;
+    }
+
+    public void setRemainingBatchQuantity(int remainingBatchQuantity) {
+        this.remainingBatchQuantity = remainingBatchQuantity;
     }
 
     public String getProductStatus() {

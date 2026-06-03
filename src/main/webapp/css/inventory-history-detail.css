@@ -422,3 +422,15 @@
 .status-btn-confirm:hover {
     background: #2f9e44;
 }
+
+.unit-cost-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: #fff3bf;
+    color: #f08c00;
+    font-weight: 700;
+    white-space: nowrap;
+}

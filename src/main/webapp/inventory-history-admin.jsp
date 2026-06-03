@@ -56,7 +56,11 @@
         <c:if test="${param.error == 'insufficient_stock'}">
             <div class="alert alert-danger">Không thể hoàn thành phiếu xuất vì số lượng tồn kho hiện tại không đủ.</div>
         </c:if>
-        <c:if test="${param.error == 'invalid_status' || param.error == 'status_update_failed'}">
+                <c:if test="${param.error == 'missing_unit_cost'}">
+            <div class="alert alert-danger">Không thể hoàn thành phiếu nhập vì phiếu chưa có giá nhập hợp lệ.</div>
+        </c:if>
+
+<c:if test="${param.error == 'invalid_status' || param.error == 'status_update_failed'}">
             <div class="alert alert-danger">Không thể cập nhật trạng thái phiếu. Vui lòng thử lại.</div>
         </c:if>
 

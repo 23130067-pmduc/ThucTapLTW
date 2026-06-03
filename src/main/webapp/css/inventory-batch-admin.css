@@ -1,0 +1,496 @@
+.inventory-batch-page {
+    background: #f5f7fb;
+}
+
+.batch-content .topbar h1 {
+    font-size: 26px;
+    color: #333;
+    font-weight: 700;
+}
+
+.topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.back-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #eef5ea;
+    color: #2f9e44;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.back-btn:hover {
+    background: #d8f5d0;
+}
+
+.batch-cards {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+}
+
+.batch-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-width: 190px;
+    flex: 1;
+    transition: all 0.3s;
+}
+
+.batch-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+}
+
+.batch-card span {
+    display: block;
+    margin-top: 10px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #A9C87D;
+}
+
+.batch-card.active-card span {
+    color: #2f9e44;
+}
+
+.batch-card.value-card span {
+    color: #1c7ed6;
+    font-size: 21px;
+}
+
+.batch-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.batch-search-form,
+.batch-toolbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.batch-search-input {
+    width: 380px;
+    max-width: 380px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+}
+
+.batch-filter-select {
+    width: 200px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+    color: #333;
+    cursor: pointer;
+}
+
+.batch-search-input:focus,
+.batch-filter-select:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.btn-search,
+.btn-reset,
+.btn-import,
+.btn-history {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-search {
+    background: #4caf50;
+    color: #fff;
+}
+
+.btn-search:hover {
+    background: #43a047;
+}
+
+.btn-reset {
+    background: #e9ecef;
+    color: #333;
+}
+
+.btn-reset:hover {
+    background: #dee2e6;
+}
+
+.btn-import {
+    background: #40c057;
+    color: #fff;
+}
+
+.btn-history {
+    background: #1c7ed6;
+    color: #fff;
+}
+
+.btn-import:hover,
+.btn-history:hover {
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.batch-result-info {
+    margin: 0 0 12px;
+    color: #666;
+    font-size: 14px;
+}
+
+.batch-table-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    overflow-x: auto;
+}
+
+.batch-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.batch-table th,
+.batch-table td {
+    padding: 12px 14px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+    vertical-align: middle;
+}
+
+.batch-table th {
+    background: #f3f6fa;
+    font-weight: 700;
+}
+
+.batch-table tr:hover {
+    background: #f9fbff;
+}
+
+.batch-product-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 270px;
+}
+
+.batch-product-info img {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    background: #fff;
+}
+
+.batch-product-info strong {
+    display: block;
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 600;
+}
+
+.batch-product-info small {
+    display: block;
+    margin-top: 4px;
+    color: #777;
+}
+
+.transaction-link {
+    color: #1c7ed6;
+    text-decoration: none;
+    font-weight: 700;
+}
+
+.transaction-link:hover {
+    text-decoration: underline;
+}
+
+.quantity-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 42px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-weight: 700;
+    color: #2b8a3e;
+    background: #ebfbee;
+}
+
+.batch-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-weight: 600;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.status-available {
+    color: #2f9e44;
+    background: #ebfbee;
+}
+
+.status-partial {
+    color: #f08c00;
+    background: #fff3bf;
+}
+
+.status-empty {
+    color: #e03131;
+    background: #ffe3e3;
+}
+
+.partial-batch-row {
+    background: #fffdf0;
+}
+
+.empty-batch-row {
+    background: #fff5f5;
+}
+
+.batch-empty {
+    text-align: center;
+    color: #777;
+    padding: 24px;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 24px 0 8px;
+    flex-wrap: wrap;
+}
+
+.page-btn {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background: #fff;
+    color: #333;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    background: #f1f8ec;
+    border-color: #4caf50;
+    color: #2f9e44;
+    text-decoration: none;
+}
+
+.page-btn.active {
+    background: #4caf50;
+    border-color: #4caf50;
+    color: #fff;
+}
+
+@media (max-width: 1100px) {
+    .batch-search-input {
+        width: 260px;
+    }
+}
+
+.batch-code-link {
+    color: #111827;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.batch-code-link:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.batch-detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin: 24px 0;
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.batch-detail-title span:first-child {
+    display: block;
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 6px;
+}
+
+.batch-detail-title h2 {
+    margin: 0 0 12px;
+    font-size: 28px;
+    color: #111827;
+}
+
+.batch-detail-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.batch-detail-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 18px;
+}
+
+.batch-detail-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+}
+
+.batch-detail-card h3 {
+    margin: 0 0 18px;
+    font-size: 18px;
+    color: #111827;
+}
+
+.detail-product-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.detail-product-box img {
+    width: 92px;
+    height: 92px;
+    border-radius: 14px;
+    object-fit: cover;
+    background: #f3f4f6;
+}
+
+.detail-product-box strong {
+    display: block;
+    font-size: 17px;
+    color: #111827;
+    margin-bottom: 8px;
+}
+
+.detail-product-box p,
+.note-card-detail p {
+    margin: 6px 0;
+    color: #4b5563;
+    line-height: 1.5;
+}
+
+.detail-info-list {
+    display: grid;
+    gap: 12px;
+}
+
+.detail-info-list div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #eef2f7;
+}
+
+.detail-info-list div:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.detail-info-list span {
+    color: #6b7280;
+}
+
+.detail-info-list strong {
+    color: #111827;
+    text-align: right;
+    white-space: nowrap;
+}
+
+@media (max-width: 1100px) {
+    .batch-detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .batch-detail-header {
+        flex-direction: column;
+    }
+
+    .batch-detail-actions {
+        justify-content: flex-start;
+    }
+
+    .detail-product-box {
+        flex-direction: column;
+    }
+
+    .detail-info-list div {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .detail-info-list strong {
+        text-align: left;
+    }
+}

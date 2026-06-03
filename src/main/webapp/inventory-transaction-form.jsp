@@ -62,6 +62,17 @@
             </div>
         </c:if>
 
+        <c:if test="${not empty costErrors}">
+            <div class="alert-error">
+                <strong>Không thể tạo phiếu nhập kho:</strong>
+                <ul>
+                    <c:forEach items="${costErrors}" var="error">
+                        <li>${error}</li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </c:if>
+
         <form action="${pageContext.request.contextPath}/inventory-transaction-form" method="post" id="transactionForm">
             <input type="hidden" name="type" value="${type}">
 
@@ -88,11 +99,23 @@
                 <div class="section-title">
                     <div>
                         <h2>Chọn sản phẩm</h2>
-                        <p>Chọn biến thể sản phẩm, nhập số lượng rồi thêm vào phiếu.</p>
+                        <p>
+                            <c:choose>
+                                <c:when test="${type == 'IMPORT'}">Chọn biến thể, nhập số lượng và giá nhập để tạo lô hàng.</c:when>
+                                <c:otherwise>Chọn biến thể sản phẩm, nhập số lượng rồi thêm vào phiếu.</c:otherwise>
+                            </c:choose>
+                        </p>
                     </div>
                 </div>
 
-                <div class="add-item-row">
+                <div class="variant-picker">
+                    <input type="text"
+                           id="variantSearchInput"
+                           class="variant-search-input"
+                           placeholder="Tìm nhanh theo ID biến thể, tên sản phẩm, màu hoặc size...">
+                </div>
+
+                <div class="add-item-row ${type == 'IMPORT' ? 'has-cost' : ''}">
                     <select id="variantSelect" class="variant-select">
                         <option value="">-- Chọn sản phẩm / màu / size --</option>
                         <c:forEach items="${inventoryItems}" var="item">
@@ -100,6 +123,7 @@
                                     data-name="${item.productName}"
                                     data-color="${item.colorName}"
                                     data-size="${item.sizeName}"
+                                    data-category="${item.categoryName}"
                                     data-stock="${item.stock}">
                                 #${item.variantId} - ${item.productName} - ${item.colorName} - ${item.sizeName} - Tồn: ${item.stock}
                             </option>
@@ -107,6 +131,10 @@
                     </select>
 
                     <input type="number" id="quantityInput" class="quantity-input" min="1" value="1" placeholder="Số lượng">
+
+                    <c:if test="${type == 'IMPORT'}">
+                        <input type="number" id="unitCostInput" class="cost-price-input" min="1" step="1000" placeholder="Giá nhập">
+                    </c:if>
 
                     <button type="button" class="btn-add-item" id="addItemBtn">
                         <i class="fa-solid fa-plus"></i> Thêm vào phiếu
@@ -123,12 +151,15 @@
                             <th>Size</th>
                             <th>Tồn hiện tại</th>
                             <th>Số lượng</th>
+                            <c:if test="${type == 'IMPORT'}">
+                                <th>Giá nhập</th>
+                            </c:if>
                             <th>Hành động</th>
                         </tr>
                         </thead>
                         <tbody id="selectedItemsBody">
                         <tr id="emptyRow">
-                            <td colspan="7" class="empty-state">Chưa có sản phẩm nào trong phiếu.</td>
+                            <td colspan="${type == 'IMPORT' ? 8 : 7}" class="empty-state">Chưa có sản phẩm nào trong phiếu.</td>
                         </tr>
                         </tbody>
                     </table>
@@ -144,13 +175,17 @@
         </form>
     </section>
 </div>
+
 <div id="notifyBox" class="notify-box">
     <div class="notify-content">
         <i class="fa-solid fa-circle-exclamation"></i>
         <span id="notifyMessage"></span>
     </div>
 </div>
-<script></script>window.transactionType = '${type}';</script>
-<script src="${pageContext.request.contextPath}/javaScript/inventory-transaction-form.js"></script
+
+<script>
+    window.transactionType = '${type}';
+</script>
+<script src="${pageContext.request.contextPath}/javaScript/inventory-transaction-form.js"></script>
 </body>
 </html>

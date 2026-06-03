@@ -27,6 +27,8 @@ public class InventoryTransactionDetailDao extends BaseDao {
                            'img/gau.png'
                        ) AS thumbnail,
                        itd.quantity,
+                       itd.unit_cost,
+                       (itd.quantity * itd.unit_cost) AS line_total,
                        itd.note
                 FROM inventory_transaction_details itd
                 JOIN product_variants pv ON itd.product_variant_id = pv.id

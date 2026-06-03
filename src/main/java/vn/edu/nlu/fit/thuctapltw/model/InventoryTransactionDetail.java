@@ -2,6 +2,8 @@ package vn.edu.nlu.fit.thuctapltw.model;
 
 import org.jdbi.v3.core.mapper.reflect.ColumnName;
 
+import java.math.BigDecimal;
+
 public class InventoryTransactionDetail {
     private int id;
 
@@ -28,6 +30,13 @@ public class InventoryTransactionDetail {
 
     private String thumbnail;
     private int quantity;
+
+    @ColumnName("unit_cost")
+    private BigDecimal unitCost;
+
+    @ColumnName("line_total")
+    private BigDecimal lineTotal;
+
     private String note;
 
     public InventoryTransactionDetail() {
@@ -111,6 +120,22 @@ public class InventoryTransactionDetail {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public BigDecimal getUnitCost() {
+        return unitCost;
+    }
+
+    public void setUnitCost(BigDecimal unitCost) {
+        this.unitCost = unitCost;
+    }
+
+    public BigDecimal getLineTotal() {
+        return lineTotal;
+    }
+
+    public void setLineTotal(BigDecimal lineTotal) {
+        this.lineTotal = lineTotal;
     }
 
     public String getNote() {
