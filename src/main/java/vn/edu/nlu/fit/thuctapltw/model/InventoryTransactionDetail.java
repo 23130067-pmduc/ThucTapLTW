@@ -33,10 +33,6 @@ public class InventoryTransactionDetail {
 
     @ColumnName("unit_cost")
     private BigDecimal unitCost;
-
-    @ColumnName("line_total")
-    private BigDecimal lineTotal;
-
     private String note;
 
     public InventoryTransactionDetail() {
@@ -122,20 +118,19 @@ public class InventoryTransactionDetail {
         this.quantity = quantity;
     }
 
+    public BigDecimal getTotalCost() {
+        if (unitCost == null) {
+            return BigDecimal.ZERO;
+        }
+        return unitCost.multiply(BigDecimal.valueOf(quantity));
+    }
+
     public BigDecimal getUnitCost() {
         return unitCost;
     }
 
     public void setUnitCost(BigDecimal unitCost) {
         this.unitCost = unitCost;
-    }
-
-    public BigDecimal getLineTotal() {
-        return lineTotal;
-    }
-
-    public void setLineTotal(BigDecimal lineTotal) {
-        this.lineTotal = lineTotal;
     }
 
     public String getNote() {
