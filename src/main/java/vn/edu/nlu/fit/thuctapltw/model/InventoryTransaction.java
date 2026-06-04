@@ -20,6 +20,9 @@ public class InventoryTransaction {
     @ColumnName("created_by")
     private Integer createdBy;
 
+    @ColumnName("order_id")
+    private Integer orderId;
+
     @ColumnName("created_by_name")
     private String createdByName;
 
@@ -91,6 +94,14 @@ public class InventoryTransaction {
 
     public void setCreatedBy(Integer createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public Integer getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Integer orderId) {
+        this.orderId = orderId;
     }
 
     public String getCreatedByName() {

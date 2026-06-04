@@ -598,3 +598,285 @@
 .btn-cancel-grey:hover {
     background: #d8dbe0;
 }
+.order-inventory-export-card {
+    border-left: 5px solid #2e7d32;
+}
+
+.order-export-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 16px;
+}
+
+.order-export-actions .btn-search {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.order-help-text {
+    margin: 0 0 16px;
+    color: #4b5563;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.order-status-form {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.order-status-form .btn-search {
+    width: auto;
+    min-width: 220px;
+}
+
+
+/* Bàn giao đơn hàng - issue #75 */
+.shipping-handover-box {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 18px;
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #eff6ff, #ffffff);
+}
+
+.shipping-handover-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    background: #2563eb;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 10px 18px rgba(37, 99, 235, 0.22);
+}
+
+.shipping-handover-content h4 {
+    margin: 0 0 6px;
+    font-size: 17px;
+    color: #111827;
+}
+
+.shipping-handover-content p {
+    margin: 0 0 10px;
+    color: #4b5563;
+    line-height: 1.55;
+}
+
+.shipping-handover-content ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 7px;
+}
+
+.shipping-handover-content li {
+    color: #374151;
+    font-size: 14px;
+}
+
+.shipping-handover-content li i {
+    color: #16a34a;
+    margin-right: 8px;
+}
+
+.btn-start-shipping {
+    border: none;
+    min-width: 230px;
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb, #0284c7);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.24);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.btn-start-shipping:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 13px 24px rgba(37, 99, 235, 0.30);
+    filter: brightness(1.03);
+}
+
+.btn-start-shipping:active {
+    transform: translateY(0);
+}
+
+.order-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.order-modal-overlay.show {
+    display: flex;
+}
+
+.order-modal-card {
+    position: relative;
+    width: min(480px, 100%);
+    background: #fff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 24px 80px rgba(15, 23, 42, 0.28);
+    animation: orderModalPop 0.2s ease;
+}
+
+@keyframes orderModalPop {
+    from {
+        transform: translateY(10px) scale(0.98);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.order-modal-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: #f3f4f6;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.order-modal-close:hover {
+    background: #e5e7eb;
+    color: #111827;
+}
+
+.order-modal-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    background: #dbeafe;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    margin-bottom: 16px;
+}
+
+.order-modal-card h3 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    color: #111827;
+}
+
+.order-modal-desc {
+    margin: 0;
+    color: #4b5563;
+    line-height: 1.65;
+}
+
+.order-modal-checklist {
+    display: grid;
+    gap: 10px;
+    margin: 18px 0 22px;
+    padding: 14px;
+    background: #f8fafc;
+    border-radius: 14px;
+    color: #374151;
+    font-size: 14px;
+}
+
+.order-modal-checklist i {
+    color: #16a34a;
+    margin-right: 8px;
+}
+
+.order-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+.btn-modal-cancel,
+.btn-modal-confirm {
+    height: 42px;
+    padding: 0 18px;
+    border: none;
+    border-radius: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-modal-cancel {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.btn-modal-cancel:hover {
+    background: #e5e7eb;
+}
+
+.btn-modal-confirm {
+    background: #16a34a;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-modal-confirm:hover {
+    background: #15803d;
+}
+
+.btn-modal-confirm:disabled {
+    opacity: 0.75;
+    cursor: wait;
+}
+
+@media (max-width: 640px) {
+    .shipping-handover-box {
+        flex-direction: column;
+    }
+
+    .order-status-form {
+        justify-content: stretch;
+    }
+
+    .btn-start-shipping {
+        width: 100%;
+    }
+
+    .order-modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    .btn-modal-cancel,
+    .btn-modal-confirm {
+        width: 100%;
+        justify-content: center;
+    }
+}

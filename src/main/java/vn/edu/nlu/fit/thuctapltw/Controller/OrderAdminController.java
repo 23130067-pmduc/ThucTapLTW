@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import vn.edu.nlu.fit.thuctapltw.Service.EmailService;
 import vn.edu.nlu.fit.thuctapltw.Service.OrderService;
+import vn.edu.nlu.fit.thuctapltw.model.User;
 
 import java.io.IOException;
 
@@ -61,6 +62,7 @@ public class OrderAdminController extends HttpServlet {
 
         req.setAttribute("order", order);
         req.setAttribute("items", items);
+        req.setAttribute("exportTransaction", orderService.getExportTransactionByOrderId(id));
         req.setAttribute("success", req.getParameter("success"));
         req.setAttribute("error", req.getParameter("error"));
 
@@ -104,12 +106,26 @@ public class OrderAdminController extends HttpServlet {
             return;
         }
 
-        if ("PENDING".equalsIgnoreCase(currentStatus) && "COMPLETED".equalsIgnoreCase(newStatus)) {
-            resp.sendRedirect(req.getContextPath() + "/order-admin?mode=edit&id=" + id + "&error=Không thể chuyển trực tiếp từ chờ xử lý sang hoàn thành");
+        // Theo luồng hiện tại của hệ thống, admin chỉ được bàn giao đơn sang trạng thái Đang giao.
+        // Khi chuyển Chờ xử lý -> Đang giao, hệ thống tự tạo phiếu xuất kho theo đơn hàng.
+        // Trạng thái Hoàn thành vẫn để khách hàng bấm Đã nhận hàng ở trang Đơn mua.
+        if (!"PENDING".equalsIgnoreCase(currentStatus) || !"SHIPPING".equalsIgnoreCase(newStatus)) {
+            resp.sendRedirect(req.getContextPath() + "/order-admin?mode=edit&id=" + id + "&error=" + java.net.URLEncoder.encode("Admin chỉ được chuyển đơn từ Chờ xử lý sang Đang giao", java.nio.charset.StandardCharsets.UTF_8));
             return;
         }
 
-        orderService.updateStatus(id, newStatus);
+        Integer createdBy = null;
+        Object sessionUser = req.getSession().getAttribute("userlogin");
+        if (sessionUser instanceof User user) {
+            createdBy = user.getId();
+        }
+
+        String result = orderService.updateStatusWithInventoryExport(id, newStatus, createdBy);
+        if (!"SUCCESS".equals(result) && !"SUCCESS_EXPORTED".equals(result) && !"SUCCESS_ALREADY_EXPORTED".equals(result)) {
+            String error = orderService.getInventoryExportErrorMessage(result);
+            resp.sendRedirect(req.getContextPath() + "/order-admin?mode=edit&id=" + id + "&error=" + java.net.URLEncoder.encode(error, java.nio.charset.StandardCharsets.UTF_8));
+            return;
+        }
 
         String userEmail = orderService.getUserEmailByOrderId(id);
 
@@ -135,7 +151,10 @@ public class OrderAdminController extends HttpServlet {
             EmailService.sendEmail(userEmail, subject, html);
         }
 
-        resp.sendRedirect(req.getContextPath() + "/order-admin?mode=view&id=" + id + "&success=Cập nhật trạng thái thành công");
+        String successMessage = "SUCCESS_EXPORTED".equals(result)
+                ? "Cập nhật trạng thái thành công và đã tự động xuất kho theo đơn hàng"
+                : "Cập nhật trạng thái thành công";
+        resp.sendRedirect(req.getContextPath() + "/order-admin?mode=view&id=" + id + "&success=" + java.net.URLEncoder.encode(successMessage, java.nio.charset.StandardCharsets.UTF_8));
     }
 
     private String trim(String value) {
