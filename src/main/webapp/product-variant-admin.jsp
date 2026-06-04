@@ -29,6 +29,7 @@
             </a>
 
             <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item">
+            <a href="${pageContext.request.contextPath}/profit-report" class="nav-item"><i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span></a>
                 <i class="fa-solid fa-boxes-stacked"></i>
                 <span>Kho hàng</span>
             </a>
