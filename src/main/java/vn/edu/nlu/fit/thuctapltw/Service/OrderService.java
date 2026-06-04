@@ -4,6 +4,7 @@ import vn.edu.nlu.fit.thuctapltw.DAO.CartItemDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.OrderDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.ProductVariantDao;
 import vn.edu.nlu.fit.thuctapltw.model.Order;
+import vn.edu.nlu.fit.thuctapltw.model.InventoryTransaction;
 import vn.edu.nlu.fit.thuctapltw.model.OrderItem;
 
 import java.util.List;
@@ -27,6 +28,14 @@ public class OrderService {
 
     public void updateStatus(int id, String status) {
         dao.updateStatus(id, status);
+    }
+
+    public String updateStatusWithInventoryExport(int orderId, String status, Integer createdBy) {
+        return dao.updateStatusWithInventoryExport(orderId, status, createdBy);
+    }
+
+    public InventoryTransaction getExportTransactionByOrderId(int orderId) {
+        return dao.getExportTransactionByOrderId(orderId);
     }
 
     public String getUserEmailByOrderId(int orderId) {
@@ -67,6 +76,8 @@ public class OrderService {
         if (!"SHIPPING".equals(order.getOrderStatus())) {
             throw new RuntimeException("Chỉ xác nhận nhận hàng với đơn đang giao");
         }
+        // Khách xác nhận đã nhận hàng chỉ chuyển trạng thái sang Hoàn thành.
+        // Phiếu xuất kho đã được tạo trước đó khi admin chuyển đơn sang Đang giao.
         dao.updateStatusByUser(orderId, userId, "COMPLETED");
     }
 
@@ -117,6 +128,23 @@ public class OrderService {
         }
 
         return "Đã thêm lại đơn hàng vào giỏ hàng";
+    }
+
+    public String getInventoryExportErrorMessage(String result) {
+        if (result == null) {
+            return "Không thể cập nhật trạng thái đơn hàng";
+        }
+        return switch (result) {
+            case "ORDER_NOT_FOUND" -> "Không tìm thấy đơn hàng";
+            case "ORDER_FINAL" -> "Đơn hàng này không thể cập nhật nữa";
+            case "INVALID_STATUS" -> "Trạng thái đơn hàng không hợp lệ";
+            case "INVALID_FLOW" -> "Admin chỉ được chuyển đơn từ Chờ xử lý sang Đang giao";
+            case "ORDER_EMPTY" -> "Đơn hàng không có sản phẩm để xuất kho";
+            case "INVALID_ORDER_ITEM" -> "Đơn hàng có sản phẩm không hợp lệ, không thể xuất kho";
+            case "INSUFFICIENT_STOCK" -> "Không đủ tồn kho để xuất theo đơn hàng";
+            case "INSUFFICIENT_BATCH_STOCK" -> "Không đủ tồn kho theo lô để xuất theo đơn hàng";
+            default -> "Không thể cập nhật trạng thái đơn hàng";
+        };
     }
 
     public int getCartSize(int cartId) {

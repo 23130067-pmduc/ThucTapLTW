@@ -68,6 +68,39 @@
         </div>
     </div>
 
+    <c:if test="${not empty exportTransaction}">
+        <div class="order-form-card order-inventory-export-card">
+            <h3>• Phiếu xuất kho theo đơn hàng</h3>
+            <div class="order-form-grid">
+                <div class="form-group">
+                    <label>Mã phiếu xuất</label>
+                    <input type="text" value="${exportTransaction.code}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Trạng thái phiếu xuất</label>
+                    <input type="text" value="${exportTransaction.statusText}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Tổng số lượng xuất</label>
+                    <input type="text" value="${exportTransaction.totalQuantity}" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Ngày xuất</label>
+                    <input type="text" value="${exportTransaction.createdAtText}" readonly>
+                </div>
+                <div class="form-group form-group-full">
+                    <label>Ghi chú</label>
+                    <textarea readonly>${exportTransaction.note}</textarea>
+                </div>
+            </div>
+            <div class="order-export-actions">
+                <a href="${pageContext.request.contextPath}/inventory-history-detail?id=${exportTransaction.id}" class="btn-search">
+                    <i class="fa-solid fa-box-open"></i> Xem chi tiết phiếu xuất
+                </a>
+            </div>
+        </div>
+    </c:if>
+
     <div class="order-form-card">
         <h3>• Sản phẩm trong đơn</h3>
 

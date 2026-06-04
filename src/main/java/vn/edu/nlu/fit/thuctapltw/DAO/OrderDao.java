@@ -1,9 +1,13 @@
 package vn.edu.nlu.fit.thuctapltw.DAO;
 
+import vn.edu.nlu.fit.thuctapltw.model.InventoryTransaction;
 import vn.edu.nlu.fit.thuctapltw.model.Order;
 import vn.edu.nlu.fit.thuctapltw.model.OrderItem;
 
+import java.math.BigDecimal;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class OrderDao extends BaseDao {
 
@@ -69,6 +73,398 @@ public class OrderDao extends BaseDao {
                         .bind("orderId", orderId)
                         .bind("userId", userId)
                         .execute()
+        );
+    }
+
+
+
+    public String updateStatusWithInventoryExport(int orderId, String newStatus, Integer createdBy) {
+        String normalizedStatus = newStatus == null ? "" : newStatus.trim().toUpperCase();
+
+        return getJdbi().inTransaction(handle -> {
+            Order order = handle.createQuery("""
+                            SELECT *
+                            FROM orders
+                            WHERE id = :orderId
+                            FOR UPDATE
+                            """)
+                    .bind("orderId", orderId)
+                    .mapToBean(Order.class)
+                    .findOne()
+                    .orElse(null);
+
+            if (order == null) {
+                return "ORDER_NOT_FOUND";
+            }
+
+            String currentStatus = order.getOrderStatus() == null ? "" : order.getOrderStatus().trim().toUpperCase();
+
+            if ("COMPLETED".equals(currentStatus) || "CANCELLED".equals(currentStatus)) {
+                return "ORDER_FINAL";
+            }
+
+            if (!"PENDING".equals(normalizedStatus)
+                    && !"SHIPPING".equals(normalizedStatus)
+                    && !"COMPLETED".equals(normalizedStatus)
+                    && !"CANCELLED".equals(normalizedStatus)) {
+                return "INVALID_STATUS";
+            }
+
+            if ("PENDING".equals(currentStatus) && "COMPLETED".equals(normalizedStatus)) {
+                return "INVALID_FLOW";
+            }
+
+            // Luồng đúng của issue #75:
+            // Admin bàn giao đơn: PENDING -> SHIPPING => xuất kho FIFO + ghi giá vốn.
+            // Khách xác nhận đã nhận: SHIPPING -> COMPLETED => chỉ đổi trạng thái, không xuất kho lần 2.
+            if ("COMPLETED".equals(normalizedStatus)) {
+                if (!"SHIPPING".equals(currentStatus)) {
+                    return "INVALID_FLOW";
+                }
+
+                handle.createUpdate("""
+                                UPDATE orders
+                                SET order_status = 'COMPLETED'
+                                WHERE id = :orderId
+                                """)
+                        .bind("orderId", orderId)
+                        .execute();
+                return "SUCCESS";
+            }
+
+            if (!"SHIPPING".equals(normalizedStatus)) {
+                handle.createUpdate("""
+                                UPDATE orders
+                                SET order_status = :status
+                                WHERE id = :orderId
+                                """)
+                        .bind("status", normalizedStatus)
+                        .bind("orderId", orderId)
+                        .execute();
+                return "SUCCESS";
+            }
+
+            if (!"PENDING".equals(currentStatus)) {
+                return "INVALID_FLOW";
+            }
+
+            Integer existingExportId = handle.createQuery("""
+                            SELECT id
+                            FROM inventory_transactions
+                            WHERE order_id = :orderId
+                              AND type = 'EXPORT'
+                            LIMIT 1
+                            """)
+                    .bind("orderId", orderId)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElse(null);
+
+            if (existingExportId != null) {
+                handle.createUpdate("""
+                                UPDATE orders
+                                SET order_status = 'SHIPPING'
+                                WHERE id = :orderId
+                                """)
+                        .bind("orderId", orderId)
+                        .execute();
+                return "SUCCESS_ALREADY_EXPORTED";
+            }
+
+            List<Map<String, Object>> rawItems = handle.createQuery("""
+                            SELECT variant_id, quantity
+                            FROM order_items
+                            WHERE order_id = :orderId
+                            """)
+                    .bind("orderId", orderId)
+                    .mapToMap()
+                    .list();
+
+            if (rawItems.isEmpty()) {
+                return "ORDER_EMPTY";
+            }
+
+            Map<Integer, Integer> itemQuantityMap = new LinkedHashMap<>();
+            for (Map<String, Object> item : rawItems) {
+                Object variantValue = item.get("variant_id");
+                Object quantityValue = item.get("quantity");
+
+                if (variantValue == null || quantityValue == null) {
+                    return "INVALID_ORDER_ITEM";
+                }
+
+                int variantId = ((Number) variantValue).intValue();
+                int quantity = ((Number) quantityValue).intValue();
+
+                if (variantId <= 0 || quantity <= 0) {
+                    return "INVALID_ORDER_ITEM";
+                }
+
+                itemQuantityMap.merge(variantId, quantity, Integer::sum);
+            }
+
+            int totalQuantity = itemQuantityMap.values().stream().mapToInt(Integer::intValue).sum();
+
+            for (Map.Entry<Integer, Integer> entry : itemQuantityMap.entrySet()) {
+                int variantId = entry.getKey();
+                int quantity = entry.getValue();
+
+                Integer currentStock = handle.createQuery("""
+                                SELECT stock
+                                FROM product_variants
+                                WHERE id = :variantId
+                                FOR UPDATE
+                                """)
+                        .bind("variantId", variantId)
+                        .mapTo(Integer.class)
+                        .findOne()
+                        .orElse(null);
+
+                if (currentStock == null || currentStock < quantity) {
+                    return "INSUFFICIENT_STOCK";
+                }
+
+                Integer availableBatchQuantity = handle.createQuery("""
+                                SELECT CAST(COALESCE(SUM(remaining_quantity), 0) AS SIGNED)
+                                FROM inventory_batches
+                                WHERE product_variant_id = :variantId
+                                  AND remaining_quantity > 0
+                                """)
+                        .bind("variantId", variantId)
+                        .mapTo(Integer.class)
+                        .one();
+
+                if (availableBatchQuantity == null || availableBatchQuantity < quantity) {
+                    return "INSUFFICIENT_BATCH_STOCK";
+                }
+            }
+
+            int transactionId = handle.createUpdate("""
+                            INSERT INTO inventory_transactions(
+                                code,
+                                type,
+                                total_quantity,
+                                status,
+                                supplier_name,
+                                note,
+                                created_by,
+                                order_id,
+                                created_at
+                            ) VALUES (
+                                '',
+                                'EXPORT',
+                                :totalQuantity,
+                                'PENDING',
+                                NULL,
+                                :note,
+                                :createdBy,
+                                :orderId,
+                                NOW()
+                            )
+                            """)
+                    .bind("totalQuantity", totalQuantity)
+                    .bind("note", "Xuất kho tự động khi bàn giao đơn hàng #" + orderId)
+                    .bind("createdBy", createdBy)
+                    .bind("orderId", orderId)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(int.class)
+                    .one();
+
+            String code = "PX" + String.format("%05d", transactionId);
+            handle.createUpdate("""
+                            UPDATE inventory_transactions
+                            SET code = :code
+                            WHERE id = :transactionId
+                            """)
+                    .bind("code", code)
+                    .bind("transactionId", transactionId)
+                    .execute();
+
+            Map<Integer, Integer> detailIdMap = new LinkedHashMap<>();
+            for (Map.Entry<Integer, Integer> entry : itemQuantityMap.entrySet()) {
+                int detailId = handle.createUpdate("""
+                                INSERT INTO inventory_transaction_details(
+                                    transaction_id,
+                                    product_variant_id,
+                                    quantity,
+                                    unit_cost,
+                                    note
+                                ) VALUES (
+                                    :transactionId,
+                                    :productVariantId,
+                                    :quantity,
+                                    0,
+                                    'Tự động xuất khi bàn giao đơn hàng'
+                                )
+                                """)
+                        .bind("transactionId", transactionId)
+                        .bind("productVariantId", entry.getKey())
+                        .bind("quantity", entry.getValue())
+                        .executeAndReturnGeneratedKeys("id")
+                        .mapTo(int.class)
+                        .one();
+                detailIdMap.put(entry.getKey(), detailId);
+            }
+
+            for (Map.Entry<Integer, Integer> entry : itemQuantityMap.entrySet()) {
+                int variantId = entry.getKey();
+                int quantity = entry.getValue();
+                int detailId = detailIdMap.get(variantId);
+                int remainingToExport = quantity;
+                BigDecimal totalCost = BigDecimal.ZERO;
+
+                List<Map<String, Object>> batches = handle.createQuery("""
+                                SELECT id, remaining_quantity, unit_cost
+                                FROM inventory_batches
+                                WHERE product_variant_id = :variantId
+                                  AND remaining_quantity > 0
+                                ORDER BY created_at ASC, id ASC
+                                FOR UPDATE
+                                """)
+                        .bind("variantId", variantId)
+                        .mapToMap()
+                        .list();
+
+                for (Map<String, Object> batch : batches) {
+                    if (remainingToExport <= 0) {
+                        break;
+                    }
+
+                    int batchId = ((Number) batch.get("id")).intValue();
+                    int batchRemainingQuantity = ((Number) batch.get("remaining_quantity")).intValue();
+                    BigDecimal batchUnitCost = (BigDecimal) batch.get("unit_cost");
+                    int usedQuantity = Math.min(remainingToExport, batchRemainingQuantity);
+                    BigDecimal usedTotalCost = batchUnitCost.multiply(BigDecimal.valueOf(usedQuantity));
+
+                    int updatedBatchRows = handle.createUpdate("""
+                                    UPDATE inventory_batches
+                                    SET remaining_quantity = remaining_quantity - :usedQuantity,
+                                        status = CASE
+                                            WHEN remaining_quantity - :usedQuantity <= 0 THEN 'SOLD_OUT'
+                                            ELSE status
+                                        END,
+                                        updated_at = NOW()
+                                    WHERE id = :batchId
+                                      AND remaining_quantity >= :usedQuantity
+                                    """)
+                            .bind("usedQuantity", usedQuantity)
+                            .bind("batchId", batchId)
+                            .execute();
+
+                    if (updatedBatchRows <= 0) {
+                        return "INSUFFICIENT_BATCH_STOCK";
+                    }
+
+                    handle.createUpdate("""
+                                    INSERT INTO inventory_batch_usages(
+                                        transaction_id,
+                                        transaction_detail_id,
+                                        batch_id,
+                                        product_variant_id,
+                                        quantity,
+                                        unit_cost,
+                                        total_cost,
+                                        created_at
+                                    ) VALUES (
+                                        :transactionId,
+                                        :transactionDetailId,
+                                        :batchId,
+                                        :productVariantId,
+                                        :quantity,
+                                        :unitCost,
+                                        :totalCost,
+                                        NOW()
+                                    )
+                                    """)
+                            .bind("transactionId", transactionId)
+                            .bind("transactionDetailId", detailId)
+                            .bind("batchId", batchId)
+                            .bind("productVariantId", variantId)
+                            .bind("quantity", usedQuantity)
+                            .bind("unitCost", batchUnitCost)
+                            .bind("totalCost", usedTotalCost)
+                            .execute();
+
+                    totalCost = totalCost.add(usedTotalCost);
+                    remainingToExport -= usedQuantity;
+                }
+
+                if (remainingToExport > 0) {
+                    return "INSUFFICIENT_BATCH_STOCK";
+                }
+
+                BigDecimal averageCost = totalCost.divide(BigDecimal.valueOf(quantity), 2, java.math.RoundingMode.HALF_UP);
+
+                handle.createUpdate("""
+                                UPDATE inventory_transaction_details
+                                SET unit_cost = :averageCost
+                                WHERE id = :detailId
+                                """)
+                        .bind("averageCost", averageCost)
+                        .bind("detailId", detailId)
+                        .execute();
+
+                int updatedVariantRows = handle.createUpdate("""
+                                UPDATE product_variants
+                                SET stock = stock - :quantity
+                                WHERE id = :variantId
+                                  AND stock >= :quantity
+                                """)
+                        .bind("quantity", quantity)
+                        .bind("variantId", variantId)
+                        .execute();
+
+                if (updatedVariantRows <= 0) {
+                    return "INSUFFICIENT_STOCK";
+                }
+            }
+
+            handle.createUpdate("""
+                            UPDATE inventory_transactions
+                            SET status = 'COMPLETED',
+                                updated_at = NOW()
+                            WHERE id = :transactionId
+                            """)
+                    .bind("transactionId", transactionId)
+                    .execute();
+
+            handle.createUpdate("""
+                            UPDATE orders
+                            SET order_status = 'SHIPPING'
+                            WHERE id = :orderId
+                            """)
+                    .bind("orderId", orderId)
+                    .execute();
+
+            return "SUCCESS_EXPORTED";
+        });
+    }
+
+    public InventoryTransaction getExportTransactionByOrderId(int orderId) {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery("""
+                        SELECT it.id,
+                               it.code,
+                               it.type,
+                               it.total_quantity,
+                               it.status,
+                               it.supplier_name,
+                               it.note,
+                               it.created_by,
+                               it.order_id,
+                               COALESCE(u.full_name, u.username, 'Chưa xác định') AS created_by_name,
+                               DATE_FORMAT(it.created_at, '%d/%m/%Y %H:%i') AS created_at_text
+                        FROM inventory_transactions it
+                        LEFT JOIN users u ON it.created_by = u.id
+                        WHERE it.order_id = :orderId
+                          AND it.type = 'EXPORT'
+                        ORDER BY it.id DESC
+                        LIMIT 1
+                        """)
+                        .bind("orderId", orderId)
+                        .mapToBean(InventoryTransaction.class)
+                        .findOne()
+                        .orElse(null)
         );
     }
 
