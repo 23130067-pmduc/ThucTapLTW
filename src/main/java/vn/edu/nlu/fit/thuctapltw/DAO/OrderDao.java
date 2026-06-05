@@ -522,7 +522,24 @@ public class OrderDao extends BaseDao {
 
     public List<Order> getByUserId(int userId) {
         return getJdbi().withHandle(handle ->
-                handle.createQuery("SELECT * FROM orders WHERE user_id = :userId ORDER BY created_at DESC")
+                handle.createQuery("""
+                        SELECT o.*,
+                               ro.id AS return_order_id,
+                               ro.code AS return_code,
+                               ro.status AS return_status
+                        FROM orders o
+                        LEFT JOIN (
+                            SELECT r1.*
+                            FROM return_orders r1
+                            JOIN (
+                                SELECT order_id, MAX(id) AS max_id
+                                FROM return_orders
+                                GROUP BY order_id
+                            ) last_return ON r1.id = last_return.max_id
+                        ) ro ON ro.order_id = o.id
+                        WHERE o.user_id = :userId
+                        ORDER BY o.created_at DESC
+                        """)
                         .bind("userId", userId)
                         .mapToBean(Order.class)
                         .list()
@@ -531,7 +548,24 @@ public class OrderDao extends BaseDao {
 
     public List<Order> getByUserIdAndStatus(int userId, String status) {
         return getJdbi().withHandle(handle ->
-                handle.createQuery("SELECT * FROM orders WHERE user_id = :userId AND order_status = :status ORDER BY created_at DESC")
+                handle.createQuery("""
+                        SELECT o.*,
+                               ro.id AS return_order_id,
+                               ro.code AS return_code,
+                               ro.status AS return_status
+                        FROM orders o
+                        LEFT JOIN (
+                            SELECT r1.*
+                            FROM return_orders r1
+                            JOIN (
+                                SELECT order_id, MAX(id) AS max_id
+                                FROM return_orders
+                                GROUP BY order_id
+                            ) last_return ON r1.id = last_return.max_id
+                        ) ro ON ro.order_id = o.id
+                        WHERE o.user_id = :userId AND o.order_status = :status
+                        ORDER BY o.created_at DESC
+                        """)
                         .bind("userId", userId)
                         .bind("status", status)
                         .mapToBean(Order.class)
