@@ -13,6 +13,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.Normalizer;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Locale;
 
 public class GhnShippingService {
@@ -58,6 +61,37 @@ public class GhnShippingService {
             return ShippingQuote.success(fee, null);
         } catch (Exception e) {
             return ShippingQuote.failure("Khong tinh duoc phi van chuyen GHN: " + e.getMessage());
+        }
+    }
+
+    public LocalDate getLeadTime(Address address) {
+        if (address == null || !isConfigured()) return null;
+        try {
+            Integer toDistrictId = findDistrictId(address.getDistrict(), address.getCity());
+            if (toDistrictId == null) return null;
+
+            String wardCode = findWardCode(toDistrictId, address.getWard());
+            if (wardCode == null) return null;
+
+            Integer serviceId = findServiceId(toDistrictId);
+            if (serviceId == null) return null;
+
+            JsonObject body = new JsonObject();
+            body.addProperty("service_id", serviceId);
+            body.addProperty("from_district_id", fromDistrictId);
+            body.addProperty("to_district_id", toDistrictId);
+            body.addProperty("to_ward_code", wardCode);
+
+            JsonObject response = post("/v2/shipping-order/leadtime", body, true);
+            JsonObject data = response.getAsJsonObject("data");
+            if (data == null || data.isJsonNull()) return null;
+
+            JsonElement leadtimeElem = data.get("leadtime");
+            if (leadtimeElem == null || leadtimeElem.isJsonNull()) return null;
+
+            return Instant.ofEpochSecond(leadtimeElem.getAsLong()).atZone(ZoneId.of("Asia/Ho_Chi_Minh")).toLocalDate();
+        } catch (Exception e) {
+            return null;
         }
     }
 

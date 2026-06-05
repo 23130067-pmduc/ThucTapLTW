@@ -22,6 +22,7 @@ import vn.edu.nlu.fit.thuctapltw.model.OrderItem;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 import vn.edu.nlu.fit.thuctapltw.Service.VoucherService;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @WebServlet(name = "CheckoutController", value = "/checkout")
@@ -141,6 +142,7 @@ public class CheckoutController extends HttpServlet {
             return;
         }
         double shippingFee = shippingQuote.success() ? shippingQuote.fee() : 0;
+        LocalDate estimatedDeliveryDate = ghnShippingService.getLeadTime(selectedAddress);
         String voucherCode = request.getParameter("voucherCode");
         double discount = 0;
         Integer appliedVoucherId = null;
@@ -183,7 +185,8 @@ public class CheckoutController extends HttpServlet {
                 paymentMethod,
                 totalPrice,
                 shippingFee,
-                totalDiscount
+                totalDiscount,
+                estimatedDeliveryDate
         );
         for (CartItem item : cartItems) {
             int variantId = item.getVariantId();
