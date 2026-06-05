@@ -127,6 +127,21 @@
                                             <input type="hidden" name="currentStatus" value="${currentStatus}">
                                             <button type="submit" class="order-action-btn btn-warm">Mua lại</button>
                                         </form>
+                                        <c:choose>
+                                            <c:when test="${not empty o.returnOrderId}">
+                                                <span class="order-return-badge ${o.returnStatus}">${o.returnStatusLabel}</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <form action="${pageContext.request.contextPath}/don-mua" method="post" class="return-request-form">
+                                                    <input type="hidden" name="action" value="returnRequest">
+                                                    <input type="hidden" name="orderId" value="${o.id}">
+                                                    <input type="hidden" name="currentStatus" value="${currentStatus}">
+                                                    <input type="text" name="reason" class="return-reason-input"
+                                                           placeholder="Lý do hoàn hàng..." required maxlength="255">
+                                                    <button type="submit" class="order-action-btn btn-return">Yêu cầu hoàn hàng</button>
+                                                </form>
+                                            </c:otherwise>
+                                        </c:choose>
                                     </c:when>
                                     <c:when test="${o.orderStatus == 'CANCELLED'}">
                                         <form action="${pageContext.request.contextPath}/mua-lai-don" method="post">

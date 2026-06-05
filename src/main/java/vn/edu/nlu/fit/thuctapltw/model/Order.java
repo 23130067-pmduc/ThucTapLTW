@@ -21,6 +21,10 @@ public class Order {
     private LocalDateTime createdAt;
     private List<OrderItem> items;
 
+    private Integer returnOrderId;
+    private String returnCode;
+    private String returnStatus;
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
     public int getUserId() { return userId; }
@@ -51,6 +55,26 @@ public class Order {
     public void setNote(String note) { this.note = note; }
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }
+
+    public Integer getReturnOrderId() { return returnOrderId; }
+    public void setReturnOrderId(Integer returnOrderId) { this.returnOrderId = returnOrderId; }
+    public String getReturnCode() { return returnCode; }
+    public void setReturnCode(String returnCode) { this.returnCode = returnCode; }
+    public String getReturnStatus() { return returnStatus; }
+    public void setReturnStatus(String returnStatus) { this.returnStatus = returnStatus; }
+
+    public boolean isHasReturnRequest() { return returnOrderId != null && returnOrderId > 0; }
+
+    public String getReturnStatusLabel() {
+        if (returnStatus == null || returnStatus.isBlank()) return "Chưa yêu cầu";
+        return switch (returnStatus) {
+            case "PENDING" -> "Hoàn hàng chờ duyệt";
+            case "APPROVED" -> "Hoàn hàng đã duyệt";
+            case "REJECTED" -> "Hoàn hàng bị từ chối";
+            case "COMPLETED" -> "Đã hoàn nhập kho";
+            default -> returnStatus;
+        };
+    }
 
     public String getCreatedAtFormatted() {
         if (createdAt == null) return "";

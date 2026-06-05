@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import vn.edu.nlu.fit.thuctapltw.Service.OrderService;
+import vn.edu.nlu.fit.thuctapltw.Service.ReturnOrderService;
 import vn.edu.nlu.fit.thuctapltw.model.Order;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
@@ -19,10 +20,12 @@ import java.util.List;
 public class MyOrderController extends HttpServlet {
 
     private OrderService orderService;
+    private ReturnOrderService returnOrderService;
 
     @Override
     public void init() {
         orderService = new OrderService();
+        returnOrderService = new ReturnOrderService();
     }
 
     @Override
@@ -80,6 +83,12 @@ public class MyOrderController extends HttpServlet {
                     orderService.confirmReceived(orderId, user.getId());
                     redirectWithMessage(response, request.getContextPath() + "/don-mua?status=COMPLETED",
                             "success", "Đã xác nhận nhận hàng");
+                }
+                case "returnRequest" -> {
+                    String reason = request.getParameter("reason");
+                    returnOrderService.createReturnRequest(orderId, user.getId(), reason);
+                    redirectWithMessage(response, request.getContextPath() + "/don-mua?status=COMPLETED",
+                            "success", "Đã gửi yêu cầu hoàn hàng. Vui lòng chờ quản trị viên xử lý");
                 }
                 default -> redirectWithMessage(response, request.getContextPath() + "/don-mua?status=" + currentStatus,
                         "error", "Thao tác không hợp lệ");

@@ -446,3 +446,64 @@
     border-color: #5B3A29;
     text-decoration: none;
 }
+.return-request-form {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.return-reason-input {
+    min-width: 220px;
+    height: 38px;
+    border: 1px solid #dfe5ec;
+    border-radius: 10px;
+    padding: 0 12px;
+    outline: none;
+    font-size: 14px;
+}
+
+.return-reason-input:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.12);
+}
+
+.order-action-btn.btn-return {
+    background: #20c997;
+    color: #fff;
+    border: none;
+}
+
+.order-action-btn.btn-return:hover {
+    background: #12a77d;
+}
+
+.order-return-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.order-return-badge.PENDING {
+    color: #b26a00;
+    background: #fff3cd;
+}
+
+.order-return-badge.APPROVED {
+    color: #0f766e;
+    background: #ccfbf1;
+}
+
+.order-return-badge.REJECTED {
+    color: #dc2626;
+    background: #fee2e2;
+}
+
+.order-return-badge.COMPLETED {
+    color: #15803d;
+    background: #dcfce7;
+}
