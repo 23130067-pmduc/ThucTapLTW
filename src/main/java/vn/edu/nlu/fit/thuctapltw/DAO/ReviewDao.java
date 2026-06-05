@@ -23,10 +23,10 @@ public class ReviewDao extends BaseDao {
 
     public void insert(Review review) {
         getJdbi().useHandle(handle -> handle.createUpdate(
-                                """
-                                        INSERT INTO product_reviews(product_id, user_id, rating, comment, created_at)
-                                        VALUES (:pid, :cid, :rating, :comment, NOW())
-                                    """
+                    """
+                            INSERT INTO product_reviews(product_id, user_id, rating, comment, created_at)
+                            VALUES (:pid, :cid, :rating, :comment, NOW())
+                        """
                         ).bind("pid", review.getProductId())
                         .bind("cid", review.getUserId())
                         .bind("rating", review.getRating())
@@ -34,6 +34,20 @@ public class ReviewDao extends BaseDao {
                         .execute()
         );
 
+    }
+
+    public int insertAndReturnId(Review review) {
+        return getJdbi().withHandle(handle -> handle.createUpdate("""
+                INSERT INTO product_reviews(product_id, user_id, rating, comment, created_at)
+                VALUES (:pid, :cid, :rating, :comment, NOW())""")
+                .bind("pid", review.getProductId())
+                .bind("cid", review.getUserId())
+                .bind("rating", review.getRating())
+                .bind("comment", review.getComment())
+                .executeAndReturnGeneratedKeys("id")
+                .mapTo(Integer.class)
+                .one()
+        );
     }
 
     public void update(Review review) {

@@ -3,21 +3,31 @@ package vn.edu.nlu.fit.thuctapltw.Controller;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import vn.edu.nlu.fit.thuctapltw.Service.ReviewImageService;
 import vn.edu.nlu.fit.thuctapltw.Service.ReviewService;
+import vn.edu.nlu.fit.thuctapltw.Util.CloudinaryUtil;
 import vn.edu.nlu.fit.thuctapltw.model.Review;
 import vn.edu.nlu.fit.thuctapltw.model.User;
+import jakarta.servlet.annotation.MultipartConfig;
+import jakarta.servlet.http.Part;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+@MultipartConfig
 @WebServlet("/review")
 public class ReviewController extends HttpServlet {
 
     private ReviewService reviewService;
+    private ReviewImageService reviewImageService;
 
     @Override
     public void init(){
+
         reviewService = new ReviewService();
+        reviewImageService = new ReviewImageService();
     }
 
 
@@ -61,8 +71,37 @@ public class ReviewController extends HttpServlet {
         review.setRating(rating);
         review.setComment(comment);
 
-        reviewService.addReview(review);
+        List<String> uploadedImageUrls = new ArrayList<>();
+        int imageCount = 0;
 
+        for (Part part : request.getParts()) {
+            if ("reviewImages".equals(part.getName()) && part.getSize() > 0) {
+                imageCount++;
+
+                if (imageCount > 5) {
+                    response.sendRedirect(request.getContextPath()
+                            + "/chi-tiet-san-pham?id=" + productId + "&reviewError=too_many_images");
+                    return;
+                }
+
+                String contentType = part.getContentType();
+
+                if (contentType == null || !contentType.startsWith("image/")) {
+                    response.sendRedirect(request.getContextPath()
+                            + "/chi-tiet-san-pham?id=" + productId + "&reviewError=invalid_image");
+                    return;
+                }
+
+                String imageUrl = CloudinaryUtil.uploadImage(part, "sunnybear/reviews");
+                uploadedImageUrls.add(imageUrl);
+            }
+        }
+
+        int reviewId = reviewService.addReviewAndReturnId(review);
+
+        for (String imageUrl : uploadedImageUrls) {
+            reviewImageService.saveImage(reviewId, imageUrl);
+        }
 
         response.sendRedirect("chi-tiet-san-pham?id=" + productId + "&reviewSuccess=1");
     }

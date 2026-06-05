@@ -2,6 +2,7 @@ package vn.edu.nlu.fit.thuctapltw.Service;
 
 import vn.edu.nlu.fit.thuctapltw.DAO.OrderDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.ReviewDao;
+import vn.edu.nlu.fit.thuctapltw.DAO.ReviewImageDao;
 import vn.edu.nlu.fit.thuctapltw.model.Review;
 
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.List;
 public class ReviewService {
     private final ReviewDao reviewDao = new ReviewDao();
     private final OrderDao orderDao = new OrderDao();
+    private final ReviewImageDao reviewImageDao = new ReviewImageDao();
 
     public void addOrUpdateReview(Review review) {
         Review exist = reviewDao.findByProductAndUser(
@@ -25,6 +27,10 @@ public class ReviewService {
 
     public void addReview(Review review) {
         reviewDao.insert(review);
+    }
+
+    public int addReviewAndReturnId(Review review) {
+        return reviewDao.insertAndReturnId(review);
     }
 
     public List<Review> getReviewByProductID(int productID){
@@ -55,5 +61,24 @@ public class ReviewService {
 
     }
 
+    public List<Review> getReviewByProductIDWithImages(int productId) {
+        List<Review> reviews = reviewDao.findByProductID(productId);
+
+        for (Review review : reviews) {
+            review.setImages(reviewImageDao.getImagesByReviewId(review.getId()));
+        }
+
+        return reviews;
+    }
+
+    public List<Review> getReviewByProductIDWithImages(int productId, String sortRating) {
+        List<Review> reviews = reviewDao.getReviewByProductID(productId, sortRating);
+
+        for (Review review : reviews) {
+            review.setImages(reviewImageDao.getImagesByReviewId(review.getId()));
+        }
+
+        return reviews;
+    }
 
 }

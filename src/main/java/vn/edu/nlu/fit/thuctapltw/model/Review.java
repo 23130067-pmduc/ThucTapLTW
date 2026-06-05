@@ -2,6 +2,7 @@ package vn.edu.nlu.fit.thuctapltw.model;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class Review {
     private int id;
@@ -13,6 +14,7 @@ public class Review {
 
 
     private String userName;
+    private List<String> images;
 
 
     public Review(int id, int productId, int userId, int rating, String comment, LocalDateTime createdAt) {
@@ -96,5 +98,13 @@ public class Review {
     public String getCreatedAtFormatted() {
         if (createdAt == null) return "";
         return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 }
