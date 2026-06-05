@@ -55,12 +55,11 @@ public class ProductDetailController extends HttpServlet {
         List<Review> reviews;
 
         if ("asc".equals(sortRating) || "desc".equals(sortRating)) {
-            reviews = reviewService.getReviewByProductID(id, sortRating);
+            reviews = reviewService.getReviewByProductIDWithImages(id, sortRating);
         } else {
-            reviews = reviewService.getReviewByProductID(id);
+            reviews = reviewService.getReviewByProductIDWithImages(id);
         }
 
-        request.setAttribute("sortRating", sortRating);
 
 
         List<Product> ralatedProducts = productService.ralatedProduct(id, 4);

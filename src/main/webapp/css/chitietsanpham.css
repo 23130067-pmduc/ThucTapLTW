@@ -863,3 +863,24 @@ input[type=number]::-webkit-outer-spin-button {
     line-height: 20px;
     cursor: pointer;
 }
+
+.review-images {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+.review-comment-img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.review-comment-img:hover {
+    transform: scale(1.04);
+}

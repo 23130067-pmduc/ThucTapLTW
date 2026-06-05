@@ -221,6 +221,15 @@
                         <c:forEach begin="1" end="${r.rating}">⭐</c:forEach>
                     </div>
                     <p>${r.comment}</p>
+
+                    <c:if test="${not empty r.images}">
+                        <div class="review-images">
+                            <c:forEach var="img" items="${r.images}">
+                                <img src="${img}" alt="Ảnh đánh giá" class="review-comment-img">
+                            </c:forEach>
+                        </div>
+                    </c:if>
+
                     <small>${r.createdAtFormatted}</small>
                 </div>
             </c:forEach>
