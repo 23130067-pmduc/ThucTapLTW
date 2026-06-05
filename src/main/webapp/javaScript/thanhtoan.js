@@ -126,12 +126,16 @@ function setShippingHint(message) {
 
 async function fetchShippingFeeForSelectedAddress() {
     const selectedRadio = document.querySelector('input[name="selectedAddress"]:checked');
+    const priceFastEl = document.getElementById('priceFast');
 
     if (!selectedRadio || !selectedRadio.value) {
+        if (priceFastEl) priceFastEl.textContent = 'Miễn phí';
         updateSummaryAmounts(0);
         setShippingHint('');
         return;
     }
+
+    if (priceFastEl) priceFastEl.textContent = 'Đang tính...';
 
     try {
         const contextPath = getContextPath();
@@ -148,13 +152,16 @@ async function fetchShippingFeeForSelectedAddress() {
         const data = await response.json();
 
         if (data.success && typeof data.fee === 'number') {
+            if (priceFastEl) priceFastEl.textContent = formatVnd(data.fee);
             updateSummaryAmounts(data.fee);
             setShippingHint('');
         } else {
+            if (priceFastEl) priceFastEl.textContent = '--';
             updateSummaryAmounts(0);
             setShippingHint(data.message || 'Không tính được phí vận chuyển cho địa chỉ này.');
         }
     } catch (e) {
+        if (priceFastEl) priceFastEl.textContent = '--';
         updateSummaryAmounts(0);
         setShippingHint('Có lỗi khi tính phí vận chuyển.');
     }
