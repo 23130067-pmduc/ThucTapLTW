@@ -31,7 +31,10 @@
                     </c:otherwise>
                 </c:choose>
                 <li>✔ Nhân viên giao hàng sẽ liên hệ trước</li>
-                <li>✔ Giao hàng tiêu chuẩn (3–5 ngày)</li>
+                <li>✔ Giao hàng nhanh (GHN) — 1–2 ngày làm việc</li>
+                <c:if test="${not empty order.estimatedDeliveryDateFormatted}">
+                    <li>Dự kiến giao: <b>${order.estimatedDeliveryDateFormatted}</b></li>
+                </c:if>
             </ul>
         </div>
 

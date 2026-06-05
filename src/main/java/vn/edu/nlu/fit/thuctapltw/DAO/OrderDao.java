@@ -5,6 +5,7 @@ import vn.edu.nlu.fit.thuctapltw.model.Order;
 import vn.edu.nlu.fit.thuctapltw.model.OrderItem;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -574,18 +575,11 @@ public class OrderDao extends BaseDao {
     }
 
     public int createOrder(int userId, String receiver, String phone, String address, String note,
-                           String paymentMethod, double totalPrice, double shippingFee, double discount) {
-        double finalAmount = totalPrice + shippingFee - discount;
-
-        if (finalAmount < 0) {
-            finalAmount = 0;
-        }
-
-        double finalFinalAmount = finalAmount;
-
+                           String paymentMethod, double totalPrice, double shippingFee, double discount, LocalDate estimatedDeliveryDate) {
+        double finalAmount = Math.max(0, totalPrice + shippingFee - discount);
         return getJdbi().withHandle(h -> h.createUpdate("""
-            INSERT INTO orders(user_id, receiver_name, phone, shipping_address, note, total_price, discount, shipping_fee, final_amount, payment_methods, payment_statuses, order_status, created_at)
-            VALUES(:uid, :receiver, :phone, :address, :note, :total, :discount, :shippingFee, :finalAmount, :payment, 'UNPAID', 'PENDING', NOW())
+            INSERT INTO orders(user_id, receiver_name, phone, shipping_address, note, total_price, discount, shipping_fee, estimated_delivery_date, final_amount, payment_methods, payment_statuses, order_status, created_at)
+            VALUES(:uid, :receiver, :phone, :address, :note, :total, :discount, :shippingFee, :estimatedDeliveryDate, :finalAmount, :payment, 'UNPAID', 'PENDING', NOW())
             """)
                 .bind("uid", userId)
                 .bind("receiver", receiver)
@@ -595,7 +589,8 @@ public class OrderDao extends BaseDao {
                 .bind("total", totalPrice)
                 .bind("discount", discount)
                 .bind("shippingFee", shippingFee)
-                .bind("finalAmount", finalFinalAmount)
+                .bind("estimatedDeliveryDate", estimatedDeliveryDate)
+                .bind("finalAmount", finalAmount)
                 .bind("payment", paymentMethod)
                 .executeAndReturnGeneratedKeys("id")
                 .mapTo(int.class)
@@ -605,7 +600,7 @@ public class OrderDao extends BaseDao {
 
     public Order getById(int orderId) {
         String sql = """
-        SELECT id, user_id, receiver_name, phone, shipping_address, total_price, discount, shipping_fee, note, final_amount, payment_methods, payment_statuses, order_status, created_at
+        SELECT id, user_id, receiver_name, phone, shipping_address, total_price, discount, shipping_fee, estimated_delivery_date, note, final_amount, payment_methods, payment_statuses, order_status, created_at
         FROM orders
         WHERE id = :oid
     """;
@@ -625,8 +620,9 @@ public class OrderDao extends BaseDao {
             o.setPaymentStatuses(rs.getString("payment_statuses"));
             o.setOrderStatus(rs.getString("order_status"));
             o.setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime());
-            return o;}).findOne().orElse(null)
-        );
+            java.sql.Date edd = rs.getDate("estimated_delivery_date");
+            if (edd != null) o.setEstimatedDeliveryDate(edd.toLocalDate());
+            return o;}).findOne().orElse(null));
     }
 
     public void updatePaymentStatus(int orderId, String paymentStatus) {

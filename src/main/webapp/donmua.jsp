@@ -90,6 +90,9 @@
                                     <div class="info-row"><span class="info-label">Địa chỉ giao:</span> <span>${o.shippingAddress}</span></div>
                                     <div class="info-row"><span class="info-label">Số điện thoại:</span> <span>${o.phone}</span></div>
                                     <div class="info-row"><span class="info-label">Hình thức thanh toán:</span> <span>${o.paymentMethodLabel}</span></div>
+                                    <c:if test="${not empty o.estimatedDeliveryDateFormatted}">
+                                        <div class="info-row"><span class="info-label">Dự kiến giao:</span> <span>${o.estimatedDeliveryDateFormatted}</span></div>
+                                    </c:if>
                                     <div class="info-row"><span class="info-label">Trạng thái thanh toán:</span>
                                         <span class="payment-badge ${o.paymentStatuses}">${o.paymentStatusLabel}</span>
                                     </div>

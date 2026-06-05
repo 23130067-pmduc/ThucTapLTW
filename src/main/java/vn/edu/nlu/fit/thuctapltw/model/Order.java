@@ -1,5 +1,6 @@
 package vn.edu.nlu.fit.thuctapltw.model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -19,6 +20,7 @@ public class Order {
     private String paymentStatuses;
     private String orderStatus;
     private LocalDateTime createdAt;
+    private LocalDate estimatedDeliveryDate;
     private List<OrderItem> items;
 
     private Integer returnOrderId;
@@ -55,6 +57,8 @@ public class Order {
     public void setNote(String note) { this.note = note; }
     public List<OrderItem> getItems() { return items; }
     public void setItems(List<OrderItem> items) { this.items = items; }
+    public LocalDate getEstimatedDeliveryDate() { return estimatedDeliveryDate; }
+    public void setEstimatedDeliveryDate(LocalDate v) { this.estimatedDeliveryDate = v; }
 
     public Integer getReturnOrderId() { return returnOrderId; }
     public void setReturnOrderId(Integer returnOrderId) { this.returnOrderId = returnOrderId; }
@@ -84,6 +88,11 @@ public class Order {
     public String getCreatedDateOnly() {
         if (createdAt == null) return "";
         return createdAt.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    }
+
+    public String getEstimatedDeliveryDateFormatted() {
+        if (estimatedDeliveryDate == null) return "";
+        return estimatedDeliveryDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     public String getOrderStatusLabel() {

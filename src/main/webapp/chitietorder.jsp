@@ -83,6 +83,12 @@
                         <span class="detail-value">${order.note}</span>
                     </div>
                 </c:if>
+                <c:if test="${not empty order.estimatedDeliveryDateFormatted}">
+                    <div class="detail-row">
+                        <span class="detail-label">Dự kiến giao</span>
+                        <span class="detail-value">${order.estimatedDeliveryDateFormatted}</span>
+                    </div>
+                </c:if>
             </div>
 
             <div class="order-detail-card">
