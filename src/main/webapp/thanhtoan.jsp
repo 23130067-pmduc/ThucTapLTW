@@ -108,7 +108,16 @@
 
                 <div class="shipping-method-wrapper">
                     <h2>Phương thức vận chuyển</h2>
-                    <p>Giao hàng tiêu chuẩn (3 đến 7 ngày) · <strong>MIỄN PHÍ</strong></p>
+                    <div class="shipping-option-item active">
+                        <div class="shipping-option-info">
+                            <span class="shipping-option-name">
+                                <i class="fa-solid fa-bolt"></i> Giao hàng nhanh (GHN)
+                            </span>
+                            <span class="shipping-option-duration">1 – 2 ngày làm việc</span>
+                        </div>
+                        <span class="shipping-option-price" id="priceFast">Đang tính...</span>
+                    </div>
+                    <input type="hidden" name="shippingMethod" value="FAST">
                 </div>
 
                 <div class="payment-method-wrapper">

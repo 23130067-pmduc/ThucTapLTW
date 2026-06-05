@@ -402,9 +402,43 @@
     color: #777;
     font-weight: normal;
 }
-.shipping-method-wrapper p {
+.shipping-option-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background: #fafafa;
+}
+.shipping-option-item.active {
+    border-color: #2b7de9;
+    background: #edf3ff;
+}
+.shipping-option-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+.shipping-option-name {
     font-size: 14px;
-    margin-bottom: 5px;
+    font-weight: 600;
+    color: #222;
+}
+.shipping-option-name i {
+    color: #2b7de9;
+    margin-right: 4px;
+}
+.shipping-option-duration {
+    font-size: 12px;
+    color: #888888;
+}
+.shipping-option-price {
+    font-size: 14px;
+    font-weight: 700;
+    color: black;
+    white-space: nowrap;
 }
 .payment-method-wrapper {
     border: 1px solid #ddd;
