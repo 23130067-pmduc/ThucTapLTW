@@ -148,45 +148,45 @@
             <p class="review-success">Đánh giá của bạn đã được gửi thành công!</p>
         </c:if>
 
-        <c:if test="${param.reviewError == 'no_permission'}">
-            <p class="review-error">
-                Bạn chưa mua sản phẩm này hoặc đã dùng hết lượt đánh giá.
-            </p>
+
+        <c:if test="${canReview}">
+            <form action="${pageContext.request.contextPath}/review" method="post"
+                  enctype="multipart/form-data" class="review-form">
+                <input type="hidden" name="product_id" value="${product.id}">
+                <input type="hidden" name="rating" id="rating-value" value="5">
+
+                <div class="star-select">
+                    <span class="star" data-value="1">★</span>
+                    <span class="star" data-value="2">★</span>
+                    <span class="star" data-value="3">★</span>
+                    <span class="star" data-value="4">★</span>
+                    <span class="star" data-value="5">★</span>
+                </div>
+
+                <textarea id="review-text"
+                          name="comment"
+                          required
+                          placeholder="Nhập nhận xét của bạn..."></textarea>
+
+
+                <label class="review-upload-box">
+                    <!--  <span class="review-upload-icon">📷</span> -->
+                    <span class="review-upload-text">Thêm ảnh đánh giá</span>
+
+                    <input type="file"
+                           id="reviewImages"
+                           name="reviewImages"
+                           multiple
+                           accept="image/*"
+                           class="review-image-input">
+                </label>
+
+                <div id="reviewImagePreview" class="review-image-preview"></div>
+
+                <button type="submit" class="review-submit-btn">Gửi đánh giá</button>
+            </form>
+
         </c:if>
-
-        <c:choose>
-            <c:when test="${canReview}">
-                <p class="review-note">
-                    Bạn còn ${remainingReviewTimes} lượt đánh giá cho sản phẩm này.
-                </p>
-
-                <form action="${pageContext.request.contextPath}/review" method="post" class="review-form">
-                    <input type="hidden" name="product_id" value="${product.id}">
-                    <input type="hidden" name="rating" id="rating-value" value="5">
-
-                    <div class="star-select">
-                        <span class="star" data-value="1">★</span>
-                        <span class="star" data-value="2">★</span>
-                        <span class="star" data-value="3">★</span>
-                        <span class="star" data-value="4">★</span>
-                        <span class="star" data-value="5">★</span>
-                    </div>
-
-                    <textarea id="review-text"
-                              name="comment"
-                              required
-                              placeholder="Nhập nhận xét của bạn..."></textarea>
-
-                    <button type="submit" class="review-submit-btn">Gửi đánh giá</button>
-                </form>
-            </c:when>
-
-            <c:otherwise>
-                <p class="review-warning"id="">
-                    Bạn cần mua sản phẩm này và còn lượt đánh giá thì mới được đánh giá.
-                </p>
-            </c:otherwise>
-        </c:choose>
 
 
 
@@ -593,6 +593,67 @@
                 showImage(currentIndex + 1);
             }
         });
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const imageInput = document.getElementById("reviewImages");
+        const previewBox = document.getElementById("reviewImagePreview");
+
+        if (!imageInput || !previewBox) return;
+
+        let selectedFiles = [];
+
+        imageInput.addEventListener("change", function () {
+            selectedFiles = Array.from(imageInput.files).slice(0, 5);
+            renderPreview();
+        });
+
+        function renderPreview() {
+            previewBox.innerHTML = "";
+
+            selectedFiles.forEach(function (file, index) {
+                if (!file.type.startsWith("image/")) return;
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    const item = document.createElement("div");
+                    item.className = "review-preview-item";
+
+                    const img = document.createElement("img");
+                    img.src = e.target.result;
+
+                    const removeBtn = document.createElement("button");
+                    removeBtn.type = "button";
+                    removeBtn.className = "review-preview-remove";
+                    removeBtn.textContent = "×";
+
+                    removeBtn.addEventListener("click", function () {
+                        selectedFiles.splice(index, 1);
+                        updateInputFiles();
+                        renderPreview();
+                    });
+
+                    item.appendChild(img);
+                    item.appendChild(removeBtn);
+                    previewBox.appendChild(item);
+                };
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function updateInputFiles() {
+            const dataTransfer = new DataTransfer();
+
+            selectedFiles.forEach(function (file) {
+                dataTransfer.items.add(file);
+            });
+
+            imageInput.files = dataTransfer.files;
+        }
     });
 </script>
 

@@ -27,6 +27,10 @@ public class ReviewService {
         reviewDao.insert(review);
     }
 
+    public int addReviewAndReturnId(Review review) {
+        return reviewDao.insertAndReturnId(review);
+    }
+
     public List<Review> getReviewByProductID(int productID){
         return reviewDao.findByProductID(productID);
     }
