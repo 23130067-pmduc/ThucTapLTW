@@ -88,7 +88,7 @@ public class loginController extends HttpServlet {
 
         createUserSession(request, user);
 
-        if ("admin".equalsIgnoreCase(user.getRole())) {
+        if ("ADMIN".equalsIgnoreCase(user.getRoleName())) {
             response.sendRedirect(request.getContextPath() + "/dashboard");
         } else {
             response.sendRedirect(request.getContextPath() + "/trang-chu");
@@ -102,6 +102,11 @@ public class loginController extends HttpServlet {
         }
 
         HttpSession session = request.getSession(true);
+
+
+        userService.loadPermissions(user);
+
+
         session.setAttribute("userId", user.getId());
         session.setAttribute("userlogin", user);
 
@@ -146,7 +151,7 @@ public class loginController extends HttpServlet {
                 user.setUsername(userName);
                 user.setEmail(email);
                 user.setFullName(name);
-                user.setRole("user");
+                user.setRoleId(userService.getRoleIdByName("CUSTOMER"));
                 user.setStatus("ACTIVE");
                 user.setIsActive(1);
 
@@ -176,7 +181,7 @@ public class loginController extends HttpServlet {
 
             createUserSession(request, user);
 
-            if ("admin".equalsIgnoreCase(user.getRole())) {
+            if ("ADMIN".equalsIgnoreCase(user.getRoleName())) {
                 response.sendRedirect(request.getContextPath() + "/dashboard");
             } else {
                 response.sendRedirect(request.getContextPath() + "/trang-chu");
