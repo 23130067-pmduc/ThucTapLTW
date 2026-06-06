@@ -392,3 +392,52 @@ body, .admin {
     background: #FFFFFF7F;
     animation: progress 3s linear forwards;
 }
+
+.status-form {
+    display: inline-block;
+}
+
+.status-select {
+    min-width: 125px;
+    padding: 6px 28px 6px 10px;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.status-select:focus {
+    outline: 2px solid #228be6;
+    outline-offset: 2px;
+}
+
+.status-new {
+    background: #e3f7e9;
+    color: #2e7d32;
+}
+
+.status-processing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-closed {
+    background: #fdecea;
+    color: #c62828;
+}
+
+.status-select option {
+    background-color: #ffffff;
+}
+
+.status-select option[value="New"] {
+    color: #2e7d32;
+}
+
+.status-select option[value="Processing"] {
+    color: #856404;
+}
+.status-select option[value="Closed"] {
+    color: #c62828;
+}

@@ -29,6 +29,10 @@ function dismissToast(toast) {
     setTimeout(() => toast.remove(), 350);
 }
 
+function updateContactStatus(select) {
+    select.form.submit();
+}
+
 (function () {
     const params = new URLSearchParams(window.location.search);
     const success = params.get('success');
@@ -37,6 +41,9 @@ function dismissToast(toast) {
     }
     if (success === 'deleted') {
         showToast('Đã xóa liên hệ thành công!', 'warning', 'fa-trash-can');
+    }
+    if (success === 'status-updated') {
+        showToast('Cập nhật trạng thái liên hệ thành công!', 'success', 'fa-circle-check');
     }
     if (success) {
         const url = new URL(window.location);

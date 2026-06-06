@@ -90,7 +90,7 @@ public class ContactDao extends BaseDao {
         getJdbi().withHandle(handle -> handle.createUpdate("""
                 UPDATE contacts
                 SET status = :status
-                WHERE id = :id""")
+                WHERE id = :id AND is_deleted = 0""")
                 .bind("id", id)
                 .bind("status", status)
                 .execute());
