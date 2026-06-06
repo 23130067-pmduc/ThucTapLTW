@@ -24,18 +24,85 @@
     <p>ADMIN</p>
 
     <div class="nav" id="menu">
-      <a href="${pageContext.request.contextPath}/dashboard" class="nav-item"><i class="fa-solid fa-gauge"></i><span>Dashboard</span></a>
-      <a href="${pageContext.request.contextPath}/product-admin" class="nav-item active"><i class="fa-solid fa-shirt"></i><span>Sản phẩm</span></a>
-      <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span></a>
-      <a href="${pageContext.request.contextPath}/profit-report" class="nav-item"><i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span></a>
-      <a href="${pageContext.request.contextPath}/category-admin" class="nav-item"><i class="fa-solid fa-list"></i><span>Danh mục</span></a>
-      <a href="${pageContext.request.contextPath}/order-admin" class="nav-item"><i class="fa-solid fa-receipt"></i><span>Đơn hàng</span></a>
-      <a href="${pageContext.request.contextPath}/user-admin" class="nav-item"><i class="fa-solid fa-users"></i><span>Người dùng</span></a>
-      <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item"><i class="fa-solid fa-image"></i><span>Banner</span></a>
-      <a href="${pageContext.request.contextPath}/news-admin" class="nav-item"><i class="fa-solid fa-newspaper"></i><span>Tin tức</span></a>
-      <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item"><i class="fa-solid fa-bell"></i><span>Thông báo</span></a>
-      <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item"><i class="fa-solid fa-envelope"></i><span>Liên hệ</span></a>
-      <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item"><i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span></a>
+      <div class="nav" id="menu">
+
+        <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
+          <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
+            <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('PRODUCT_MANAGE')}">
+          <a href="${pageContext.request.contextPath}/product-admin" class="nav-item active">
+            <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
+          <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item">
+            <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+          <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
+            <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
+          <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
+            <i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('CATEGORY_MANAGE')}">
+          <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
+            <i class="fa-solid fa-list"></i><span>Danh mục</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('ORDER_VIEW')}">
+          <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">
+            <i class="fa-solid fa-receipt"></i><span>Đơn hàng</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
+          <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">
+            <i class="fa-solid fa-users"></i><span>Người dùng</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('BANNER_MANAGE')}">
+          <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
+            <i class="fa-solid fa-image"></i><span>Banner</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('NEWS_MANAGE')}">
+          <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
+            <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('NOTIFICATION_MANAGE')}">
+          <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
+            <i class="fa-solid fa-bell"></i><span>Thông báo</span>
+          </a>
+        </c:if>
+
+        <c:if test="${userlogin.permissions.contains('CONTACT_MANAGE')}">
+          <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
+            <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
+          </a>
+        </c:if>
+
+        <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">
+          <i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span>
+        </a>
+
+      </div>
     </div>
   </aside>
 

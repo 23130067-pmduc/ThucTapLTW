@@ -88,11 +88,29 @@ public class loginController extends HttpServlet {
 
         createUserSession(request, user);
 
-        if ("ADMIN".equalsIgnoreCase(user.getRoleName())) {
+        String roleName = user.getRoleName();
+
+        if ("ADMIN".equalsIgnoreCase(roleName)) {
             response.sendRedirect(request.getContextPath() + "/dashboard");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/trang-chu");
+            return;
         }
+
+        if ("STAFF_ORDER".equalsIgnoreCase(roleName)) {
+            response.sendRedirect(request.getContextPath() + "/order-admin");
+            return;
+        }
+
+        if ("STAFF_WAREHOUSE".equalsIgnoreCase(roleName)) {
+            response.sendRedirect(request.getContextPath() + "/inventory-admin");
+            return;
+        }
+
+        if ("STAFF_MARKETING".equalsIgnoreCase(roleName)) {
+            response.sendRedirect(request.getContextPath() + "/banner-admin");
+            return;
+        }
+
+        response.sendRedirect(request.getContextPath() + "/trang-chu");
     }
 
     private void createUserSession(HttpServletRequest request, User user){
@@ -181,11 +199,29 @@ public class loginController extends HttpServlet {
 
             createUserSession(request, user);
 
-            if ("ADMIN".equalsIgnoreCase(user.getRoleName())) {
+            String roleName = user.getRoleName();
+
+            if ("ADMIN".equalsIgnoreCase(roleName)) {
                 response.sendRedirect(request.getContextPath() + "/dashboard");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/trang-chu");
+                return;
             }
+
+            if ("STAFF_ORDER".equalsIgnoreCase(roleName)) {
+                response.sendRedirect(request.getContextPath() + "/order-admin");
+                return;
+            }
+
+            if ("STAFF_WAREHOUSE".equalsIgnoreCase(roleName)) {
+                response.sendRedirect(request.getContextPath() + "/inventory-admin");
+                return;
+            }
+
+            if ("STAFF_MARKETING".equalsIgnoreCase(roleName)) {
+                response.sendRedirect(request.getContextPath() + "/banner-admin");
+                return;
+            }
+
+            response.sendRedirect(request.getContextPath() + "/trang-chu");
 
         } catch (GeneralSecurityException e) {
             throw new ServletException("Lỗi xác thực Google token", e);
