@@ -17,6 +17,7 @@
 </head>
 <body>
 <div class="user">
+    <div class="toast-container" id="toastContainer"></div>
     <aside class="sidebar">
         <img src="img/gau.png" alt="" Logo>
         <p>ADMIN</p>
@@ -154,18 +155,7 @@
         </div>
     </div>
 </div>
+<script src="javaScript/contact-admin.js"></script>
 </body>
-<script>
-    function openDeleteModal(id, name) {
-        document.getElementById("deleteContactId").value = id;
-        document.getElementById("deleteMessage").innerHTML =
-            'Bạn có chắc muốn xóa liên hệ từ "<b>' + name + '</b>" không?';
-        document.getElementById("deleteModal").style.display = "flex";
-    }
-
-    function closeDeleteModal() {
-        document.getElementById("deleteModal").style.display = "none";
-    }
-</script>
 
 </html>
