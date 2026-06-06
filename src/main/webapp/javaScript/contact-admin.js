@@ -35,6 +35,9 @@ function dismissToast(toast) {
     if (success === 'created') {
         showToast('Thêm liên hệ mới thành công!', 'success', 'fa-circle-check');
     }
+    if (success === 'deleted') {
+        showToast('Đã xóa liên hệ thành công!', 'warning', 'fa-trash-can');
+    }
     if (success) {
         const url = new URL(window.location);
         url.searchParams.delete('success');

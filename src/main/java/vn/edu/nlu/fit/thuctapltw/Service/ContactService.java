@@ -37,4 +37,8 @@ public class ContactService {
     public void acceptContact(int id) {
         contactDao.acceptContact(id, "Closed");
     }
+
+    public void deleteContact(int id) {
+        contactDao.softDeleteContact(id);
+    }
 }

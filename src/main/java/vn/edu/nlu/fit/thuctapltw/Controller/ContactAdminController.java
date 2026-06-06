@@ -112,6 +112,15 @@ public class ContactAdminController extends HttpServlet {
             response.sendRedirect("contact-admin");
             return;
         }
+
+        if ("delete".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+
+            contactService.deleteContact(id);
+
+            response.sendRedirect("contact-admin?success=deleted");
+            return;
+        }
     }
 
 }
