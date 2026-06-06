@@ -83,7 +83,7 @@ public class ContactAdminController extends HttpServlet {
 
             contactService.createContact(contact);
 
-            response.sendRedirect("contact-admin");
+            response.sendRedirect("contact-admin?success=created");
             return;
         }
 
@@ -100,7 +100,7 @@ public class ContactAdminController extends HttpServlet {
             contact.setMessage(request.getParameter("message"));
 
             contactService.updateContact(contact);
-            response.sendRedirect("contact-admin?mode=view&id=" + id );
+            response.sendRedirect("contact-admin?mode=view&id=" + id + "&success=updated");
             return;
         }
 
@@ -110,6 +110,15 @@ public class ContactAdminController extends HttpServlet {
             contactService.acceptContact(id);
 
             response.sendRedirect("contact-admin");
+            return;
+        }
+
+        if ("delete".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+
+            contactService.deleteContact(id);
+
+            response.sendRedirect("contact-admin?success=deleted");
             return;
         }
     }

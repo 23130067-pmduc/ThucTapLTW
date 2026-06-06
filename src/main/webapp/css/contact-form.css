@@ -150,3 +150,22 @@ button, .btn-primary, .btn-secondary {
         flex-direction: column;
     }
 }
+
+.required-star {
+    color: #e53935;
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+.error-msg {
+    display: none;
+    color: #e53935;
+    font-size: 12px;
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.input-error {
+    border-color: #e53935 !important;
+    background-color: #fff8f8 !important;
+}
