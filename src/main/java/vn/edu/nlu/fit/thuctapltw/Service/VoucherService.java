@@ -16,6 +16,36 @@ public class VoucherService {
         return voucherDao.findActiveOrderAndProductVouchers();
     }
 
+
+
+    public List<Voucher> getAdminVouchers(String keyword, String scope, String status, int page, int pageSize) {
+        if (page < 1) {
+            page = 1;
+        }
+        int offset = (page - 1) * pageSize;
+        return voucherDao.findAdminVouchers(keyword, scope, status, pageSize, offset);
+    }
+
+    public int countAdminVouchers(String keyword, String scope, String status) {
+        return voucherDao.countAdminVouchers(keyword, scope, status);
+    }
+
+    public int countAllVouchers() {
+        return voucherDao.countAllVouchers();
+    }
+
+    public int countActiveVouchers() {
+        return voucherDao.countActiveVouchers();
+    }
+
+    public int countLockedVouchers() {
+        return voucherDao.countLockedVouchers();
+    }
+
+    public int countExpiredVouchers() {
+        return voucherDao.countExpiredVouchers();
+    }
+
     public List<Voucher> getActiveShippingVouchers() {
         return voucherDao.findActiveShippingVouchers();
     }
