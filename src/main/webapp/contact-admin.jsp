@@ -94,17 +94,15 @@
                                                 : c.message}
                                 </td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${c.status == 'New'}">
-                                            <span class="status active">Liên hệ mới</span>
-                                        </c:when>
-                                        <c:when test="${c.status == 'Processing'}">
-                                            <span class="status processing">Đang xử lý</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="status blocked">Đã xử lý</span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <form method="post" action="contact-admin" class="status-form">
+                                        <input type="hidden" name="action" value="updateStatus">
+                                        <input type="hidden" name="id" value="${c.id}">
+                                        <select name="status" class="status-select status-${fn:toLowerCase(c.status)}" onchange="updateContactStatus(this)">
+                                            <option value="New" ${c.status == 'New' ? 'selected' : ''}>Liên hệ mới</option>
+                                            <option value="Processing" ${c.status == 'Processing' ? 'selected' : ''}>Đang xử lý</option>
+                                            <option value="Closed" ${c.status == 'Closed' ? 'selected' : ''}>Đã xử lý</option>
+                                        </select>
+                                    </form>
                                 </td>
                                 <td class="actions">
                                     <!-- XEM -->

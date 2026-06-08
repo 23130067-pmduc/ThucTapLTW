@@ -38,6 +38,8 @@ public class ContactService {
         contactDao.acceptContact(id, "Closed");
     }
 
+    public void updateStatus(int id, String status) {contactDao.acceptContact(id, status);}
+
     public void deleteContact(int id) {
         contactDao.softDeleteContact(id);
     }

@@ -12,6 +12,8 @@ import java.util.List;
 @WebServlet(name = "ContactAdminController", value = "/contact-admin")
 public class ContactAdminController extends HttpServlet {
 
+    private static final List<String> ALLOWED_STATUSES = List.of("New", "Processing", "Closed");
+
     private ContactService contactService;
 
     @Override
@@ -104,12 +106,17 @@ public class ContactAdminController extends HttpServlet {
             return;
         }
 
-        if ("accept".equals(action)) {
+        if ("updateStatus".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
+            String status = request.getParameter("status");
 
-            contactService.acceptContact(id);
+            if (!ALLOWED_STATUSES.contains(status)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid contact status");
+                return;
+            }
 
-            response.sendRedirect("contact-admin");
+            contactService.updateStatus(id, status);
+            response.sendRedirect("contact-admin?success=status-updated");
             return;
         }
 
