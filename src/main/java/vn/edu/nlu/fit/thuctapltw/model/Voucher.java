@@ -173,6 +173,58 @@ public class Voucher implements Serializable {
         this.created_at = created_at;
     }
 
+
+    public String getScopeLabel() {
+        if ("PRODUCT".equalsIgnoreCase(voucher_scope)) return "Sản phẩm";
+        if ("SHIPPING".equalsIgnoreCase(voucher_scope)) return "Vận chuyển";
+        return "Đơn hàng";
+    }
+
+    public String getDiscountTypeLabel() {
+        if ("PERCENT".equalsIgnoreCase(discount_type)) return "Theo phần trăm";
+        return "Số tiền cố định";
+    }
+
+    public String getStatusLabel() {
+        if (status == 0) return "Đã khóa";
+        if (end_date != null && end_date.isBefore(LocalDateTime.now())) return "Hết hạn";
+        if (used_quantity >= quantity) return "Hết lượt";
+        if (start_date != null && start_date.isAfter(LocalDateTime.now())) return "Chưa bắt đầu";
+        return "Đang hoạt động";
+    }
+
+    public String getStatusClass() {
+        if (status == 0) return "blocked";
+        if (end_date != null && end_date.isBefore(LocalDateTime.now())) return "expired";
+        if (used_quantity >= quantity) return "soldout";
+        if (start_date != null && start_date.isAfter(LocalDateTime.now())) return "waiting";
+        return "active";
+    }
+
+    public String getStartDateText() {
+        if (start_date == null) return "-";
+        return start_date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
+
+    public String getEndDateText() {
+        if (end_date == null) return "-";
+        return end_date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
+
+    public String getMinOrderText() {
+        if (min_order_value <= 0) return "Không yêu cầu";
+        return formatCurrency(min_order_value);
+    }
+
+    public String getMaxDiscountText() {
+        if (max_discount == null || max_discount <= 0) return "Không giới hạn";
+        return formatCurrency(max_discount);
+    }
+
+    public String getUsageText() {
+        return used_quantity + "/" + quantity;
+    }
+
     public String getTypeLabel() {
         if ("PRODUCT".equalsIgnoreCase(voucher_scope)) return "Giảm sản phẩm";
         return "Giảm đơn hàng";

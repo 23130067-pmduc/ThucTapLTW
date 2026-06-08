@@ -40,11 +40,13 @@
             </a>
 
             <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">
+            <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item"><i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span></a>
                 <i class="fa-solid fa-receipt"></i>
                 <span>Đơn hàng</span>
             </a>
 
             <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">
+            <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item"><i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span></a>
                 <i class="fa-solid fa-users"></i>
                 <span>Người dùng</span>
             </a>
