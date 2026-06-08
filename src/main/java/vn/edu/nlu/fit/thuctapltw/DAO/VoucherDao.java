@@ -224,4 +224,46 @@ public class VoucherDao extends BaseDao {
                         .one()
         );
     }
+    public boolean existsByCode(String code) {
+        String sql = "SELECT COUNT(*) FROM vouchers WHERE UPPER(code) = UPPER(:code)";
+        return getJdbi().withHandle(handle ->
+                handle.createQuery(sql)
+                        .bind("code", code)
+                        .mapTo(Integer.class)
+                        .one() > 0
+        );
+    }
+
+    public void insert(Voucher voucher) {
+        getJdbi().useHandle(handle ->
+                handle.createUpdate("""
+                    INSERT INTO vouchers (
+                        code, name, description, discount_type, discount_value, max_discount,
+                        min_order_value, voucher_scope, customer_id, product_id, order_id,
+                        start_date, end_date, quantity, used_quantity, status
+                    )
+                    VALUES (
+                        :code, :name, :description, :discountType, :discountValue, :maxDiscount,
+                        :minOrderValue, :voucherScope, :customerId, :productId, NULL,
+                        :startDate, :endDate, :quantity, 0, :status
+                    )
+                    """)
+                        .bind("code", voucher.getCode())
+                        .bind("name", voucher.getName())
+                        .bind("description", voucher.getDescription())
+                        .bind("discountType", voucher.getDiscount_type())
+                        .bind("discountValue", voucher.getDiscount_value())
+                        .bind("maxDiscount", voucher.getMax_discount())
+                        .bind("minOrderValue", voucher.getMin_order_value())
+                        .bind("voucherScope", voucher.getVoucher_scope())
+                        .bind("customerId", voucher.getCustomer_id())
+                        .bind("productId", voucher.getProduct_id())
+                        .bind("startDate", voucher.getStart_date())
+                        .bind("endDate", voucher.getEnd_date())
+                        .bind("quantity", voucher.getQuantity())
+                        .bind("status", voucher.getStatus())
+                        .execute()
+        );
+    }
+
 }

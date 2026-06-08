@@ -125,6 +125,91 @@ public class VoucherService {
         return Math.min(discount, applicableAmount);
     }
 
+
+    public String createVoucher(Voucher voucher) {
+        if (voucher == null) {
+            return "Dữ liệu mã giảm giá không hợp lệ.";
+        }
+
+        voucher.setCode(normalizeUpper(voucher.getCode()));
+        voucher.setDiscount_type(normalizeUpper(voucher.getDiscount_type()));
+        voucher.setVoucher_scope(normalizeUpper(voucher.getVoucher_scope()));
+
+        String validationMessage = validateVoucher(voucher);
+        if (validationMessage != null) {
+            return validationMessage;
+        }
+
+        if (voucherDao.existsByCode(voucher.getCode())) {
+            return "Mã giảm giá đã tồn tại.";
+        }
+
+        voucherDao.insert(voucher);
+        return null;
+    }
+
+    private String validateVoucher(Voucher voucher) {
+        if (isBlank(voucher.getCode())) {
+            return "Vui lòng nhập mã giảm giá.";
+        }
+
+        if (isBlank(voucher.getName())) {
+            return "Vui lòng nhập tên mã giảm giá.";
+        }
+
+        if (!"PERCENT".equals(voucher.getDiscount_type()) && !"FIXED".equals(voucher.getDiscount_type())) {
+            return "Loại giảm giá không hợp lệ.";
+        }
+
+        if (voucher.getDiscount_value() <= 0) {
+            return "Giá trị giảm phải lớn hơn 0.";
+        }
+
+        if ("PERCENT".equals(voucher.getDiscount_type()) && voucher.getDiscount_value() > 100) {
+            return "Giá trị giảm theo phần trăm không được vượt quá 100%.";
+        }
+
+        if (!"ORDER".equals(voucher.getVoucher_scope())
+                && !"PRODUCT".equals(voucher.getVoucher_scope())
+                && !"SHIPPING".equals(voucher.getVoucher_scope())) {
+            return "Phạm vi áp dụng không hợp lệ.";
+        }
+
+        if ("PRODUCT".equals(voucher.getVoucher_scope()) && voucher.getProduct_id() == null) {
+            return "Mã giảm giá sản phẩm cần nhập ID sản phẩm áp dụng.";
+        }
+
+        if (voucher.getMin_order_value() < 0) {
+            return "Giá trị đơn tối thiểu không được âm.";
+        }
+
+        if (voucher.getMax_discount() != null && voucher.getMax_discount() < 0) {
+            return "Giảm tối đa không được âm.";
+        }
+
+        if (voucher.getQuantity() <= 0) {
+            return "Số lượt sử dụng phải lớn hơn 0.";
+        }
+
+        if (voucher.getStart_date() == null || voucher.getEnd_date() == null) {
+            return "Vui lòng chọn thời gian bắt đầu và kết thúc.";
+        }
+
+        if (!voucher.getEnd_date().isAfter(voucher.getStart_date())) {
+            return "Thời gian kết thúc phải sau thời gian bắt đầu.";
+        }
+
+        return null;
+    }
+
+    private String normalizeUpper(String value) {
+        return value == null ? "" : value.trim().toUpperCase();
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
     public static class ApplyResult {
         private final boolean success;
         private final String message;

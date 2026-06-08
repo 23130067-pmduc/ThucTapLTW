@@ -25,6 +25,7 @@
             <a href="${pageContext.request.contextPath}/profit-report" class="nav-item"><i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span></a>
             <a href="${pageContext.request.contextPath}/category-admin" class="nav-item"><i class="fa-solid fa-list"></i><span>Danh mục</span></a>
             <a href="${pageContext.request.contextPath}/order-admin" class="nav-item"><i class="fa-solid fa-receipt"></i><span>Đơn hàng</span></a>
+            <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item"><i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span></a>
             <a href="${pageContext.request.contextPath}/user-admin" class="nav-item"><i class="fa-solid fa-users"></i><span>Người dùng</span></a>
             <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item active"><i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span></a>
             <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item"><i class="fa-solid fa-image"></i><span>Banner</span></a>
@@ -44,6 +45,13 @@
         </header>
 
         <main>
+            <c:if test="${param.success == 'create'}">
+                <div class="alert alert-success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Thêm mã giảm giá thành công.
+                </div>
+            </c:if>
+
             <div class="cards voucher-cards">
                 <div class="card">Tổng mã<br><span>${totalAll}</span></div>
                 <div class="card">Đang hoạt động<br><span>${totalActive}</span></div>
@@ -56,7 +64,13 @@
                     <div>
                         <h2>Danh sách mã giảm giá</h2>
                     </div>
-                    <span class="result-count">${total} kết quả</span>
+                    <div class="voucher-panel-actions">
+                        <span class="result-count">${total} kết quả</span>
+                        <a href="${pageContext.request.contextPath}/voucher-admin?action=create" class="voucher-add-btn">
+                            <i class="fa-solid fa-plus"></i>
+                            Thêm mã giảm giá
+                        </a>
+                    </div>
                 </div>
                 <div class="voucher-table-wrapper">
                     <table class="voucher-table">
