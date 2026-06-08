@@ -9,6 +9,8 @@ import vn.edu.nlu.fit.thuctapltw.Service.VoucherService;
 import vn.edu.nlu.fit.thuctapltw.model.Voucher;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.List;
@@ -33,6 +35,11 @@ public class VoucherAdminController extends HttpServlet {
             return;
         }
 
+        if ("edit".equalsIgnoreCase(action)) {
+            showEditForm(request, response);
+            return;
+        }
+
         showVoucherList(request, response);
     }
 
@@ -45,6 +52,12 @@ public class VoucherAdminController extends HttpServlet {
             createVoucher(request, response);
             return;
         }
+
+        if ("update".equalsIgnoreCase(action)) {
+            updateVoucher(request, response);
+            return;
+        }
+
 
         response.sendRedirect(request.getContextPath() + "/voucher-admin");
     }
@@ -72,6 +85,19 @@ public class VoucherAdminController extends HttpServlet {
         request.getRequestDispatcher("/voucher-admin.jsp").forward(request, response);
     }
 
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = parsePositiveInt(request.getParameter("id"), 0);
+        Voucher voucher = voucherService.getById(id);
+        if (voucher == null) {
+            response.sendRedirect(request.getContextPath() + "/voucher-admin?error=" + urlEncode("Không tìm thấy mã giảm giá."));
+            return;
+        }
+
+        request.setAttribute("mode", "edit");
+        request.setAttribute("voucher", voucher);
+        request.getRequestDispatcher("/voucher-form.jsp").forward(request, response);
+    }
+
     private void createVoucher(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Voucher voucher = readVoucherFromRequest(request);
         String errorMessage = voucherService.createVoucher(voucher);
@@ -85,6 +111,22 @@ public class VoucherAdminController extends HttpServlet {
         }
 
         response.sendRedirect(request.getContextPath() + "/voucher-admin?success=create");
+    }
+
+    private void updateVoucher(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        Voucher voucher = readVoucherFromRequest(request);
+        voucher.setId(parsePositiveInt(request.getParameter("id"), 0));
+
+        String errorMessage = voucherService.updateVoucher(voucher);
+        if (errorMessage != null) {
+            request.setAttribute("mode", "edit");
+            request.setAttribute("voucher", voucher);
+            request.setAttribute("errorMessage", errorMessage);
+            request.getRequestDispatcher("/voucher-form.jsp").forward(request, response);
+            return;
+        }
+
+        response.sendRedirect(request.getContextPath() + "/voucher-admin?success=update");
     }
 
     private Voucher readVoucherFromRequest(HttpServletRequest request) {
@@ -101,7 +143,7 @@ public class VoucherAdminController extends HttpServlet {
         voucher.setCustomer_id(parseNullableInt(request.getParameter("customer_id")));
         voucher.setProduct_id(parseNullableInt(request.getParameter("product_id")));
         voucher.setQuantity(parsePositiveInt(request.getParameter("quantity"), 0));
-        voucher.setUsed_quantity(0);
+        voucher.setUsed_quantity(parsePositiveInt(request.getParameter("used_quantity"), 0));
         voucher.setStatus("0".equals(request.getParameter("status")) ? 0 : 1);
         voucher.setStart_date(parseLocalDateTime(request.getParameter("start_date")));
         voucher.setEnd_date(parseLocalDateTime(request.getParameter("end_date")));
@@ -160,5 +202,9 @@ public class VoucherAdminController extends HttpServlet {
         } catch (DateTimeParseException e) {
             return null;
         }
+    }
+
+    private String urlEncode(String value) {
+        return URLEncoder.encode(value == null ? "" : value, StandardCharsets.UTF_8);
     }
 }

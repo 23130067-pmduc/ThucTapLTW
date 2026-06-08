@@ -46,10 +46,13 @@
 
         <main>
             <c:if test="${param.success == 'create'}">
-                <div class="alert alert-success">
-                    <i class="fa-solid fa-circle-check"></i>
-                    Thêm mã giảm giá thành công.
-                </div>
+                <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> Thêm mã giảm giá thành công.</div>
+            </c:if>
+            <c:if test="${param.success == 'update'}">
+                <div class="alert alert-success"><i class="fa-solid fa-circle-check"></i> Cập nhật mã giảm giá thành công.</div>
+            </c:if>
+            <c:if test="${not empty param.error}">
+                <div class="alert alert-error"><i class="fa-solid fa-circle-exclamation"></i> ${param.error}</div>
             </c:if>
 
             <div class="cards voucher-cards">
@@ -65,7 +68,6 @@
                         <h2>Danh sách mã giảm giá</h2>
                     </div>
                     <div class="voucher-panel-actions">
-                        <span class="result-count">${total} kết quả</span>
                         <a href="${pageContext.request.contextPath}/voucher-admin?action=create" class="voucher-add-btn">
                             <i class="fa-solid fa-plus"></i>
                             Thêm mã giảm giá
@@ -87,6 +89,7 @@
                             <th>Lượt dùng</th>
                             <th>Thời gian</th>
                             <th>Trạng thái</th>
+                            <th>Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -113,12 +116,19 @@
                                         <td>
                                             <span class="voucher-status ${v.statusClass}">${v.statusLabel}</span>
                                         </td>
+                                        <td>
+                                            <div class="voucher-actions-cell">
+                                                <a class="voucher-action-btn edit" href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${v.id}" title="Sửa mã">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </a>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
                                 <tr>
-                                    <td colspan="11" class="empty-row">
+                                    <td colspan="12" class="empty-row">
                                         <i class="fa-solid fa-ticket-simple"></i>
                                         <span>Chưa có mã giảm giá nào trong hệ thống.</span>
                                     </td>
@@ -132,18 +142,15 @@
                 <c:if test="${totalPages > 1}">
                     <div class="pagination">
                         <c:if test="${currentPage > 1}">
-                            <a class="page-btn"
-                               href="voucher-admin?page=${currentPage - 1}">Trước</a>
+                            <a class="page-btn" href="voucher-admin?page=${currentPage - 1}">Trước</a>
                         </c:if>
 
                         <c:forEach begin="1" end="${totalPages}" var="i">
-                            <a class="page-btn ${i == currentPage ? 'active' : ''}"
-                               href="voucher-admin?page=${i}">${i}</a>
+                            <a class="page-btn ${i == currentPage ? 'active' : ''}" href="voucher-admin?page=${i}">${i}</a>
                         </c:forEach>
 
                         <c:if test="${currentPage < totalPages}">
-                            <a class="page-btn"
-                               href="voucher-admin?page=${currentPage + 1}">Sau</a>
+                            <a class="page-btn" href="voucher-admin?page=${currentPage + 1}">Sau</a>
                         </c:if>
                     </div>
                 </c:if>

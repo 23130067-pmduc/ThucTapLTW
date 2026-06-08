@@ -66,21 +66,6 @@ public class VoucherDao extends BaseDao {
         );
     }
 
-    public void markVoucherUsed(int voucherId, int orderId) {
-        getJdbi().useHandle(handle ->
-                handle.createUpdate("""
-                    UPDATE vouchers
-                    SET used_quantity = used_quantity + 1,
-                        order_id = :orderId
-                    WHERE id = :voucherId
-                      AND used_quantity < quantity
-                    """)
-                        .bind("voucherId", voucherId)
-                        .bind("orderId", orderId)
-                        .execute()
-        );
-    }
-
     public Voucher findActiveShippingVoucherByCode(String code) {
         String sql = VOUCHER_SELECT + """
             WHERE UPPER(code) = UPPER(:code)
@@ -98,6 +83,21 @@ public class VoucherDao extends BaseDao {
                         .mapToBean(Voucher.class)
                         .findOne()
                         .orElse(null)
+        );
+    }
+
+    public void markVoucherUsed(int voucherId, int orderId) {
+        getJdbi().useHandle(handle ->
+                handle.createUpdate("""
+                    UPDATE vouchers
+                    SET used_quantity = used_quantity + 1,
+                        order_id = :orderId
+                    WHERE id = :voucherId
+                      AND used_quantity < quantity
+                    """)
+                        .bind("voucherId", voucherId)
+                        .bind("orderId", orderId)
+                        .execute()
         );
     }
 
@@ -224,11 +224,33 @@ public class VoucherDao extends BaseDao {
                         .one()
         );
     }
+
+    public Voucher findById(int id) {
+        return getJdbi().withHandle(handle ->
+                handle.createQuery(VOUCHER_SELECT + " WHERE id = :id LIMIT 1")
+                        .bind("id", id)
+                        .mapToBean(Voucher.class)
+                        .findOne()
+                        .orElse(null)
+        );
+    }
+
     public boolean existsByCode(String code) {
         String sql = "SELECT COUNT(*) FROM vouchers WHERE UPPER(code) = UPPER(:code)";
         return getJdbi().withHandle(handle ->
                 handle.createQuery(sql)
                         .bind("code", code)
+                        .mapTo(Integer.class)
+                        .one() > 0
+        );
+    }
+
+    public boolean existsByCodeExceptId(String code, int id) {
+        String sql = "SELECT COUNT(*) FROM vouchers WHERE UPPER(code) = UPPER(:code) AND id <> :id";
+        return getJdbi().withHandle(handle ->
+                handle.createQuery(sql)
+                        .bind("code", code)
+                        .bind("id", id)
                         .mapTo(Integer.class)
                         .one() > 0
         );
@@ -248,6 +270,45 @@ public class VoucherDao extends BaseDao {
                         :startDate, :endDate, :quantity, 0, :status
                     )
                     """)
+                        .bind("code", voucher.getCode())
+                        .bind("name", voucher.getName())
+                        .bind("description", voucher.getDescription())
+                        .bind("discountType", voucher.getDiscount_type())
+                        .bind("discountValue", voucher.getDiscount_value())
+                        .bind("maxDiscount", voucher.getMax_discount())
+                        .bind("minOrderValue", voucher.getMin_order_value())
+                        .bind("voucherScope", voucher.getVoucher_scope())
+                        .bind("customerId", voucher.getCustomer_id())
+                        .bind("productId", voucher.getProduct_id())
+                        .bind("startDate", voucher.getStart_date())
+                        .bind("endDate", voucher.getEnd_date())
+                        .bind("quantity", voucher.getQuantity())
+                        .bind("status", voucher.getStatus())
+                        .execute()
+        );
+    }
+
+    public void update(Voucher voucher) {
+        getJdbi().useHandle(handle ->
+                handle.createUpdate("""
+                    UPDATE vouchers
+                    SET code = :code,
+                        name = :name,
+                        description = :description,
+                        discount_type = :discountType,
+                        discount_value = :discountValue,
+                        max_discount = :maxDiscount,
+                        min_order_value = :minOrderValue,
+                        voucher_scope = :voucherScope,
+                        customer_id = :customerId,
+                        product_id = :productId,
+                        start_date = :startDate,
+                        end_date = :endDate,
+                        quantity = :quantity,
+                        status = :status
+                    WHERE id = :id
+                    """)
+                        .bind("id", voucher.getId())
                         .bind("code", voucher.getCode())
                         .bind("name", voucher.getName())
                         .bind("description", voucher.getDescription())

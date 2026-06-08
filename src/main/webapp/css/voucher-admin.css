@@ -579,3 +579,47 @@
         text-align: center;
     }
 }
+
+/* Issue 99: edit voucher action */
+.voucher-actions-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.inline-action-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.voucher-action-btn {
+    width: 34px;
+    height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    background: transparent;
+    font-size: 18px;
+    transition: 0.2s ease;
+}
+
+.voucher-action-btn.edit {
+    color: #16a34a;
+}
+
+.voucher-action-btn.edit:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.form-note {
+    display: block;
+    margin-top: 7px;
+    color: #64748b;
+    font-size: 13px;
+}

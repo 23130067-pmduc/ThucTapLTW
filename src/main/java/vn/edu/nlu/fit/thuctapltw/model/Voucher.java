@@ -210,6 +210,15 @@ public class Voucher implements Serializable {
         if (end_date == null) return "-";
         return end_date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
+    public String getStartDateInputValue() {
+        if (start_date == null) return "";
+        return start_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+    }
+
+    public String getEndDateInputValue() {
+        if (end_date == null) return "";
+        return end_date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+    }
 
     public String getMinOrderText() {
         if (min_order_value <= 0) return "Không yêu cầu";
