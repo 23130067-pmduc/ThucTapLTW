@@ -29,7 +29,7 @@
         </a>
       </c:if>
 
-      <c:if test="${userlogin.permissions.contains('PRODUCT_MANAGE')}">
+      <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
         <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
           <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
         </a>
@@ -53,7 +53,7 @@
         </a>
       </c:if>
 
-      <c:if test="${userlogin.permissions.contains('CATEGORY_MANAGE')}">
+      <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
         <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
           <i class="fa-solid fa-list"></i><span>Danh mục</span>
         </a>
@@ -71,25 +71,25 @@
         </a>
       </c:if>
 
-      <c:if test="${userlogin.permissions.contains('BANNER_MANAGE')}">
+      <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
         <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
           <i class="fa-solid fa-image"></i><span>Banner</span>
         </a>
       </c:if>
 
-      <c:if test="${userlogin.permissions.contains('NEWS_MANAGE')}">
+      <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
         <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
           <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
         </a>
       </c:if>
 
-      <c:if test="${userlogin.permissions.contains('NOTIFICATION_MANAGE')}">
+      <c:if test="${userlogin.permissions.contains('NOTIFICATION_VIEW')}">
         <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
           <i class="fa-solid fa-bell"></i><span>Thông báo</span>
         </a>
       </c:if>
 
-      <c:if test="${userlogin.permissions.contains('CONTACT_MANAGE')}">
+      <c:if test="${userlogin.permissions.contains('CONTACT_VIEW')}">
         <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
           <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
         </a>
@@ -135,9 +135,11 @@
             </button>
           </form>
 
-          <a href="user-admin?mode=add" class="btn-add">
-            <i class="fa fa-plus"></i> Thêm người dùng
-          </a>
+          <c:if test="${userlogin.permissions.contains('USER_CREATE')}">
+            <a href="user-admin?mode=add" class="btn-add">
+              <i class="fa fa-plus"></i> Thêm người dùng
+            </a>
+          </c:if>
         </div>
 
 
@@ -184,18 +186,21 @@
                                     </c:choose>
                                 </span></td>
                 <td class="actions">
-                  <a href="user-admin?mode=view&id=${u.id}"
-                     class="icon-btn view" title="Xem chi tiết">
-                    <i class="fa fa-eye"></i>
-                  </a>
+                  <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
+                    <a href="user-admin?mode=view&id=${u.id}"
+                       class="icon-btn view" title="Xem chi tiết">
+                      <i class="fa fa-eye"></i>
+                    </a>
+                  </c:if>
 
-                  <a href="user-admin?mode=edit&id=${u.id}"
-                     class="icon-btn edit" title="Chỉnh sửa">
-                    <i class="fa fa-pen"></i>
-                  </a>
+                  <c:if test="${userlogin.permissions.contains('USER_UPDATE')}">
+                    <a href="user-admin?mode=edit&id=${u.id}"
+                       class="icon-btn edit" title="Chỉnh sửa">
+                      <i class="fa fa-pen"></i>
+                    </a>
+                  </c:if>
 
-
-                  <c:if test="${u.status == 'ACTIVE'}">
+                  <c:if test="${userlogin.permissions.contains('USER_LOCK') && u.status == 'ACTIVE'}">
                     <button type="button"
                             class="icon-btn delete"
                             title="Khóa người dùng"

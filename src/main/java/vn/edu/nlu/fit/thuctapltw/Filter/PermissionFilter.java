@@ -32,17 +32,17 @@ public class PermissionFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) {
         permissionMap.put("/dashboard", "DASHBOARD_VIEW");
-        permissionMap.put("/product-admin", "PRODUCT_MANAGE");
+        permissionMap.put("/product-admin", "PRODUCT_VIEW");
         permissionMap.put("/inventory-admin", "WAREHOUSE_VIEW");
         permissionMap.put("/profit-report", "REPORT_VIEW");
-        permissionMap.put("/category-admin", "CATEGORY_MANAGE");
+        permissionMap.put("/category-admin", "CATEGORY_VIEW");
         permissionMap.put("/order-admin", "ORDER_VIEW");
         permissionMap.put("/user-admin", "USER_VIEW");
-        permissionMap.put("/banner-admin", "BANNER_MANAGE");
-        permissionMap.put("/news-admin", "NEWS_MANAGE");
-        permissionMap.put("/notification-admin", "NOTIFICATION_MANAGE");
-        permissionMap.put("/contact-admin", "CONTACT_MANAGE");
-        permissionMap.put("/return-order-admin", "RETURN_RECEIPT_CREATE");
+        permissionMap.put("/banner-admin", "BANNER_VIEW");
+        permissionMap.put("/news-admin", "NEWS_VIEW");
+        permissionMap.put("/notification-admin", "NOTIFICATION_VIEW");
+        permissionMap.put("/contact-admin", "CONTACT_VIEW");
+        permissionMap.put("/return-order-admin", "RETURN_RECEIPT_VIEW");
     }
 
     @Override

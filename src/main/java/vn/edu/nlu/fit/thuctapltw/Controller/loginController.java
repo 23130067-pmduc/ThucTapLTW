@@ -100,8 +100,8 @@ public class loginController extends HttpServlet {
             return;
         }
 
-        if ("STAFF_WAREHOUSE".equalsIgnoreCase(roleName)) {
-            response.sendRedirect(request.getContextPath() + "/inventory-admin");
+        if ("STAFF_PRODUCT".equalsIgnoreCase(roleName)) {
+            response.sendRedirect(request.getContextPath() + "/product-admin");
             return;
         }
 
@@ -211,8 +211,8 @@ public class loginController extends HttpServlet {
                 return;
             }
 
-            if ("STAFF_WAREHOUSE".equalsIgnoreCase(roleName)) {
-                response.sendRedirect(request.getContextPath() + "/inventory-admin");
+            if ("STAFF_PRODUCT".equalsIgnoreCase(roleName)) {
+                response.sendRedirect(request.getContextPath() + "/product-admin");
                 return;
             }
 

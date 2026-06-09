@@ -25,7 +25,7 @@
                 </a>
             </c:if>
 
-            <c:if test="${userlogin.permissions.contains('PRODUCT_MANAGE')}">
+            <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
                 <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
                     <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
                 </a>
@@ -49,7 +49,7 @@
                 </a>
             </c:if>
 
-            <c:if test="${userlogin.permissions.contains('CATEGORY_MANAGE')}">
+            <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
                 <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
                     <i class="fa-solid fa-list"></i><span>Danh mục</span>
                 </a>
@@ -67,25 +67,25 @@
                 </a>
             </c:if>
 
-            <c:if test="${userlogin.permissions.contains('BANNER_MANAGE')}">
+            <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
                 <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
                     <i class="fa-solid fa-image"></i><span>Banner</span>
                 </a>
             </c:if>
 
-            <c:if test="${userlogin.permissions.contains('NEWS_MANAGE')}">
+            <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
                 <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
                     <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
                 </a>
             </c:if>
 
-            <c:if test="${userlogin.permissions.contains('NOTIFICATION_MANAGE')}">
+            <c:if test="${userlogin.permissions.contains('NOTIFICATION_VIEW')}">
                 <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
                     <i class="fa-solid fa-bell"></i><span>Thông báo</span>
                 </a>
             </c:if>
 
-            <c:if test="${userlogin.permissions.contains('CONTACT_MANAGE')}">
+            <c:if test="${userlogin.permissions.contains('CONTACT_VIEW')}">
                 <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
                     <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
                 </a>
