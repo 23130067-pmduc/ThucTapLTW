@@ -21,16 +21,16 @@ public class VoucherService {
         return voucherDao.findActiveShippingVouchers();
     }
 
-    public List<Voucher> getAdminVouchers(String keyword, String scope, String status, int page, int pageSize) {
+    public List<Voucher> getAdminVouchers(String keyword, String scope, String discountType, String status, int page, int pageSize) {
         if (page < 1) {
             page = 1;
         }
         int offset = (page - 1) * pageSize;
-        return voucherDao.findAdminVouchers(keyword, scope, status, pageSize, offset);
+        return voucherDao.findAdminVouchers(keyword, scope, discountType, status, pageSize, offset);
     }
 
-    public int countAdminVouchers(String keyword, String scope, String status) {
-        return voucherDao.countAdminVouchers(keyword, scope, status);
+    public int countAdminVouchers(String keyword, String scope, String discountType, String status) {
+        return voucherDao.countAdminVouchers(keyword, scope, discountType, status);
     }
 
     public int countAllVouchers() {
