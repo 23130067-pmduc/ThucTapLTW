@@ -34,7 +34,6 @@
                     <h2>${isEdit ? 'Cập nhật mã giảm giá' : 'Tạo mã giảm giá mới'}</h2>
                     <p>${isEdit ? 'Chỉnh sửa thông tin để mã giảm giá phù hợp với chương trình hiện tại.' : 'Nhập đầy đủ thông tin để mã có thể hiển thị và áp dụng trên hệ thống.'}</p>
                 </div>
-                <span class="form-badge">${isEdit ? 'Issue 111' : 'Issue 110'}</span>
             </div>
 
             <c:if test="${not empty errorMessage}">

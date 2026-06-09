@@ -70,6 +70,7 @@
                 <div class="detail-item">
                     <span>Lượt sử dụng</span>
                     <strong>${voucher.usageText}</strong>
+                    <small>Còn lại ${voucher.remainingQuantity} lượt</small>
                 </div>
 
                 <div class="detail-item">
@@ -96,20 +97,40 @@
                     <span>ID khách hàng áp dụng</span>
                     <strong>${empty voucher.customer_id ? 'Tất cả khách hàng' : voucher.customer_id}</strong>
                 </div>
-            </div>
 
-            <div class="voucher-detail-actions">
-                <a href="${pageContext.request.contextPath}/voucher-admin" class="btn-secondary">
-                    <i class="fa-solid fa-list"></i>
-                    Về danh sách
-                </a>
-                <a href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${voucher.id}" class="btn-primary">
-                    <i class="fa-solid fa-pen"></i>
-                    Sửa mã giảm giá
-                </a>
+                <div class="detail-item">
+                    <span>Thời gian tạo</span>
+                    <strong>${voucher.createdAtText}</strong>
+                </div>
+
+                <div class="detail-item">
+                    <span>Đơn hàng đã áp dụng gần nhất</span>
+                    <strong>${empty voucher.order_id ? 'Chưa áp dụng cho đơn hàng' : voucher.order_id}</strong>
+                </div>
             </div>
         </section>
     </main>
 </div>
+
+<div id="voucherStatusModal" class="voucher-modal-overlay" aria-hidden="true">
+    <div class="voucher-modal" role="dialog" aria-modal="true" aria-labelledby="voucherStatusModalTitle">
+        <div class="voucher-modal-icon"><i id="voucherStatusModalIcon" class="fa-solid fa-lock"></i></div>
+        <h3 id="voucherStatusModalTitle">Xác nhận thay đổi trạng thái</h3>
+        <p id="voucherStatusModalMessage"></p>
+
+        <form method="post" action="${pageContext.request.contextPath}/voucher-admin">
+            <input type="hidden" name="action" value="toggle-status">
+            <input type="hidden" name="id" id="voucherStatusId">
+            <input type="hidden" name="status" id="voucherStatusValue">
+
+            <div class="voucher-modal-actions">
+                <button type="button" class="btn-secondary js-close-voucher-status-modal">Hủy</button>
+                <button type="submit" id="voucherStatusSubmit" class="btn-voucher-confirm">Xác nhận</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="${pageContext.request.contextPath}/javaScript/voucher-admin.js"></script>
 </body>
 </html>
