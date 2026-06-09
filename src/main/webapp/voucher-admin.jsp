@@ -118,7 +118,15 @@
                                         </td>
                                         <td>
                                             <div class="voucher-actions-cell">
-                                                <a class="voucher-action-btn edit" href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${v.id}" title="Sửa mã">
+                                                <a class="voucher-action-btn view"
+                                                   href="${pageContext.request.contextPath}/voucher-admin?action=detail&id=${v.id}"
+                                                   title="Xem chi tiết">
+                                                    <i class="fa-solid fa-eye"></i>
+                                                </a>
+
+                                                <a class="voucher-action-btn edit"
+                                                   href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${v.id}"
+                                                   title="Sửa mã">
                                                     <i class="fa-solid fa-pen"></i>
                                                 </a>
                                             </div>

@@ -40,6 +40,11 @@ public class VoucherAdminController extends HttpServlet {
             return;
         }
 
+        if ("detail".equalsIgnoreCase(action) || "view".equalsIgnoreCase(action)) {
+            showDetail(request, response);
+            return;
+        }
+
         showVoucherList(request, response);
     }
 
@@ -83,6 +88,19 @@ public class VoucherAdminController extends HttpServlet {
         request.setAttribute("totalExpired", voucherService.countExpiredVouchers());
 
         request.getRequestDispatcher("/voucher-admin.jsp").forward(request, response);
+    }
+
+
+    private void showDetail(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        int id = parsePositiveInt(request.getParameter("id"), 0);
+        Voucher voucher = voucherService.getById(id);
+        if (voucher == null) {
+            response.sendRedirect(request.getContextPath() + "/voucher-admin?error=" + urlEncode("Không tìm thấy mã giảm giá."));
+            return;
+        }
+
+        request.setAttribute("voucher", voucher);
+        request.getRequestDispatcher("/voucher-detail.jsp").forward(request, response);
     }
 
     private void showEditForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

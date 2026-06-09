@@ -623,3 +623,95 @@
     color: #64748b;
     font-size: 13px;
 }
+
+
+/* Issue 102: voucher detail action and detail page */
+.voucher-action-btn.view {
+    color: #2563eb;
+}
+
+.voucher-action-btn.view:hover,
+.voucher-action-btn.edit:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.voucher-detail-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: 0 8px 28px rgba(15, 23, 42, 0.08);
+}
+
+.voucher-detail-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    padding-bottom: 22px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.voucher-detail-head h2 {
+    margin: 14px 0 8px;
+    color: #0f172a;
+    font-size: 26px;
+}
+
+.voucher-detail-head p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.detail-code {
+    font-size: 15px;
+}
+
+.voucher-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.detail-item {
+    padding: 16px;
+    border-radius: 14px;
+    background: #f8fafc;
+    border: 1px solid #edf2f7;
+}
+
+.detail-item span {
+    display: block;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.detail-item strong {
+    color: #0f172a;
+    font-size: 15px;
+}
+
+.voucher-detail-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 26px;
+}
+
+@media (max-width: 768px) {
+    .voucher-detail-head {
+        flex-direction: column;
+    }
+
+    .voucher-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .voucher-detail-actions {
+        flex-direction: column-reverse;
+    }
+}
