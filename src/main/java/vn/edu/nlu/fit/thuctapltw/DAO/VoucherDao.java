@@ -101,20 +101,25 @@ public class VoucherDao extends BaseDao {
         );
     }
 
-    public List<Voucher> findAdminVouchers(String keyword, String scope, String status, int limit, int offset) {
+    public List<Voucher> findAdminVouchers(String keyword, String scope, String discountType, String status, int limit, int offset) {
         StringBuilder sql = new StringBuilder(VOUCHER_SELECT);
         sql.append(" WHERE 1 = 1 ");
 
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
         boolean hasScope = scope != null && !scope.trim().isEmpty() && !"ALL".equalsIgnoreCase(scope);
+        boolean hasDiscountType = discountType != null && !discountType.trim().isEmpty() && !"ALL".equalsIgnoreCase(discountType);
         boolean hasStatus = status != null && !status.trim().isEmpty() && !"ALL".equalsIgnoreCase(status);
 
         if (hasKeyword) {
-            sql.append(" AND (UPPER(code) LIKE UPPER(:keyword) OR UPPER(name) LIKE UPPER(:keyword) OR UPPER(description) LIKE UPPER(:keyword)) ");
+            sql.append(" AND (CAST(id AS CHAR) LIKE :keyword OR UPPER(code) LIKE UPPER(:keyword) OR UPPER(name) LIKE UPPER(:keyword) OR UPPER(description) LIKE UPPER(:keyword)) ");
         }
 
         if (hasScope) {
             sql.append(" AND voucher_scope = :scope ");
+        }
+
+        if (hasDiscountType) {
+            sql.append(" AND discount_type = :discountType ");
         }
 
         if (hasStatus) {
@@ -142,24 +147,32 @@ public class VoucherDao extends BaseDao {
             if (hasScope) {
                 query.bind("scope", scope.trim().toUpperCase());
             }
+            if (hasDiscountType) {
+                query.bind("discountType", discountType.trim().toUpperCase());
+            }
 
             return query.mapToBean(Voucher.class).list();
         });
     }
 
-    public int countAdminVouchers(String keyword, String scope, String status) {
+    public int countAdminVouchers(String keyword, String scope, String discountType, String status) {
         StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM vouchers WHERE 1 = 1 ");
 
         boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
         boolean hasScope = scope != null && !scope.trim().isEmpty() && !"ALL".equalsIgnoreCase(scope);
+        boolean hasDiscountType = discountType != null && !discountType.trim().isEmpty() && !"ALL".equalsIgnoreCase(discountType);
         boolean hasStatus = status != null && !status.trim().isEmpty() && !"ALL".equalsIgnoreCase(status);
 
         if (hasKeyword) {
-            sql.append(" AND (UPPER(code) LIKE UPPER(:keyword) OR UPPER(name) LIKE UPPER(:keyword) OR UPPER(description) LIKE UPPER(:keyword)) ");
+            sql.append(" AND (CAST(id AS CHAR) LIKE :keyword OR UPPER(code) LIKE UPPER(:keyword) OR UPPER(name) LIKE UPPER(:keyword) OR UPPER(description) LIKE UPPER(:keyword)) ");
         }
 
         if (hasScope) {
             sql.append(" AND voucher_scope = :scope ");
+        }
+
+        if (hasDiscountType) {
+            sql.append(" AND discount_type = :discountType ");
         }
 
         if (hasStatus) {
@@ -181,6 +194,9 @@ public class VoucherDao extends BaseDao {
             }
             if (hasScope) {
                 query.bind("scope", scope.trim().toUpperCase());
+            }
+            if (hasDiscountType) {
+                query.bind("discountType", discountType.trim().toUpperCase());
             }
             return query.mapTo(Integer.class).one();
         });

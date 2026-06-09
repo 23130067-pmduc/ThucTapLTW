@@ -74,15 +74,23 @@ public class VoucherAdminController extends HttpServlet {
     private void showVoucherList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int pageSize = 20;
         int currentPage = parsePositiveInt(request.getParameter("page"), 1);
+        String keyword = trim(request.getParameter("keyword"));
+        String scope = normalizeFilter(request.getParameter("scope"), "ALL", "ORDER", "PRODUCT", "SHIPPING");
+        String discountType = normalizeFilter(request.getParameter("discountType"), "ALL", "PERCENT", "FIXED");
+        String status = normalizeFilter(request.getParameter("voucherStatus"), "ALL", "ACTIVE", "LOCKED", "EXPIRED", "SOLD_OUT");
 
-        int total = voucherService.countAdminVouchers(null, "ALL", "ALL");
+        int total = voucherService.countAdminVouchers(keyword, scope, discountType, status);
         int totalPages = (int) Math.ceil((double) total / pageSize);
         if (totalPages == 0) totalPages = 1;
         if (currentPage > totalPages) currentPage = totalPages;
 
-        List<Voucher> vouchers = voucherService.getAdminVouchers(null, "ALL", "ALL", currentPage, pageSize);
+        List<Voucher> vouchers = voucherService.getAdminVouchers(keyword, scope, discountType, status, currentPage, pageSize);
 
         request.setAttribute("vouchers", vouchers);
+        request.setAttribute("keyword", keyword);
+        request.setAttribute("scope", scope);
+        request.setAttribute("discountType", discountType);
+        request.setAttribute("voucherStatus", status);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("total", total);
@@ -92,6 +100,16 @@ public class VoucherAdminController extends HttpServlet {
         request.setAttribute("totalExpired", voucherService.countExpiredVouchers());
 
         request.getRequestDispatcher("/voucher-admin.jsp").forward(request, response);
+    }
+
+    private String normalizeFilter(String value, String defaultValue, String... allowedValues) {
+        String normalized = trim(value).toUpperCase();
+        for (String allowedValue : allowedValues) {
+            if (allowedValue.equals(normalized)) {
+                return normalized;
+            }
+        }
+        return defaultValue;
     }
 
 

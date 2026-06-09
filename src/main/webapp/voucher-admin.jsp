@@ -72,6 +72,7 @@
                 <div class="voucher-panel-header">
                     <div>
                         <h2>Danh sách mã giảm giá</h2>
+                        <p>Tìm thấy ${total} mã giảm giá phù hợp.</p>
                     </div>
                     <div class="voucher-panel-actions">
                         <a href="${pageContext.request.contextPath}/voucher-admin?action=create" class="voucher-add-btn">
@@ -80,6 +81,59 @@
                         </a>
                     </div>
                 </div>
+
+                <form method="get" action="${pageContext.request.contextPath}/voucher-admin" class="voucher-filter">
+                    <div class="filter-group search-box">
+                        <label for="keyword">Tìm kiếm</label>
+                        <input type="text"
+                               id="keyword"
+                               name="keyword"
+                               value="${keyword}"
+                               placeholder="Nhập ID, mã, tên hoặc mô tả...">
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="scope">Điều kiện áp dụng</label>
+                        <select id="scope" name="scope">
+                            <option value="ALL" ${scope == 'ALL' ? 'selected' : ''}>Tất cả phạm vi</option>
+                            <option value="ORDER" ${scope == 'ORDER' ? 'selected' : ''}>Đơn hàng</option>
+                            <option value="PRODUCT" ${scope == 'PRODUCT' ? 'selected' : ''}>Sản phẩm</option>
+                            <option value="SHIPPING" ${scope == 'SHIPPING' ? 'selected' : ''}>Vận chuyển</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="discountType">Loại giảm giá</label>
+                        <select id="discountType" name="discountType">
+                            <option value="ALL" ${discountType == 'ALL' ? 'selected' : ''}>Tất cả loại giảm</option>
+                            <option value="PERCENT" ${discountType == 'PERCENT' ? 'selected' : ''}>Theo phần trăm</option>
+                            <option value="FIXED" ${discountType == 'FIXED' ? 'selected' : ''}>Số tiền cố định</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="voucherStatus">Trạng thái</label>
+                        <select id="voucherStatus" name="voucherStatus">
+                            <option value="ALL" ${voucherStatus == 'ALL' ? 'selected' : ''}>Tất cả trạng thái</option>
+                            <option value="ACTIVE" ${voucherStatus == 'ACTIVE' ? 'selected' : ''}>Đang hoạt động</option>
+                            <option value="LOCKED" ${voucherStatus == 'LOCKED' ? 'selected' : ''}>Đã khóa</option>
+                            <option value="EXPIRED" ${voucherStatus == 'EXPIRED' ? 'selected' : ''}>Hết hạn</option>
+                            <option value="SOLD_OUT" ${voucherStatus == 'SOLD_OUT' ? 'selected' : ''}>Hết lượt</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button type="submit" class="btn-search">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            Tìm kiếm
+                        </button>
+                        <a href="${pageContext.request.contextPath}/voucher-admin" class="btn-reset">
+                            <i class="fa-solid fa-rotate-left"></i>
+                            Đặt lại
+                        </a>
+                    </div>
+                </form>
+
                 <div class="voucher-table-wrapper">
                     <table class="voucher-table">
                         <thead>
@@ -167,15 +221,36 @@
                 <c:if test="${totalPages > 1}">
                     <div class="pagination">
                         <c:if test="${currentPage > 1}">
-                            <a class="page-btn" href="voucher-admin?page=${currentPage - 1}">Trước</a>
+                            <c:url var="previousPageUrl" value="/voucher-admin">
+                                <c:param name="page" value="${currentPage - 1}" />
+                                <c:param name="keyword" value="${keyword}" />
+                                <c:param name="scope" value="${scope}" />
+                                <c:param name="discountType" value="${discountType}" />
+                                <c:param name="voucherStatus" value="${voucherStatus}" />
+                            </c:url>
+                            <a class="page-btn" href="${previousPageUrl}">Trước</a>
                         </c:if>
 
                         <c:forEach begin="1" end="${totalPages}" var="i">
-                            <a class="page-btn ${i == currentPage ? 'active' : ''}" href="voucher-admin?page=${i}">${i}</a>
+                            <c:url var="pageUrl" value="/voucher-admin">
+                                <c:param name="page" value="${i}" />
+                                <c:param name="keyword" value="${keyword}" />
+                                <c:param name="scope" value="${scope}" />
+                                <c:param name="discountType" value="${discountType}" />
+                                <c:param name="voucherStatus" value="${voucherStatus}" />
+                            </c:url>
+                            <a class="page-btn ${i == currentPage ? 'active' : ''}" href="${pageUrl}">${i}</a>
                         </c:forEach>
 
                         <c:if test="${currentPage < totalPages}">
-                            <a class="page-btn" href="voucher-admin?page=${currentPage + 1}">Sau</a>
+                            <c:url var="nextPageUrl" value="/voucher-admin">
+                                <c:param name="page" value="${currentPage + 1}" />
+                                <c:param name="keyword" value="${keyword}" />
+                                <c:param name="scope" value="${scope}" />
+                                <c:param name="discountType" value="${discountType}" />
+                                <c:param name="voucherStatus" value="${voucherStatus}" />
+                            </c:url>
+                            <a class="page-btn" href="${nextPageUrl}">Sau</a>
                         </c:if>
                     </div>
                 </c:if>
