@@ -20,7 +20,7 @@
         <nav class="nav">
             <a href="${pageContext.request.contextPath}/dashboard" class="nav-item">
                 <i class="fa-solid fa-gauge"></i>
-                <span>Dashboard</span>
+                <span>Thống kê</span>
             </a>
 
             <a href="${pageContext.request.contextPath}/product-admin" class="nav-item active">
@@ -47,6 +47,7 @@
 
             <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">
             <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item"><i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span></a>
+            <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item"><i class="fa-solid fa-tags"></i><span>Khuyến mãi</span></a>
                 <i class="fa-solid fa-users"></i>
                 <span>Người dùng</span>
             </a>

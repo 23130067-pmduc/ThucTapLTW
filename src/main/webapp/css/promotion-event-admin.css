@@ -1,0 +1,243 @@
+.promotion-summary .card {
+    min-width: 180px;
+    min-height: 137px;
+    padding: 26px;
+    font-size: 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.promotion-summary .card span {
+    margin-top: 20px;
+    font-size: 28px;
+}
+
+.promotion-panel {
+    padding: 20px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.promotion-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.promotion-panel-header h2 {
+    margin: 0 0 6px;
+    color: #2f3e2f;
+    font-size: 20px;
+}
+
+.promotion-panel-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.result-count {
+    padding: 8px 13px;
+    border-radius: 999px;
+    background: #eef7e8;
+    color: #4f7f29;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.promotion-table-wrapper {
+    overflow: hidden;
+    border: 1px solid #edf0f2;
+    border-radius: 12px;
+}
+
+.promotion-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.promotion-table th:nth-child(1) { width: 6%; }
+.promotion-table th:nth-child(2) { width: 29%; }
+.promotion-table th:nth-child(3) { width: 13%; }
+.promotion-table th:nth-child(4) { width: 15%; }
+.promotion-table th:nth-child(5) { width: 10%; }
+.promotion-table th:nth-child(6) { width: 17%; }
+.promotion-table th:nth-child(7) { width: 10%; }
+
+.promotion-table th,
+.promotion-table td {
+    padding: 13px 14px;
+    border-bottom: 1px solid #eef0f3;
+    color: #374151;
+    font-size: 13px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.promotion-table th {
+    background: #f3f6fa;
+    color: #1f2937;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.promotion-table tbody tr:hover {
+    background: #fbfcfa;
+}
+
+.event-id {
+    color: #64748b !important;
+    font-weight: 700;
+}
+
+.event-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    min-width: 0;
+}
+
+.event-info > div {
+    min-width: 0;
+    flex: 1;
+}
+
+.event-icon {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #fff1e8;
+    color: #f15b4a;
+}
+
+.event-info strong,
+.event-info small,
+.event-tag,
+.date-cell strong,
+.date-cell span {
+    display: block;
+}
+
+.event-info strong {
+    color: #253025;
+    font-size: 14px;
+    line-height: 1.35;
+}
+
+.event-info small,
+.event-tag,
+.date-cell span {
+    color: #64748b;
+    font-size: 12px;
+}
+
+.event-info small {
+    margin-top: 7px;
+    line-height: 1.45;
+    white-space: normal;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.promotion-discount-cell {
+    vertical-align: top !important;
+}
+
+.event-tag {
+    margin-top: 8px;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.date-cell span {
+    margin-top: 5px;
+}
+
+.discount-badge,
+.scope-badge,
+.event-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.discount-badge {
+    padding: 6px 9px;
+    background: #fff1e8;
+    color: #d9480f;
+}
+
+.scope-badge {
+    padding: 6px 9px;
+    background: #e7f5ff;
+    color: #1971c2;
+}
+
+.event-status {
+    padding: 6px 10px;
+    white-space: nowrap;
+}
+
+.event-status.active {
+    background: #e3f7e9;
+    color: #2e7d32;
+}
+
+.event-status.upcoming {
+    background: #e7f5ff;
+    color: #1864ab;
+}
+
+.event-status.expired {
+    background: #fff3cd;
+    color: #996500;
+}
+
+.event-status.locked {
+    background: #fdecea;
+    color: #c62828;
+}
+
+.date-cell {
+    white-space: nowrap;
+}
+
+.date-cell strong {
+    color: #334155;
+}
+
+.empty-row {
+    height: 130px;
+    text-align: center !important;
+    color: #64748b !important;
+}
+
+.empty-row i {
+    margin-right: 8px;
+    color: #A9C87D;
+}
+
+@media (max-width: 1100px) {
+    .promotion-table-wrapper {
+        overflow-x: auto;
+    }
+
+    .promotion-table {
+        min-width: 1050px;
+    }
+}
