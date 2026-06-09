@@ -234,6 +234,15 @@ public class Voucher implements Serializable {
         return used_quantity + "/" + quantity;
     }
 
+    public int getRemainingQuantity() {
+        return Math.max(0, quantity - used_quantity);
+    }
+
+    public String getCreatedAtText() {
+        if (created_at == null) return "-";
+        return created_at.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
+
     public String getTypeLabel() {
         if ("PRODUCT".equalsIgnoreCase(voucher_scope)) return "Giảm sản phẩm";
         return "Giảm đơn hàng";

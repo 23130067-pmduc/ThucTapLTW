@@ -256,6 +256,15 @@ public class VoucherDao extends BaseDao {
         );
     }
 
+    public boolean updateStatus(int id, int status) {
+        return getJdbi().withHandle(handle ->
+                handle.createUpdate("UPDATE vouchers SET status = :status WHERE id = :id")
+                        .bind("id", id)
+                        .bind("status", status)
+                        .execute() == 1
+        );
+    }
+
     public void insert(Voucher voucher) {
         getJdbi().useHandle(handle ->
                 handle.createUpdate("""

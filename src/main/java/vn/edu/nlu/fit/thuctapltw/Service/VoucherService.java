@@ -53,6 +53,27 @@ public class VoucherService {
         return voucherDao.findById(id);
     }
 
+    public String updateStatus(int id, int status) {
+        if (id <= 0 || (status != 0 && status != 1)) {
+            return "Dữ liệu khóa/mở mã giảm giá không hợp lệ.";
+        }
+
+        Voucher voucher = voucherDao.findById(id);
+        if (voucher == null) {
+            return "Không tìm thấy mã giảm giá.";
+        }
+
+        if (voucher.getStatus() == status) {
+            return status == 1 ? "Mã giảm giá đã được mở." : "Mã giảm giá đã bị khóa.";
+        }
+
+        if (!voucherDao.updateStatus(id, status)) {
+            return "Không thể cập nhật trạng thái mã giảm giá. Vui lòng thử lại.";
+        }
+
+        return null;
+    }
+
     public String createVoucher(Voucher voucher) {
         if (voucher == null) {
             return "Dữ liệu mã giảm giá không hợp lệ.";

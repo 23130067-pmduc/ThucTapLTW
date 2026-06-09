@@ -63,6 +63,10 @@ public class VoucherAdminController extends HttpServlet {
             return;
         }
 
+        if ("toggle-status".equalsIgnoreCase(action)) {
+            toggleVoucherStatus(request, response);
+            return;
+        }
 
         response.sendRedirect(request.getContextPath() + "/voucher-admin");
     }
@@ -145,6 +149,20 @@ public class VoucherAdminController extends HttpServlet {
         }
 
         response.sendRedirect(request.getContextPath() + "/voucher-admin?success=update");
+    }
+
+    private void toggleVoucherStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = parsePositiveInt(request.getParameter("id"), 0);
+        int status = parsePositiveInt(request.getParameter("status"), -1);
+
+        String errorMessage = voucherService.updateStatus(id, status);
+        if (errorMessage != null) {
+            response.sendRedirect(request.getContextPath() + "/voucher-admin?error=" + urlEncode(errorMessage));
+            return;
+        }
+
+        String result = status == 1 ? "unlock" : "lock";
+        response.sendRedirect(request.getContextPath() + "/voucher-admin?success=" + result);
     }
 
     private Voucher readVoucherFromRequest(HttpServletRequest request) {
