@@ -43,7 +43,7 @@
                         </a>
                     </c:if>
 
-                    <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+                    <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
                         <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
                             <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
                         </a>
@@ -127,11 +127,12 @@
                     <div class="card">Liên hệ đã xử lý<br><span id="dashboard-total-contact-closed">${totalClosed}</span></div>
                 </div>
 
-                <div class="contact-toolbar">
-                    <a href="contact-admin?mode=add" class="btn-add">
-                        <i class="fa fa-plus"></i> Thêm liên hệ
+                <c:if test="${userlogin.permissions.contains('CONTACT_UPDATE')}">
+                    <a href="contact-admin?mode=edit&id=${c.id}"
+                       class="icon-btn edit" title="Chỉnh sửa">
+                        <i class="fa fa-pen"></i>
                     </a>
-                </div>
+                </c:if>
 
 
                 <div class="contact-table-wrapper">
@@ -181,19 +182,23 @@
                                         <i class="fa fa-eye"></i>
                                     </a>
 
-                                    <!-- SỬA -->
-                                    <a href="contact-admin?mode=edit&id=${c.id}"
-                                       class="icon-btn edit" title="Chỉnh sửa">
-                                        <i class="fa fa-pen"></i>
-                                    </a>
 
-                                    <!-- XÓA MỀM -->
-                                    <button type="button"
-                                            class="icon-btn delete"
-                                            title="Xóa liên hệ"
-                                            onclick="openDeleteModal(${c.id}, '${c.name}')">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
+                                    <c:if test="${userlogin.permissions.contains('CONTACT_UPDATE')}">
+                                        <a href="contact-admin?mode=edit&id=${c.id}"
+                                           class="icon-btn edit" title="Chỉnh sửa">
+                                            <i class="fa fa-pen"></i>
+                                        </a>
+                                    </c:if>
+
+
+                                    <c:if test="${userlogin.permissions.contains('CONTACT_DELETE')}">
+                                        <button type="button"
+                                                class="icon-btn delete"
+                                                title="Xóa liên hệ"
+                                                onclick="openDeleteModal(${c.id}, '${c.name}')">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </c:if>
                                 </td>
 
                             </tr>

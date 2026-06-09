@@ -122,9 +122,11 @@
                 </div>
 
                 <div class="banner-toolbar">
-                    <a href="${pageContext.request.contextPath}/banner-admin?mode=add" class="btn-add">
-                        <i class="fa fa-plus"></i> Thêm banner
-                    </a>
+                    <c:if test="${userlogin.permissions.contains('BANNER_CREATE')}">
+                        <a href="${pageContext.request.contextPath}/banner-admin?mode=add" class="btn-add">
+                            <i class="fa fa-plus"></i> Thêm banner
+                        </a>
+                    </c:if>
                 </div>
 
 
@@ -164,17 +166,21 @@
                                         <i class="fa fa-eye"></i>
                                     </a>
 
-                                    <a href="banner-admin?mode=edit&id=${b.id}"
-                                       class="icon-btn edit" title="Chỉnh sửa">
-                                        <i class="fa fa-pen"></i>
-                                    </a>
+                                    <c:if test="${userlogin.permissions.contains('BANNER_UPDATE')}">
+                                        <a href="banner-admin?mode=edit&id=${b.id}"
+                                           class="icon-btn edit" title="Chỉnh sửa">
+                                            <i class="fa fa-pen"></i>
+                                        </a>
+                                    </c:if>
 
-                                    <button type="button"
-                                            class="icon-btn delete"
-                                            title="Xóa banner"
-                                            onclick="openDeleteModal(${b.id}, '${b.title}')">
-                                        <i class="fa fa-trash"></i>
-                                    </button>
+                                    <c:if test="${userlogin.permissions.contains('BANNER_DELETE')}">
+                                        <button type="button"
+                                                class="icon-btn delete"
+                                                title="Xóa banner"
+                                                onclick="openDeleteModal(${b.id}, '${b.title}')">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </c:if>
                                 </td>
 
                             </tr>

@@ -41,7 +41,7 @@
         </a>
       </c:if>
 
-      <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+      <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
         <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
           <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
         </a>
@@ -166,12 +166,11 @@
                 <td>${u.email}</td>
                 <td>
                   <c:choose>
-                    <c:when test="${u.roleName == 'ADMIN'}">
-                      Quản trị
-                    </c:when>
-                    <c:otherwise>
-                      Khách hàng
-                    </c:otherwise>
+                    <c:when test="${u.roleName == 'ADMIN'}">Quản trị</c:when>
+                    <c:when test="${u.roleName == 'STAFF_PRODUCT'}">Nhân viên sản phẩm</c:when>
+                    <c:when test="${u.roleName == 'STAFF_ORDER'}">Nhân viên đơn hàng</c:when>
+                    <c:when test="${u.roleName == 'STAFF_MARKETING'}">Nhân viên marketing</c:when>
+                    <c:otherwise>Khách hàng</c:otherwise>
                   </c:choose>
                 </td>
 
@@ -186,12 +185,11 @@
                                     </c:choose>
                                 </span></td>
                 <td class="actions">
-                  <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
-                    <a href="user-admin?mode=view&id=${u.id}"
-                       class="icon-btn view" title="Xem chi tiết">
-                      <i class="fa fa-eye"></i>
-                    </a>
-                  </c:if>
+                  <a href="user-admin?mode=view&id=${u.id}"
+                     class="icon-btn view" title="Xem chi tiết">
+                    <i class="fa fa-eye"></i>
+                  </a>
+
 
                   <c:if test="${userlogin.permissions.contains('USER_UPDATE')}">
                     <a href="user-admin?mode=edit&id=${u.id}"

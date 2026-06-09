@@ -36,7 +36,7 @@
           </a>
         </c:if>
 
-        <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+        <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
           <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
             <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
           </a>
@@ -143,9 +143,11 @@
         </button>
       </form>
 
-      <a href="${pageContext.request.contextPath}/notification-admin?mode=add" class="btn-add">
-        <i class="fa fa-plus"></i> Thêm thông báo
-      </a>
+      <c:if test="${userlogin.permissions.contains('NOTIFICATION_CREATE')}">
+        <a href="${pageContext.request.contextPath}/notification-admin?mode=add" class="btn-add">
+          <i class="fa fa-plus"></i> Thêm thông báo
+        </a>
+      </c:if>
     </div>
 
     <div class="notification-table-wrapper">
@@ -203,18 +205,22 @@
                       <i class="fa fa-eye"></i>
                     </a>
 
-                    <a href="${pageContext.request.contextPath}/notification-admin?mode=edit&id=${n.id}"
-                       class="icon-btn edit"
-                       title="Sửa">
-                      <i class="fa fa-pen"></i>
-                    </a>
+                    <c:if test="${userlogin.permissions.contains('NOTIFICATION_UPDATE')}">
+                      <a href="${pageContext.request.contextPath}/notification-admin?mode=edit&id=${n.id}"
+                         class="icon-btn edit"
+                         title="Sửa">
+                        <i class="fa fa-pen"></i>
+                      </a>
+                    </c:if>
 
-                    <button type="button"
-                            class="icon-btn delete open-confirm-btn"
-                            title="Khóa"
-                            data-id="${n.id}">
-                      <i class="fa fa-trash"></i>
-                    </button>
+                    <c:if test="${userlogin.permissions.contains('NOTIFICATION_DELETE')}">
+                      <button type="button"
+                              class="icon-btn delete open-confirm-btn"
+                              title="Khóa"
+                              data-id="${n.id}">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </c:if>
                   </div>
                 </td>
               </tr>

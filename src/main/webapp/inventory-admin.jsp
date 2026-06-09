@@ -42,7 +42,7 @@
                         </a>
                     </c:if>
 
-                    <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+                    <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
                         <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
                             <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
                         </a>
@@ -145,13 +145,19 @@
             </form>
 
             <div class="inventory-toolbar-actions">
-                <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=IMPORT" class="btn-import">
-                    <i class="fa-solid fa-circle-plus"></i> Nhập kho
-                </a>
+                <c:if test="${userlogin.permissions.contains('IMPORT_RECEIPT_CREATE')}">
+                    <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=IMPORT"
+                       class="btn-import">
+                        <i class="fa-solid fa-circle-plus"></i> Nhập kho
+                    </a>
+                </c:if>
 
-                <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=EXPORT" class="btn-export">
-                    <i class="fa-solid fa-circle-minus"></i> Xuất kho
-                </a>
+                <c:if test="${userlogin.permissions.contains('EXPORT_RECEIPT_CREATE')}">
+                    <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=EXPORT"
+                       class="btn-export">
+                        <i class="fa-solid fa-circle-minus"></i> Xuất kho
+                    </a>
+                </c:if>
 
                 <a href="${pageContext.request.contextPath}/inventory-batch-admin" class="btn-batch">
                     <i class="fa-solid fa-layer-group"></i> Lô nhập hàng
@@ -333,10 +339,12 @@
                                    class="icon-btn view" title="Xem biến thể">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="${pageContext.request.contextPath}/product-variant-admin?mode=edit&productId=${item.productId}&id=${item.variantId}"
-                                   class="icon-btn edit" title="Cập nhật tồn kho">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
+                                <c:if test="${userlogin.permissions.contains('STOCK_UPDATE')}">
+                                    <a href="${pageContext.request.contextPath}/product-variant-admin?mode=edit&productId=${item.productId}&id=${item.variantId}"
+                                       class="icon-btn edit" title="Cập nhật tồn kho">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                </c:if>
                             </div>
                         </td>
                     </tr>

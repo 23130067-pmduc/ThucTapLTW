@@ -42,7 +42,7 @@
                     </a>
                 </c:if>
 
-                <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+                <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
                     <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
                         <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
                     </a>
@@ -186,10 +186,12 @@
                                    class="icon-btn view" title="Xem chi tiết">
                                     <i class="fa-solid fa-eye"></i>
                                 </a>
-                                <a href="${pageContext.request.contextPath}/order-admin?mode=edit&id=${o.id}"
-                                   class="icon-btn edit" title="Cập nhật trạng thái">
-                                    <i class="fa-solid fa-pen"></i>
-                                </a>
+                                <c:if test="${userlogin.permissions.contains('ORDER_UPDATE_STATUS')}">
+                                    <a href="${pageContext.request.contextPath}/order-admin?mode=edit&id=${o.id}"
+                                       class="icon-btn edit" title="Cập nhật trạng thái">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                </c:if>
                             </div>
                         </td>
                     </tr>

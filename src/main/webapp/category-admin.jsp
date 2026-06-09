@@ -40,7 +40,7 @@
           </a>
         </c:if>
 
-        <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+        <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
           <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
             <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
           </a>
@@ -136,11 +136,11 @@
             </button>
           </form>
 
-          <div class="toolbar-right">
+          <c:if test="${userlogin.permissions.contains('CATEGORY_CREATE')}">
             <a href="category-admin?mode=add" class="btn-add">
               <i class="fa fa-plus"></i> Thêm danh mục
             </a>
-          </div>
+          </c:if>
 
         </div>
 
@@ -185,19 +185,23 @@
 
 
 
-                  <a href="category-admin?mode=edit&id=${c.id}"
-                     class="icon-btn edit" title="Chỉnh sửa">
-                    <i class="fa fa-pen"></i>
-                  </a>
+                  <c:if test="${userlogin.permissions.contains('CATEGORY_UPDATE')}">
+                    <a href="category-admin?mode=edit&id=${c.id}"
+                       class="icon-btn edit" title="Chỉnh sửa">
+                      <i class="fa fa-pen"></i>
+                    </a>
+                  </c:if>
 
 
 
-                  <button type="button"
-                          class="icon-btn delete"
-                          title="Xóa danh mục"
-                          onclick="openDeleteModal(${c.id}, '${c.name}')">
-                    <i class="fa fa-trash"></i>
-                  </button>
+                  <c:if test="${userlogin.permissions.contains('CATEGORY_DELETE')}">
+                    <button type="button"
+                            class="icon-btn delete"
+                            title="Xóa danh mục"
+                            onclick="openDeleteModal(${c.id}, '${c.name}')">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </c:if>
                 </td>
 
               </tr>

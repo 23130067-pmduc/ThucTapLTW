@@ -44,7 +44,7 @@
           </a>
         </c:if>
 
-        <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+        <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
           <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
             <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
           </a>
@@ -168,12 +168,12 @@
           </button>
         </form>
 
-        <div class="toolbar-right">
+        <c:if test="${userlogin.permissions.contains('PRODUCT_CREATE')}">
           <a href="product-admin?mode=add" class="btn-add-product">
             <i class="fa-solid fa-plus"></i>
             <span>Thêm sản phẩm</span>
           </a>
-        </div>
+        </c:if>
       </div>
 
       <div class="product-table-wrapper">
@@ -245,43 +245,54 @@
                     <i class="fa-solid fa-eye"></i>
                   </a>
 
-                  <a href="product-admin?mode=edit&id=${p.id}"
-                     class="action-btn edit"
-                     title="Sửa">
-                    <i class="fa-solid fa-pen"></i>
-                  </a>
+                  <c:if test="${userlogin.permissions.contains('PRODUCT_UPDATE')}">
+                    <a href="product-admin?mode=edit&id=${p.id}"
+                       class="action-btn edit"
+                       title="Sửa">
+                      <i class="fa-solid fa-pen"></i>
+                    </a>
+                  </c:if>
 
-                  <a href="product-variant-admin?productId=${p.id}"
-                     class="action-btn variant"
-                     title="Biến thể">
-                    <i class="fa-solid fa-layer-group"></i>
-                  </a>
+                  <c:if test="${userlogin.permissions.contains('PRODUCT_VARIANT_MANAGE')}">
+                    <a href="product-variant-admin?productId=${p.id}"
+                       class="action-btn variant"
+                       title="Biến thể">
+                      <i class="fa-solid fa-layer-group"></i>
+                    </a>
+                  </c:if>
 
-                  <a href="product-image-admin?productId=${p.id}"
-                     class="action-btn image"
-                     title="Ảnh sản phẩm">
-                    <i class="fa-regular fa-image"></i>
-                  </a>
+                  <c:if test="${userlogin.permissions.contains('PRODUCT_IMAGE_MANAGE')}">
+                    <a href="product-image-admin?productId=${p.id}"
+                       class="action-btn image"
+                       title="Ảnh sản phẩm">
+                      <i class="fa-regular fa-image"></i>
+                    </a>
+                  </c:if>
 
-                  <c:choose>
-                    <c:when test="${p.status eq 'Đang bán'}">
-                      <button type="button"
-                              class="icon-btn delete"
-                              title="Ngừng bán sản phẩm"
-                              onclick="openStatusModal(${p.id}, '${p.name}', 'Ngừng bán')">
-                        <i class="fa fa-trash"></i>
-                      </button>
-                    </c:when>
+                  <c:if test="${userlogin.permissions.contains('PRODUCT_DELETE')}">
+                    <c:choose>
+                      <c:when test="${p.status eq 'Đang bán'}">
+                        <button type="button"
+                                class="icon-btn delete"
+                                title="Ngừng bán sản phẩm"
+                                onclick="openStatusModal(${p.id}, '${p.name}', 'Ngừng bán')">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </c:when>
 
-                    <c:otherwise>
-                      <button type="button"
-                              class="icon-btn restore"
-                              title="Mở bán lại sản phẩm"
-                              onclick="openStatusModal(${p.id}, '${p.name}', 'Đang bán')">
-                        <i class="fa fa-rotate-left"></i>
-                      </button>
-                    </c:otherwise>
-                  </c:choose>
+                      <c:otherwise>
+                        <button type="button"
+                                class="icon-btn restore"
+                                title="Mở bán lại sản phẩm"
+                                onclick="openStatusModal(${p.id}, '${p.name}', 'Đang bán')">
+                          <i class="fa fa-rotate-left"></i>
+                        </button>
+                      </c:otherwise>
+                    </c:choose>
+
+                  </c:if>
+
+
                 </div>
               </td>
             </tr>

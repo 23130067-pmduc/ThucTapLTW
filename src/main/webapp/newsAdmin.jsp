@@ -37,7 +37,7 @@
                     </a>
                 </c:if>
 
-                <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_CREATE')}">
+                <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
                     <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
                         <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
                     </a>
