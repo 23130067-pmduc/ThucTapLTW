@@ -6,7 +6,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Category Form</title>
+    <title>Form danh mục</title>
     <link rel="stylesheet" href="./css/user-form.css">
 </head>
 <body>

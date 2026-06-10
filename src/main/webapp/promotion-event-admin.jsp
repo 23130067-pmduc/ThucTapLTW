@@ -50,6 +50,18 @@
                     Đã thêm chương trình khuyến mãi thành công.
                 </div>
             </c:if>
+            <c:if test="${param.success == 'update'}">
+                <div class="alert alert-success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Đã cập nhật chương trình khuyến mãi thành công.
+                </div>
+            </c:if>
+            <c:if test="${not empty param.error}">
+                <div class="alert alert-error">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    ${param.error}
+                </div>
+            </c:if>
 
             <div class="cards promotion-summary">
                 <div class="card">Tổng chương trình<br><span>${totalAll}</span></div>
@@ -86,6 +98,7 @@
                             <th>Sản phẩm</th>
                             <th>Thời gian áp dụng</th>
                             <th>Trạng thái</th>
+                            <th>Hành động</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -116,12 +129,19 @@
                                         <td>
                                             <span class="event-status ${event.statusClass}">${event.statusLabel}</span>
                                         </td>
+                                        <td>
+                                            <a href="${pageContext.request.contextPath}/promotion-event-admin?action=edit&id=${event.id}"
+                                               class="promotion-action-btn edit"
+                                               title="Sửa chương trình">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </a>
+                                        </td>
                                     </tr>
                                 </c:forEach>
                             </c:when>
                             <c:otherwise>
                                 <tr>
-                                    <td colspan="7" class="empty-row">
+                                    <td colspan="8" class="empty-row">
                                         <i class="fa-solid fa-tags"></i>
                                         Chưa có chương trình khuyến mãi nào.
                                     </td>

@@ -138,12 +138,13 @@
 }
 
 .promotion-table th:nth-child(1) { width: 6%; }
-.promotion-table th:nth-child(2) { width: 29%; }
+.promotion-table th:nth-child(2) { width: 25%; }
 .promotion-table th:nth-child(3) { width: 13%; }
 .promotion-table th:nth-child(4) { width: 15%; }
 .promotion-table th:nth-child(5) { width: 10%; }
 .promotion-table th:nth-child(6) { width: 17%; }
 .promotion-table th:nth-child(7) { width: 10%; }
+.promotion-table th:nth-child(8) { width: 8%; }
 
 .promotion-table th,
 .promotion-table td {
@@ -291,6 +292,25 @@
     color: #c62828;
 }
 
+.promotion-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 6px;
+    background: transparent;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+.promotion-action-btn.edit {
+    color: #2f9e44;
+}
+
+.promotion-action-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+}
+
 .date-cell {
     white-space: nowrap;
 }
@@ -320,7 +340,6 @@
     }
 }
 
-/* Add promotion form */
 .promotion-form-body {
     overflow-y: auto;
     background: #f5f7fb;

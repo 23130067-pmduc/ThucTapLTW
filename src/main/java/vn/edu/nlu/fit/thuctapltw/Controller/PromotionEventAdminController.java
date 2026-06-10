@@ -9,6 +9,8 @@ import vn.edu.nlu.fit.thuctapltw.Service.PromotionEventService;
 import vn.edu.nlu.fit.thuctapltw.model.PromotionEvent;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
@@ -30,6 +32,11 @@ public class PromotionEventAdminController extends HttpServlet {
             event.setStatus(1);
             request.setAttribute("promotionEvent", event);
             request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
+            return;
+        }
+
+        if ("edit".equals(request.getParameter("action"))) {
+            showEditForm(request, response);
             return;
         }
 
@@ -57,16 +64,58 @@ public class PromotionEventAdminController extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        if (!"create".equals(request.getParameter("action"))) {
-            response.sendRedirect(request.getContextPath() + "/promotion-event-admin");
+        String action = request.getParameter("action");
+        if ("create".equals(action)) {
+            createEvent(request, response);
             return;
         }
 
+        if ("update".equals(action)) {
+            updateEvent(request, response);
+            return;
+        }
+
+        response.sendRedirect(request.getContextPath() + "/promotion-event-admin");
+    }
+
+    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        int id = parsePositiveInt(request.getParameter("id"), 0);
+        PromotionEvent event = promotionEventService.getById(id);
+        if (event == null) {
+            response.sendRedirect(request.getContextPath() + "/promotion-event-admin?error="
+                    + urlEncode("Không tìm thấy chương trình khuyến mãi."));
+            return;
+        }
+
+        request.setAttribute("mode", "edit");
+        request.setAttribute("promotionEvent", event);
+        request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
+    }
+
+    private void createEvent(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         PromotionEvent event = readEvent(request);
         try {
             promotionEventService.createEvent(event);
             response.sendRedirect(request.getContextPath() + "/promotion-event-admin?success=create");
         } catch (IllegalArgumentException e) {
+            request.setAttribute("promotionEvent", event);
+            request.setAttribute("errorMessage", e.getMessage());
+            request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
+        }
+    }
+
+    private void updateEvent(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        PromotionEvent event = readEvent(request);
+        event.setId(parsePositiveInt(request.getParameter("id"), 0));
+
+        try {
+            promotionEventService.updateEvent(event);
+            response.sendRedirect(request.getContextPath() + "/promotion-event-admin?success=update");
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("mode", "edit");
             request.setAttribute("promotionEvent", event);
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
@@ -103,6 +152,10 @@ public class PromotionEventAdminController extends HttpServlet {
 
     private String trim(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    private String urlEncode(String value) {
+        return URLEncoder.encode(value == null ? "" : value, StandardCharsets.UTF_8);
     }
 
     private int parsePositiveInt(String value, int defaultValue) {

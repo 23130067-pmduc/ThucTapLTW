@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - ${isEdit ? 'Sửa mã giảm giá' : 'Thêm mã giảm giá'}</title>
+    <title>${isEdit ? 'Sửa mã giảm giá' : 'Thêm mã giảm giá'}</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/voucher-admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -34,6 +34,7 @@
                     <h2>${isEdit ? 'Cập nhật mã giảm giá' : 'Tạo mã giảm giá mới'}</h2>
                     <p>${isEdit ? 'Chỉnh sửa thông tin để mã giảm giá phù hợp với chương trình hiện tại.' : 'Nhập đầy đủ thông tin để mã có thể hiển thị và áp dụng trên hệ thống.'}</p>
                 </div>
+                <span class="form-badge">${isEdit ? 'Issue 111' : 'Issue 110'}</span>
             </div>
 
             <c:if test="${not empty errorMessage}">

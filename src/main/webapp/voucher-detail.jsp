@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Chi tiết mã giảm giá</title>
+    <title>Chi tiết mã giảm giá</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/voucher-admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -107,6 +107,26 @@
                     <span>Đơn hàng đã áp dụng gần nhất</span>
                     <strong>${empty voucher.order_id ? 'Chưa áp dụng cho đơn hàng' : voucher.order_id}</strong>
                 </div>
+            </div>
+
+            <div class="voucher-detail-actions">
+                <a href="${pageContext.request.contextPath}/voucher-admin" class="btn-secondary">
+                    <i class="fa-solid fa-list"></i>
+                    Về danh sách
+                </a>
+                <a href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${voucher.id}" class="btn-primary">
+                    <i class="fa-solid fa-pen"></i>
+                    Sửa mã giảm giá
+                </a>
+                <button type="button"
+                        class="btn-toggle-status ${voucher.status == 1 ? 'lock' : 'unlock'} js-open-voucher-status-modal"
+                        data-id="${voucher.id}"
+                        data-code="${voucher.code}"
+                        data-status="${voucher.status == 1 ? 0 : 1}"
+                        data-action-label="${voucher.status == 1 ? 'Khóa' : 'Mở'}">
+                        <i class="fa-solid ${voucher.status == 1 ? 'fa-lock' : 'fa-lock-open'}"></i>
+                        ${voucher.status == 1 ? 'Khóa mã giảm giá' : 'Mở mã giảm giá'}
+                </button>
             </div>
         </section>
     </main>

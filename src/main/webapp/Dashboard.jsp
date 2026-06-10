@@ -113,7 +113,6 @@
   </aside>
 
   <section class="content">
-    <!-- PHẦN HEADER -->
     <header class="topbar">
       <h1 id="pageTitle">Thống kê</h1>
       <div class="actions">
@@ -124,7 +123,6 @@
 
 
     <main id="page">
-      <!-- DASHBROAD -->
       <section id="dashboard" class="page active">
         <div class="cards">
           <div class="card">
