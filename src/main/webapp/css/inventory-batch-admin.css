@@ -494,3 +494,24 @@
         text-align: left;
     }
 }
+
+
+/* ===== UI sync with common admin pages ===== */
+.batch-card {
+    min-height: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.batch-card span {
+    margin-top: 10px;
+    font-size: 28px;
+}
+
+.batch-table-wrapper {
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow-x: auto;
+}

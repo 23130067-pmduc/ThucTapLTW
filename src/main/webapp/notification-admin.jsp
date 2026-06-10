@@ -5,7 +5,7 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
-  <title>Quản lý thông báo</title>
+  <title>Thông báo</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/notification-admin.css">
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -37,7 +37,7 @@
 
   <section class="content">
     <header class="topbar">
-      <h1>Quản lý thông báo</h1>
+      <h1>Thông báo</h1>
       <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
     </header>
 

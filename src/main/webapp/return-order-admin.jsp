@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý hoàn hàng</title>
+    <title>Hoàn hàng</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/return-order.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -38,7 +38,7 @@
 
     <section class="content return-page-content">
         <header class="topbar">
-            <h1>Quản lý phiếu hoàn hàng</h1>
+            <h1>Hoàn hàng</h1>
             <div class="topbar-actions">
                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
             </div>

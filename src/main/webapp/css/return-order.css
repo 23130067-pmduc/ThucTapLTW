@@ -251,3 +251,28 @@
     .return-action-grid { grid-template-columns: 1fr; }
     .return-search-input { min-width: 100%; }
 }
+
+
+/* ===== UI sync with common admin pages ===== */
+.return-page-content .card {
+    min-height: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.return-page-content .card span {
+    margin-top: 10px;
+    font-size: 28px;
+}
+
+.return-table-wrapper {
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.return-table th,
+.return-table td {
+    padding: 12px 14px;
+}
