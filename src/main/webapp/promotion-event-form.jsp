@@ -1,12 +1,14 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
+<c:set var="isEdit" value="${mode == 'edit'}" />
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Thêm chương trình khuyến mãi</title>
+    <title>${isEdit ? 'Sửa chương trình khuyến mãi' : 'Thêm chương trình khuyến mãi'}</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/promotion-event-admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -19,7 +21,7 @@
                 <i class="fa-solid fa-arrow-left"></i>
                 Quay lại
             </a>
-            <h1>Thêm chương trình khuyến mãi</h1>
+            <h1>${isEdit ? 'Sửa chương trình khuyến mãi' : 'Thêm chương trình khuyến mãi'}</h1>
         </div>
         <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
     </header>
@@ -28,8 +30,8 @@
         <section class="promotion-form-card">
             <div class="promotion-form-title">
                 <div>
-                    <h2>Tạo chương trình mới</h2>
-                    <p>Chương trình mới sẽ áp dụng cho toàn cửa hàng. Bạn có thể liên kết sản phẩm ở bước quản lý chi tiết sau.</p>
+                    <h2>${isEdit ? 'Cập nhật chương trình khuyến mãi' : 'Tạo chương trình mới'}</h2>
+                    <p>${isEdit ? 'Chỉnh sửa nội dung, thời gian hiệu lực và mức ưu đãi của chương trình.' : 'Chương trình mới sẽ áp dụng cho toàn cửa hàng. Bạn có thể liên kết sản phẩm ở bước quản lý chi tiết sau.'}</p>
                 </div>
                 <span><i class="fa-solid fa-tags"></i> Khuyến mãi</span>
             </div>
@@ -42,7 +44,10 @@
             </c:if>
 
             <form method="post" action="${pageContext.request.contextPath}/promotion-event-admin" class="promotion-form">
-                <input type="hidden" name="action" value="create">
+                <input type="hidden" name="action" value="${isEdit ? 'update' : 'create'}">
+                <c:if test="${isEdit}">
+                    <input type="hidden" name="id" value="${promotionEvent.id}">
+                </c:if>
 
                 <div class="promotion-form-grid">
                     <div class="promotion-form-group">
@@ -104,8 +109,8 @@
                 <div class="promotion-form-actions">
                     <a href="${pageContext.request.contextPath}/promotion-event-admin" class="btn-secondary">Hủy</a>
                     <button type="submit" class="btn-primary">
-                        <i class="fa-solid fa-plus"></i>
-                        Thêm chương trình
+                        <i class="fa-solid ${isEdit ? 'fa-floppy-disk' : 'fa-plus'}"></i>
+                        ${isEdit ? 'Lưu thay đổi' : 'Thêm chương trình'}
                     </button>
                 </div>
             </form>

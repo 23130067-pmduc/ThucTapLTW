@@ -32,14 +32,26 @@ public class PromotionEventService {
     }
 
     public int createEvent(PromotionEvent event) {
-        validate(event);
-        event.setTitle(event.getTitle().trim());
-        event.setDescription(trimToNull(event.getDescription()));
-        event.setIcon(trimToDefault(event.getIcon(), "fa-gift"));
-        event.setTag(event.getTag().trim());
-        event.setDiscountLabel(event.getDiscountLabel().trim());
-        event.setStatus(event.getStatus() == 0 ? 0 : 1);
+        prepareAndValidate(event);
         return promotionEventDao.create(event);
+    }
+
+    public PromotionEvent getById(int id) {
+        return id <= 0 ? null : promotionEventDao.findById(id);
+    }
+
+    public void updateEvent(PromotionEvent event) {
+        if (event == null || event.getId() <= 0) {
+            throw new IllegalArgumentException("Dữ liệu chương trình khuyến mãi không hợp lệ.");
+        }
+        if (promotionEventDao.findById(event.getId()) == null) {
+            throw new IllegalArgumentException("Không tìm thấy chương trình khuyến mãi cần sửa.");
+        }
+
+        prepareAndValidate(event);
+        if (!promotionEventDao.update(event)) {
+            throw new IllegalArgumentException("Không thể cập nhật chương trình khuyến mãi. Vui lòng thử lại.");
+        }
     }
 
     public int countAllEvents() {
@@ -56,6 +68,16 @@ public class PromotionEventService {
 
     public int countEndedEvents() {
         return promotionEventDao.countEndedEvents();
+    }
+
+    private void prepareAndValidate(PromotionEvent event) {
+        validate(event);
+        event.setTitle(event.getTitle().trim());
+        event.setDescription(trimToNull(event.getDescription()));
+        event.setIcon(trimToDefault(event.getIcon(), "fa-gift"));
+        event.setTag(event.getTag().trim());
+        event.setDiscountLabel(event.getDiscountLabel().trim());
+        event.setStatus(event.getStatus() == 0 ? 0 : 1);
     }
 
     private void validate(PromotionEvent event) {

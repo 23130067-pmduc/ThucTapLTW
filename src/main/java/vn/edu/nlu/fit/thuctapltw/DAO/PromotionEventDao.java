@@ -125,6 +125,44 @@ public class PromotionEventDao extends BaseDao {
         );
     }
 
+    public PromotionEvent findById(int id) {
+        String sql = ADMIN_EVENT_SELECT + """
+                WHERE pe.id = :id
+                GROUP BY pe.id, pe.title, pe.description, pe.icon, pe.tag, pe.discount_label,
+                         pe.start_date, pe.end_date, pe.status
+                LIMIT 1
+                """;
+
+        return getJdbi().withHandle(handle ->
+                handle.createQuery(sql)
+                        .bind("id", id)
+                        .mapToBean(PromotionEvent.class)
+                        .findOne()
+                        .orElse(null)
+        );
+    }
+
+    public boolean update(PromotionEvent event) {
+        String sql = """
+                UPDATE promotion_events
+                SET title = :title,
+                    description = :description,
+                    icon = :icon,
+                    tag = :tag,
+                    discount_label = :discountLabel,
+                    start_date = :startDate,
+                    end_date = :endDate,
+                    status = :status
+                WHERE id = :id
+                """;
+
+        return getJdbi().withHandle(handle ->
+                handle.createUpdate(sql)
+                        .bindBean(event)
+                        .execute() == 1
+        );
+    }
+
     public int countAllEvents() {
         return countByCondition("1 = 1");
     }
