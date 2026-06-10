@@ -16,6 +16,7 @@ public class PromotionEvent implements Serializable {
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int status;
+    private int productCount;
     private List<Product> products = new ArrayList<>();
 
     public PromotionEvent() {
@@ -96,6 +97,14 @@ public class PromotionEvent implements Serializable {
         this.status = status;
     }
 
+    public int getProductCount() {
+        return productCount;
+    }
+
+    public void setProductCount(int productCount) {
+        this.productCount = productCount;
+    }
+
     public List<Product> getProducts() {
         return products;
     }
@@ -117,5 +126,38 @@ public class PromotionEvent implements Serializable {
             return "Từ " + startDate.format(formatter);
         }
         return startDate.format(formatter) + " - " + endDate.format(formatter);
+    }
+
+    public String getStartDateText() {
+        return formatDateTime(startDate);
+    }
+
+    public String getEndDateText() {
+        return formatDateTime(endDate);
+    }
+
+    public String getStatusLabel() {
+        LocalDateTime now = LocalDateTime.now();
+        if (status == 0) return "Đã khóa";
+        if (endDate != null && endDate.isBefore(now)) return "Đã kết thúc";
+        if (startDate != null && startDate.isAfter(now)) return "Sắp diễn ra";
+        return "Đang diễn ra";
+    }
+
+    public String getStatusClass() {
+        LocalDateTime now = LocalDateTime.now();
+        if (status == 0) return "locked";
+        if (endDate != null && endDate.isBefore(now)) return "expired";
+        if (startDate != null && startDate.isAfter(now)) return "upcoming";
+        return "active";
+    }
+
+    public String getScopeLabel() {
+        return productCount > 0 ? "Sản phẩm được chọn" : "Toàn cửa hàng";
+    }
+
+    private String formatDateTime(LocalDateTime value) {
+        if (value == null) return "-";
+        return value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
     }
 }

@@ -21,4 +21,25 @@ public class PromotionEventService {
 
         return events;
     }
+
+    public List<PromotionEvent> getAdminEvents(int page, int pageSize) {
+        int safePage = Math.max(page, 1);
+        return promotionEventDao.findAdminEvents(pageSize, (safePage - 1) * pageSize);
+    }
+
+    public int countAllEvents() {
+        return promotionEventDao.countAllEvents();
+    }
+
+    public int countActiveEvents() {
+        return promotionEventDao.countActiveEvents();
+    }
+
+    public int countUpcomingEvents() {
+        return promotionEventDao.countUpcomingEvents();
+    }
+
+    public int countEndedEvents() {
+        return promotionEventDao.countEndedEvents();
+    }
 }
