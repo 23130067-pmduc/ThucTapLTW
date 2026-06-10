@@ -17,25 +17,98 @@
 <body>
 <div class="user">
   <aside class="sidebar">
-    <img src="img/gau.png" alt="" Logo>
+    <img src="img/gau.png" alt="Logo">
     <p>ADMIN</p>
 
-    <div class="nav">
-      <a href="${pageContext.request.contextPath}/dashboard" class="nav-item"><i class="fa-solid fa-gauge"></i><span>Thống kê</span></a>
-      <a href="${pageContext.request.contextPath}/product-admin" class="nav-item"><i class="fa-solid fa-shirt"></i><span>Sản phẩm</span></a>
-      <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span></a>
-      <a href="${pageContext.request.contextPath}/profit-report" class="nav-item"><i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span></a>
-      <a href="${pageContext.request.contextPath}/category-admin" class="nav-item"><i class="fa-solid fa-list"></i><span>Danh mục</span></a>
-      <a href="${pageContext.request.contextPath}/order-admin" class="nav-item"><i class="fa-solid fa-receipt"></i><span>Đơn hàng</span></a>
-            <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item"><i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span></a>
-      <a href="${pageContext.request.contextPath}/user-admin" class="nav-item active"><i class="fa-solid fa-users"></i><span>Người dùng</span></a>
-            <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item"><i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span></a>
-            <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item"><i class="fa-solid fa-tags"></i><span>Khuyến mãi</span></a>
-      <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item"><i class="fa-solid fa-image"></i><span>Banner</span></a>
-      <a href="${pageContext.request.contextPath}/news-admin" class="nav-item"><i class="fa-solid fa-newspaper"></i><span>Tin tức</span></a>
-      <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item"><i class="fa-solid fa-bell"></i><span>Thông báo</span></a>
-      <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item"><i class="fa-solid fa-envelope"></i><span>Liên hệ</span></a>
-      <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item"><i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span></a>
+
+    <div class="nav" id="menu">
+
+      <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
+        <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
+          <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
+        <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
+          <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
+        <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item">
+          <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
+        <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
+          <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
+        <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
+          <i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
+        <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
+          <i class="fa-solid fa-list"></i><span>Danh mục</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('ORDER_VIEW')}">
+        <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">
+          <i class="fa-solid fa-receipt"></i><span>Đơn hàng</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
+        <a href="${pageContext.request.contextPath}/user-admin" class="nav-item active">
+          <i class="fa-solid fa-users"></i><span>Người dùng</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
+        <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
+          <i class="fa-solid fa-image"></i><span>Banner</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('VOUCHER_VIEW')}">
+        <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item">
+          <i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span>
+        </a>
+      </c:if>
+
+      <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
+        <i class="fa-solid fa-tags"></i><span>Khuyến mãi</span>
+      </a>
+
+      <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
+        <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
+          <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('NOTIFICATION_VIEW')}">
+        <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
+          <i class="fa-solid fa-bell"></i><span>Thông báo</span>
+        </a>
+      </c:if>
+
+      <c:if test="${userlogin.permissions.contains('CONTACT_VIEW')}">
+        <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
+          <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
+        </a>
+      </c:if>
+
+      <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">
+        <i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span>
+      </a>
+
     </div>
   </aside>
 
@@ -72,9 +145,11 @@
             </button>
           </form>
 
-          <a href="user-admin?mode=add" class="btn-add">
-            <i class="fa fa-plus"></i> Thêm người dùng
-          </a>
+          <c:if test="${userlogin.permissions.contains('USER_CREATE')}">
+            <a href="user-admin?mode=add" class="btn-add">
+              <i class="fa fa-plus"></i> Thêm người dùng
+            </a>
+          </c:if>
         </div>
 
 
@@ -101,12 +176,11 @@
                 <td>${u.email}</td>
                 <td>
                   <c:choose>
-                    <c:when test="${u.role == 'admin'}">
-                      Quản trị
-                    </c:when>
-                    <c:otherwise>
-                      Khách hàng
-                    </c:otherwise>
+                    <c:when test="${u.roleName == 'ADMIN'}">Quản trị</c:when>
+                    <c:when test="${u.roleName == 'STAFF_PRODUCT'}">Nhân viên sản phẩm</c:when>
+                    <c:when test="${u.roleName == 'STAFF_ORDER'}">Nhân viên đơn hàng</c:when>
+                    <c:when test="${u.roleName == 'STAFF_MARKETING'}">Nhân viên marketing</c:when>
+                    <c:otherwise>Khách hàng</c:otherwise>
                   </c:choose>
                 </td>
 
@@ -126,13 +200,15 @@
                     <i class="fa fa-eye"></i>
                   </a>
 
-                  <a href="user-admin?mode=edit&id=${u.id}"
-                     class="icon-btn edit" title="Chỉnh sửa">
-                    <i class="fa fa-pen"></i>
-                  </a>
 
+                  <c:if test="${userlogin.permissions.contains('USER_UPDATE')}">
+                    <a href="user-admin?mode=edit&id=${u.id}"
+                       class="icon-btn edit" title="Chỉnh sửa">
+                      <i class="fa fa-pen"></i>
+                    </a>
+                  </c:if>
 
-                  <c:if test="${u.status == 'ACTIVE'}">
+                  <c:if test="${userlogin.permissions.contains('USER_LOCK') && u.status == 'ACTIVE'}">
                     <button type="button"
                             class="icon-btn delete"
                             title="Khóa người dùng"
