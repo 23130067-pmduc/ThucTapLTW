@@ -57,20 +57,71 @@ public class PromotionEventDao extends BaseDao {
         );
     }
 
-    public List<PromotionEvent> findAdminEvents(int limit, int offset) {
-        String sql = ADMIN_EVENT_SELECT + """
+    public List<PromotionEvent> findAdminEvents(String keyword, int limit, int offset) {
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        String sql = ADMIN_EVENT_SELECT
+                + (hasKeyword ? """
+                WHERE CAST(pe.id AS CHAR) LIKE :keyword
+                   OR UPPER(pe.title) LIKE UPPER(:keyword)
+                   OR UPPER(pe.description) LIKE UPPER(:keyword)
+                   OR UPPER(pe.tag) LIKE UPPER(:keyword)
+                   OR UPPER(pe.discount_label) LIKE UPPER(:keyword)
+                """ : "")
+                + """
                 GROUP BY pe.id, pe.title, pe.description, pe.icon, pe.tag, pe.discount_label,
                          pe.start_date, pe.end_date, pe.status
                 ORDER BY pe.id DESC
                 LIMIT :limit OFFSET :offset
                 """;
 
-        return getJdbi().withHandle(handle ->
-                handle.createQuery(sql)
+        return getJdbi().withHandle(handle -> {
+            var query = handle.createQuery(sql)
                         .bind("limit", limit)
-                        .bind("offset", offset)
-                        .mapToBean(PromotionEvent.class)
-                        .list()
+                        .bind("offset", offset);
+            if (hasKeyword) {
+                query.bind("keyword", "%" + keyword.trim() + "%");
+            }
+            return query.mapToBean(PromotionEvent.class).list();
+        });
+    }
+
+    public int countAdminEvents(String keyword) {
+        boolean hasKeyword = keyword != null && !keyword.trim().isEmpty();
+        String sql = """
+                SELECT COUNT(*)
+                FROM promotion_events pe
+                """
+                + (hasKeyword ? """
+                WHERE CAST(pe.id AS CHAR) LIKE :keyword
+                   OR UPPER(pe.title) LIKE UPPER(:keyword)
+                   OR UPPER(pe.description) LIKE UPPER(:keyword)
+                   OR UPPER(pe.tag) LIKE UPPER(:keyword)
+                   OR UPPER(pe.discount_label) LIKE UPPER(:keyword)
+                """ : "");
+
+        return getJdbi().withHandle(handle -> {
+            var query = handle.createQuery(sql);
+            if (hasKeyword) {
+                query.bind("keyword", "%" + keyword.trim() + "%");
+            }
+            return query.mapTo(Integer.class).one();
+        });
+    }
+
+    public int create(PromotionEvent event) {
+        String sql = """
+                INSERT INTO promotion_events
+                    (title, description, icon, tag, discount_label, start_date, end_date, status)
+                VALUES
+                    (:title, :description, :icon, :tag, :discountLabel, :startDate, :endDate, :status)
+                """;
+
+        return getJdbi().withHandle(handle ->
+                handle.createUpdate(sql)
+                        .bindBean(event)
+                        .executeAndReturnGeneratedKeys("id")
+                        .mapTo(Integer.class)
+                        .one()
         );
     }
 

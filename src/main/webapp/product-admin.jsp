@@ -118,7 +118,7 @@
 
   <section class="content product-admin-content">
     <header class="topbar">
-      <h1>Quản lý sản phẩm</h1>
+      <h1>Sản phẩm</h1>
       <div class="actions">
         <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
       </div>

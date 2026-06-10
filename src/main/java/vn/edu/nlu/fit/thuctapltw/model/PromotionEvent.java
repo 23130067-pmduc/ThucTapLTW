@@ -136,6 +136,14 @@ public class PromotionEvent implements Serializable {
         return formatDateTime(endDate);
     }
 
+    public String getStartDateInputValue() {
+        return formatDateTimeInput(startDate);
+    }
+
+    public String getEndDateInputValue() {
+        return formatDateTimeInput(endDate);
+    }
+
     public String getStatusLabel() {
         LocalDateTime now = LocalDateTime.now();
         if (status == 0) return "Đã khóa";
@@ -159,5 +167,10 @@ public class PromotionEvent implements Serializable {
     private String formatDateTime(LocalDateTime value) {
         if (value == null) return "-";
         return value.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+    }
+
+    private String formatDateTimeInput(LocalDateTime value) {
+        if (value == null) return "";
+        return value.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
     }
 }

@@ -1,58 +1,134 @@
 .promotion-summary .card {
     min-width: 180px;
-    min-height: 137px;
-    padding: 26px;
-    font-size: 18px;
+    min-height: auto;
+    padding: 20px;
+    font-size: 16px;
     display: flex;
     flex-direction: column;
 }
 
 .promotion-summary .card span {
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 28px;
 }
 
-.promotion-panel {
-    padding: 20px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-}
-
-.promotion-panel-header {
+.promotion-toolbar {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 18px;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
 }
 
-.promotion-panel-header h2 {
-    margin: 0 0 6px;
-    color: #2f3e2f;
-    font-size: 20px;
+.promotion-search-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
 }
 
-.promotion-panel-header p {
-    margin: 0;
-    color: #64748b;
+.promotion-search-form input {
+    width: 350px;
+    max-width: 100%;
+    padding: 10px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 14px;
+    outline: none;
+}
+
+.promotion-search-form input:focus {
+    border-color: #4caf50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+}
+
+.promotion-search-form .btn-search,
+.promotion-search-form .btn-reset {
+    min-height: 39px;
+    padding: 10px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.promotion-search-form .btn-search {
+    background: #40c057;
+    color: #fff;
+}
+
+.promotion-search-form .btn-search:hover {
+    background: #37b24d;
+}
+
+.promotion-search-form .btn-reset {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.promotion-search-form .btn-reset:hover {
+    background: #d5d5d5;
+}
+
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #4caf50;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-add:hover {
+    background: #43a047;
+    transform: translateY(-2px);
+    text-decoration: none;
+}
+
+.alert {
+    margin-bottom: 20px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border-radius: 8px;
     font-size: 14px;
 }
 
-.result-count {
-    padding: 8px 13px;
-    border-radius: 999px;
-    background: #eef7e8;
-    color: #4f7f29;
-    font-size: 13px;
-    font-weight: 700;
-    white-space: nowrap;
+.alert.alert-success {
+    background: #e8f7ec;
+    color: #2e7d32;
+    border: 1px solid #cde9d3;
+}
+
+.alert.alert-error {
+    background: #fdecea;
+    color: #c62828;
+    border: 1px solid #f5c6cb;
 }
 
 .promotion-table-wrapper {
-    overflow: hidden;
-    border: 1px solid #edf0f2;
+    overflow-x: auto;
+    padding: 16px;
+    background: #fff;
     border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .promotion-table {
@@ -71,28 +147,28 @@
 
 .promotion-table th,
 .promotion-table td {
-    padding: 13px 14px;
-    border-bottom: 1px solid #eef0f3;
-    color: #374151;
-    font-size: 13px;
+    padding: 12px 14px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+    font-size: 14px;
     text-align: left;
     vertical-align: middle;
 }
 
 .promotion-table th {
     background: #f3f6fa;
-    color: #1f2937;
-    font-weight: 800;
+    color: #333;
+    font-weight: 600;
     white-space: nowrap;
 }
 
 .promotion-table tbody tr:hover {
-    background: #fbfcfa;
+    background: #f9fbff;
 }
 
 .event-id {
-    color: #64748b !important;
-    font-weight: 700;
+    color: #555 !important;
+    font-weight: 600;
 }
 
 .event-info {
@@ -128,7 +204,7 @@
 }
 
 .event-info strong {
-    color: #253025;
+    color: #333;
     font-size: 14px;
     line-height: 1.35;
 }
@@ -172,8 +248,8 @@
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    font-size: 12px;
-    font-weight: 800;
+    font-size: 13px;
+    font-weight: 600;
 }
 
 .discount-badge {
@@ -189,8 +265,10 @@
 }
 
 .event-status {
-    padding: 6px 10px;
+    min-width: 92px;
+    padding: 6px 12px;
     white-space: nowrap;
+    transform: none;
 }
 
 .event-status.active {
@@ -239,5 +317,214 @@
 
     .promotion-table {
         min-width: 1050px;
+    }
+}
+
+/* Add promotion form */
+.promotion-form-body {
+    overflow-y: auto;
+    background: #f5f7fb;
+}
+
+.promotion-form-page {
+    min-height: 100vh;
+    max-width: 1040px;
+    margin: 30px auto;
+    padding: 0 20px 30px;
+}
+
+.promotion-form-header {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.promotion-form-header h1 {
+    margin: 10px 0 0;
+    color: #333;
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.btn-back:hover {
+    background: #dcedc8;
+}
+
+.promotion-form-content {
+    width: 100%;
+}
+
+.promotion-form-card {
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.promotion-form-title {
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.promotion-form-title h2 {
+    margin: 0 0 6px;
+    color: #333;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.promotion-form-title p {
+    max-width: 720px;
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.promotion-form-title > span {
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #eef7e8;
+    color: #4f7f29;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.promotion-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px 20px;
+}
+
+.promotion-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.promotion-form-group-full {
+    grid-column: 1 / -1;
+}
+
+.promotion-form-group label {
+    color: #555;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.promotion-form-group label b {
+    color: #dc2626;
+}
+
+.promotion-form-group input,
+.promotion-form-group select,
+.promotion-form-group textarea {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    color: #1f2937;
+    font-size: 14px;
+    outline: none;
+}
+
+.promotion-form-group textarea {
+    min-height: 115px;
+    resize: vertical;
+}
+
+.promotion-form-group input:focus,
+.promotion-form-group select:focus,
+.promotion-form-group textarea:focus {
+    border-color: #4caf50;
+    box-shadow: none;
+}
+
+.promotion-form-actions {
+    margin-top: 20px;
+    padding-top: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    border-top: 1px solid #edf0f2;
+}
+
+.promotion-form-actions .btn-primary,
+.promotion-form-actions .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.promotion-form-actions .btn-primary {
+    background: #4caf50;
+    color: #fff;
+}
+
+.promotion-form-actions .btn-primary:hover {
+    background: #43a047;
+}
+
+.promotion-form-actions .btn-secondary {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.promotion-form-actions .btn-secondary:hover {
+    background: #d5d5d5;
+}
+
+@media (max-width: 760px) {
+    .promotion-toolbar,
+    .promotion-form-header,
+    .promotion-form-title {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .promotion-toolbar .btn-add,
+    .promotion-search-form,
+    .promotion-search-form input,
+    .promotion-search-form .btn-search,
+    .promotion-search-form .btn-reset {
+        width: 100%;
+    }
+
+    .promotion-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .promotion-form-group-full {
+        grid-column: auto;
     }
 }

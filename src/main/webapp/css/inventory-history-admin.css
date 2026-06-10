@@ -471,3 +471,24 @@
     align-items: center;
     gap: 10px;
 }
+
+
+/* ===== UI sync with common admin pages ===== */
+.history-card {
+    min-height: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.history-card span {
+    margin-top: 10px;
+    font-size: 28px;
+}
+
+.history-table-wrapper {
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow-x: auto;
+}

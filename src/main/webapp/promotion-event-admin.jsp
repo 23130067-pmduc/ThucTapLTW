@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Chương trình khuyến mãi</title>
+    <title>Khuyến mãi</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/pagination.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/promotion-event-admin.css">
@@ -44,23 +44,38 @@
         </header>
 
         <main>
+            <c:if test="${param.success == 'create'}">
+                <div class="alert alert-success">
+                    <i class="fa-solid fa-circle-check"></i>
+                    Đã thêm chương trình khuyến mãi thành công.
+                </div>
+            </c:if>
+
             <div class="cards promotion-summary">
-                <div class="card">Tổng chương trình<br><span>${total}</span></div>
+                <div class="card">Tổng chương trình<br><span>${totalAll}</span></div>
                 <div class="card">Đang diễn ra<br><span>${totalActive}</span></div>
                 <div class="card">Sắp diễn ra<br><span>${totalUpcoming}</span></div>
                 <div class="card">Đã kết thúc<br><span>${totalEnded}</span></div>
             </div>
 
-            <section class="promotion-panel">
-                <div class="promotion-panel-header">
-                    <div>
-                        <h2>Danh sách chương trình khuyến mãi</h2>
-                        <p>Theo dõi toàn bộ chương trình ưu đãi trên hệ thống.</p>
-                    </div>
-                    <span class="result-count">${total} chương trình</span>
-                </div>
+            <div class="promotion-toolbar">
+                <form method="get" action="${pageContext.request.contextPath}/promotion-event-admin" class="promotion-search-form">
+                    <input type="text" name="keyword" value="${keyword}" placeholder="Tìm theo ID, tên, nhãn hoặc mô tả...">
+                    <button type="submit" class="btn-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        Tìm
+                    </button>
+                    <c:if test="${not empty keyword}">
+                        <a href="${pageContext.request.contextPath}/promotion-event-admin" class="btn-reset">Đặt lại</a>
+                    </c:if>
+                </form>
+                <a href="${pageContext.request.contextPath}/promotion-event-admin?action=create" class="btn-add">
+                    <i class="fa-solid fa-plus"></i>
+                    Thêm chương trình
+                </a>
+            </div>
 
-                <div class="promotion-table-wrapper">
+            <div class="promotion-table-wrapper">
                     <table class="promotion-table">
                         <thead>
                         <tr>
@@ -120,17 +135,28 @@
                 <c:if test="${totalPages > 1}">
                     <div class="pagination">
                         <c:if test="${currentPage > 1}">
-                            <a class="page-btn" href="promotion-event-admin?page=${currentPage - 1}">Trước</a>
+                            <c:url var="previousPageUrl" value="/promotion-event-admin">
+                                <c:param name="page" value="${currentPage - 1}" />
+                                <c:param name="keyword" value="${keyword}" />
+                            </c:url>
+                            <a class="page-btn" href="${previousPageUrl}">Trước</a>
                         </c:if>
                         <c:forEach begin="1" end="${totalPages}" var="i">
-                            <a class="page-btn ${i == currentPage ? 'active' : ''}" href="promotion-event-admin?page=${i}">${i}</a>
+                            <c:url var="pageUrl" value="/promotion-event-admin">
+                                <c:param name="page" value="${i}" />
+                                <c:param name="keyword" value="${keyword}" />
+                            </c:url>
+                            <a class="page-btn ${i == currentPage ? 'active' : ''}" href="${pageUrl}">${i}</a>
                         </c:forEach>
                         <c:if test="${currentPage < totalPages}">
-                            <a class="page-btn" href="promotion-event-admin?page=${currentPage + 1}">Sau</a>
+                            <c:url var="nextPageUrl" value="/promotion-event-admin">
+                                <c:param name="page" value="${currentPage + 1}" />
+                                <c:param name="keyword" value="${keyword}" />
+                            </c:url>
+                            <a class="page-btn" href="${nextPageUrl}">Sau</a>
                         </c:if>
                     </div>
                 </c:if>
-            </section>
         </main>
     </section>
 </div>

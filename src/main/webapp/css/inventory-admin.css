@@ -622,3 +622,29 @@
         width: 100%;
     }
 }
+
+
+/* ===== UI sync with common admin pages ===== */
+.inventory-card {
+    min-height: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.inventory-card span {
+    margin-top: 10px;
+    font-size: 28px;
+}
+
+.inventory-table-wrapper {
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    overflow-x: auto;
+}
+
+.inventory-table th,
+.inventory-table td {
+    padding: 12px 14px;
+}

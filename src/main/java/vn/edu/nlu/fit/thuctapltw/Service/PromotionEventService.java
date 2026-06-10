@@ -22,9 +22,24 @@ public class PromotionEventService {
         return events;
     }
 
-    public List<PromotionEvent> getAdminEvents(int page, int pageSize) {
+    public List<PromotionEvent> getAdminEvents(String keyword, int page, int pageSize) {
         int safePage = Math.max(page, 1);
-        return promotionEventDao.findAdminEvents(pageSize, (safePage - 1) * pageSize);
+        return promotionEventDao.findAdminEvents(keyword, pageSize, (safePage - 1) * pageSize);
+    }
+
+    public int countAdminEvents(String keyword) {
+        return promotionEventDao.countAdminEvents(keyword);
+    }
+
+    public int createEvent(PromotionEvent event) {
+        validate(event);
+        event.setTitle(event.getTitle().trim());
+        event.setDescription(trimToNull(event.getDescription()));
+        event.setIcon(trimToDefault(event.getIcon(), "fa-gift"));
+        event.setTag(event.getTag().trim());
+        event.setDiscountLabel(event.getDiscountLabel().trim());
+        event.setStatus(event.getStatus() == 0 ? 0 : 1);
+        return promotionEventDao.create(event);
     }
 
     public int countAllEvents() {
@@ -41,5 +56,38 @@ public class PromotionEventService {
 
     public int countEndedEvents() {
         return promotionEventDao.countEndedEvents();
+    }
+
+    private void validate(PromotionEvent event) {
+        if (event == null) {
+            throw new IllegalArgumentException("Thông tin chương trình không hợp lệ.");
+        }
+        if (isBlank(event.getTitle())) {
+            throw new IllegalArgumentException("Vui lòng nhập tên chương trình.");
+        }
+        if (isBlank(event.getTag())) {
+            throw new IllegalArgumentException("Vui lòng nhập nhãn chương trình.");
+        }
+        if (isBlank(event.getDiscountLabel())) {
+            throw new IllegalArgumentException("Vui lòng nhập nội dung ưu đãi.");
+        }
+        if (event.getStartDate() == null || event.getEndDate() == null) {
+            throw new IllegalArgumentException("Vui lòng chọn đầy đủ thời gian bắt đầu và kết thúc.");
+        }
+        if (!event.getEndDate().isAfter(event.getStartDate())) {
+            throw new IllegalArgumentException("Thời gian kết thúc phải sau thời gian bắt đầu.");
+        }
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
+    }
+
+    private String trimToNull(String value) {
+        return isBlank(value) ? null : value.trim();
+    }
+
+    private String trimToDefault(String value, String defaultValue) {
+        return isBlank(value) ? defaultValue : value.trim();
     }
 }
