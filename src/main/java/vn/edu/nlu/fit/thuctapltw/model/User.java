@@ -3,6 +3,7 @@ package vn.edu.nlu.fit.thuctapltw.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 public class User {
     private int id;
@@ -17,6 +18,11 @@ public class User {
     private String gender;
     private String phone;
     private String status;
+
+
+    private int roleId;
+    private String roleName;
+    private List<String> permissions;
 
     public User(int id, String username, String email, String password, String role, int isActive, LocalDateTime createdAt, String otpCode, String fullName, String gender, String phone, String status) {
         this.id = id;
@@ -164,4 +170,31 @@ public class User {
         return java.sql.Timestamp.valueOf(createdAt);
     }
 
+    public int getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
+    }
+
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public List<String> getPermissions() {
+        return permissions;
+    }
+
+    public void setPermissions(List<String> permissions) {
+        this.permissions = permissions;
+    }
+
+    public boolean hasPermission(String permission) {
+        return permissions != null && permissions.contains(permission);
+    }
 }

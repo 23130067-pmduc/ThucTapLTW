@@ -88,11 +88,29 @@ public class loginController extends HttpServlet {
 
         createUserSession(request, user);
 
-        if ("admin".equalsIgnoreCase(user.getRole())) {
+        String roleName = user.getRoleName();
+
+        if ("ADMIN".equalsIgnoreCase(roleName)) {
             response.sendRedirect(request.getContextPath() + "/dashboard");
-        } else {
-            response.sendRedirect(request.getContextPath() + "/trang-chu");
+            return;
         }
+
+        if ("STAFF_ORDER".equalsIgnoreCase(roleName)) {
+            response.sendRedirect(request.getContextPath() + "/order-admin");
+            return;
+        }
+
+        if ("STAFF_PRODUCT".equalsIgnoreCase(roleName)) {
+            response.sendRedirect(request.getContextPath() + "/product-admin");
+            return;
+        }
+
+        if ("STAFF_MARKETING".equalsIgnoreCase(roleName)) {
+            response.sendRedirect(request.getContextPath() + "/banner-admin");
+            return;
+        }
+
+        response.sendRedirect(request.getContextPath() + "/trang-chu");
     }
 
     private void createUserSession(HttpServletRequest request, User user){
@@ -102,6 +120,11 @@ public class loginController extends HttpServlet {
         }
 
         HttpSession session = request.getSession(true);
+
+
+        userService.loadPermissions(user);
+
+
         session.setAttribute("userId", user.getId());
         session.setAttribute("userlogin", user);
 
@@ -146,7 +169,7 @@ public class loginController extends HttpServlet {
                 user.setUsername(userName);
                 user.setEmail(email);
                 user.setFullName(name);
-                user.setRole("user");
+                user.setRoleId(userService.getRoleIdByName("CUSTOMER"));
                 user.setStatus("ACTIVE");
                 user.setIsActive(1);
 
@@ -176,11 +199,29 @@ public class loginController extends HttpServlet {
 
             createUserSession(request, user);
 
-            if ("admin".equalsIgnoreCase(user.getRole())) {
+            String roleName = user.getRoleName();
+
+            if ("ADMIN".equalsIgnoreCase(roleName)) {
                 response.sendRedirect(request.getContextPath() + "/dashboard");
-            } else {
-                response.sendRedirect(request.getContextPath() + "/trang-chu");
+                return;
             }
+
+            if ("STAFF_ORDER".equalsIgnoreCase(roleName)) {
+                response.sendRedirect(request.getContextPath() + "/order-admin");
+                return;
+            }
+
+            if ("STAFF_PRODUCT".equalsIgnoreCase(roleName)) {
+                response.sendRedirect(request.getContextPath() + "/product-admin");
+                return;
+            }
+
+            if ("STAFF_MARKETING".equalsIgnoreCase(roleName)) {
+                response.sendRedirect(request.getContextPath() + "/banner-admin");
+                return;
+            }
+
+            response.sendRedirect(request.getContextPath() + "/trang-chu");
 
         } catch (GeneralSecurityException e) {
             throw new ServletException("Lỗi xác thực Google token", e);

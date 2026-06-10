@@ -184,4 +184,14 @@ public class UserService {
         return userDao.createGoogleUser(user);
     }
 
+    public void loadPermissions(User user) {
+        if (user == null) return;
+
+        List<String> permissions = userDao.getPermissionsByRoleId(user.getRoleId());
+        user.setPermissions(permissions);
+    }
+
+    public int getRoleIdByName(String roleName) {
+        return userDao.getRoleByIdName(roleName);
+    }
 }
