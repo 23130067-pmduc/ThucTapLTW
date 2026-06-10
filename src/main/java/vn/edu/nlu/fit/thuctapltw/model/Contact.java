@@ -12,6 +12,7 @@ public class Contact {
     private String status;
     private String address;
     private LocalDateTime createdAt;
+    private boolean isDeleted;
 
 
     public Contact(int id, Integer userId, String name, String email, String phone, String message, String status, String address, LocalDateTime createdAt) {
@@ -99,5 +100,13 @@ public class Contact {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        isDeleted = deleted;
     }
 }

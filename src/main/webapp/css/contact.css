@@ -338,3 +338,106 @@ body, .admin {
 .nav .nav-item span {
     flex: 1;
 }
+
+.toast-container {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 10px;
+    min-width: 280px;
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 16px #00000026;
+    animation: toastIn 0.35s ease forwards;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.toast.success { background: linear-gradient(135deg, #43a047, #66bb6a); }
+.toast.info    { background: linear-gradient(135deg, #1e88e5, #42a5f5); }
+.toast.warning { background: linear-gradient(135deg, #f57c00, #ffa726); }
+
+.toast i { font-size: 18px; flex-shrink: 0; }
+
+.toast .toast-close {
+    margin-left: auto;
+    cursor: pointer;
+    opacity: 0.7;
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.toast .toast-close:hover { opacity: 1; }
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    border-radius: 0 0 10px 10px;
+    background: #FFFFFF7F;
+    animation: progress 3s linear forwards;
+}
+
+.status-form {
+    display: inline-block;
+}
+
+.status-select {
+    min-width: 125px;
+    padding: 6px 28px 6px 10px;
+    border: 1px solid transparent;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.status-select:focus {
+    outline: 2px solid #228be6;
+    outline-offset: 2px;
+}
+
+.status-new {
+    background: #e3f7e9;
+    color: #2e7d32;
+}
+
+.status-processing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.status-closed {
+    background: #fdecea;
+    color: #c62828;
+}
+
+.status-select option {
+    background-color: #ffffff;
+}
+
+.status-select option[value="New"] {
+    color: #2e7d32;
+}
+
+.status-select option[value="Processing"] {
+    color: #856404;
+}
+.status-select option[value="Closed"] {
+    color: #c62828;
+}

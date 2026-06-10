@@ -12,6 +12,8 @@ import java.util.List;
 @WebServlet(name = "ContactAdminController", value = "/contact-admin")
 public class ContactAdminController extends HttpServlet {
 
+    private static final List<String> ALLOWED_STATUSES = List.of("New", "Processing", "Closed");
+
     private ContactService contactService;
 
     @Override
@@ -83,7 +85,7 @@ public class ContactAdminController extends HttpServlet {
 
             contactService.createContact(contact);
 
-            response.sendRedirect("contact-admin");
+            response.sendRedirect("contact-admin?success=created");
             return;
         }
 
@@ -100,16 +102,30 @@ public class ContactAdminController extends HttpServlet {
             contact.setMessage(request.getParameter("message"));
 
             contactService.updateContact(contact);
-            response.sendRedirect("contact-admin?mode=view&id=" + id );
+            response.sendRedirect("contact-admin?mode=view&id=" + id + "&success=updated");
             return;
         }
 
-        if ("accept".equals(action)) {
+        if ("updateStatus".equals(action)) {
+            int id = Integer.parseInt(request.getParameter("id"));
+            String status = request.getParameter("status");
+
+            if (!ALLOWED_STATUSES.contains(status)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid contact status");
+                return;
+            }
+
+            contactService.updateStatus(id, status);
+            response.sendRedirect("contact-admin?success=status-updated");
+            return;
+        }
+
+        if ("delete".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
 
-            contactService.acceptContact(id);
+            contactService.deleteContact(id);
 
-            response.sendRedirect("contact-admin");
+            response.sendRedirect("contact-admin?success=deleted");
             return;
         }
     }

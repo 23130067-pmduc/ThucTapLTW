@@ -21,7 +21,7 @@
 
             <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
                 <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
-                    <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+                    <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
                 </a>
             </c:if>
 
@@ -66,6 +66,16 @@
                     <i class="fa-solid fa-users"></i><span>Người dùng</span>
                 </a>
             </c:if>
+
+            <c:if test="${userlogin.permissions.contains('VOUCHER_VIEW')}">
+                <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item">
+                    <i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span>
+                </a>
+            </c:if>
+
+            <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
+                <i class="fa-solid fa-tags"></i><span>Khuyến mãi</span>
+            </a>
 
             <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
                 <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">

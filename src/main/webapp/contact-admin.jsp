@@ -14,9 +14,11 @@
     <title>Liên hệ - Admin</title>
     <link rel="stylesheet" href="css/contact.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
 </head>
 <body>
 <div class="user">
+    <div class="toast-container" id="toastContainer"></div>
     <aside class="sidebar">
         <img src="img/gau.png" alt="" Logo>
         <p>ADMIN</p>
@@ -27,7 +29,7 @@
 
                     <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
                         <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
-                            <i class="fa-solid fa-gauge"></i><span>Dashboard</span>
+                            <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
                         </a>
                     </c:if>
 
@@ -79,6 +81,16 @@
                         </a>
                     </c:if>
 
+                    <c:if test="${userlogin.permissions.contains('VOUCHER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item">
+                            <i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span>
+                        </a>
+                    </c:if>
+
+                    <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
+                        <i class="fa-solid fa-tags"></i><span>Khuyến mãi</span>
+                    </a>
+
                     <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
                         <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
                             <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
@@ -127,12 +139,13 @@
                     <div class="card">Liên hệ đã xử lý<br><span id="dashboard-total-contact-closed">${totalClosed}</span></div>
                 </div>
 
-                <c:if test="${userlogin.permissions.contains('CONTACT_UPDATE')}">
-                    <a href="contact-admin?mode=edit&id=${c.id}"
-                       class="icon-btn edit" title="Chỉnh sửa">
-                        <i class="fa fa-pen"></i>
-                    </a>
-                </c:if>
+                <div class="contact-toolbar">
+                    <c:if test="${userlogin.permissions.contains('CONTACT_CREATE')}">
+                        <a href="contact-admin?mode=add" class="btn-add">
+                            <i class="fa fa-plus"></i> Thêm liên hệ
+                        </a>
+                    </c:if>
+                </div>
 
 
                 <div class="contact-table-wrapper">
@@ -163,17 +176,15 @@
                                                 : c.message}
                                 </td>
                                 <td>
-                                    <c:choose>
-                                        <c:when test="${c.status == 'New'}">
-                                            <span class="status active">Liên hệ mới</span>
-                                        </c:when>
-                                        <c:when test="${c.status == 'Processing'}">
-                                            <span class="status processing">Đang xử lý</span>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <span class="status blocked">Đã xử lý</span>
-                                        </c:otherwise>
-                                    </c:choose>
+                                    <form method="post" action="contact-admin" class="status-form">
+                                        <input type="hidden" name="action" value="updateStatus">
+                                        <input type="hidden" name="id" value="${c.id}">
+                                        <select name="status" class="status-select status-${fn:toLowerCase(c.status)}" onchange="updateContactStatus(this)">
+                                            <option value="New" ${c.status == 'New' ? 'selected' : ''}>Liên hệ mới</option>
+                                            <option value="Processing" ${c.status == 'Processing' ? 'selected' : ''}>Đang xử lý</option>
+                                            <option value="Closed" ${c.status == 'Closed' ? 'selected' : ''}>Đã xử lý</option>
+                                        </select>
+                                    </form>
                                 </td>
                                 <td class="actions">
                                     <!-- XEM -->
@@ -228,18 +239,7 @@
         </div>
     </div>
 </div>
+<script src="javaScript/contact-admin.js"></script>
 </body>
-<script>
-    function openDeleteModal(id, name) {
-        document.getElementById("deleteContactId").value = id;
-        document.getElementById("deleteMessage").innerHTML =
-            'Bạn có chắc muốn xóa liên hệ từ "<b>' + name + '</b>" không?';
-        document.getElementById("deleteModal").style.display = "flex";
-    }
-
-    function closeDeleteModal() {
-        document.getElementById("deleteModal").style.display = "none";
-    }
-</script>
 
 </html>

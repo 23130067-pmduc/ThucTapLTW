@@ -22,7 +22,8 @@ public class ContactDao extends BaseDao {
     public List<Contact> getAllContact() {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT *
-                FROM contacts""")
+                FROM contacts
+                WHERE is_deleted = 0""")
                 .mapToBean(Contact.class)
                 .list());
     }
@@ -32,7 +33,7 @@ public class ContactDao extends BaseDao {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT *
                 FROM contacts
-                WHERE status = :status""")
+                WHERE status = :status AND is_deleted = 0""")
                 .bind("status",status)
                 .mapToBean(Contact.class)
                 .list());
@@ -89,9 +90,18 @@ public class ContactDao extends BaseDao {
         getJdbi().withHandle(handle -> handle.createUpdate("""
                 UPDATE contacts
                 SET status = :status
-                WHERE id = :id""")
+                WHERE id = :id AND is_deleted = 0""")
                 .bind("id", id)
                 .bind("status", status)
+                .execute());
+    }
+
+    public void softDeleteContact(int id) {
+        getJdbi().withHandle(handle -> handle.createUpdate("""
+                UPDATE contacts
+                SET is_deleted = 1
+                WHERE id = :id""")
+                .bind("id", id)
                 .execute());
     }
 }
