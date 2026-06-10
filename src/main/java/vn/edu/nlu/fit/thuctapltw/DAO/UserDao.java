@@ -7,9 +7,16 @@ import vn.edu.nlu.fit.thuctapltw.model.User;
 
 public class UserDao extends BaseDao {
     public User finduser(String username) {
-        return getJdbi().withHandle(handle ->
-                handle.createQuery("select * from users where username=:username OR email=:username")
-                        .bind("username", username).mapToBean(User.class).findFirst().orElse(null)
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                    SELECT u.*, r.name AS role_name
+                    FROM users u
+                    LEFT JOIN roles r ON u.role_id = r.id
+                    WHERE u.username = :username
+                    OR u.email = :username""")
+                .bind("username", username)
+                .mapToBean(User.class)
+                .findFirst()
+                .orElse(null)
         );
     }
 
@@ -274,9 +281,10 @@ public class UserDao extends BaseDao {
 
     public User findByEmail(String email) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
-                SELECT *
-                FROM users
-                WHERE email = :email
+                SELECT u.*, r.name AS role_name
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
+                WHERE u.email = :email
                 LIMIT 1
                 """)
                 .bind("email", email)
@@ -288,13 +296,13 @@ public class UserDao extends BaseDao {
 
     public int createGoogleUser(User user) {
         return  getJdbi().withHandle(handle -> handle.createUpdate("""
-                INSERT INTO users (username, email, full_name, role, status, is_active)
-                VALUES (:username, :email, :fullName, :role, :status, :isActive)
+                INSERT INTO users (username, email, full_name, role_id, status, is_active)
+                VALUES (:username, :email, :fullName, :roleId, :status, :isActive)
                 """)
                 .bind("username", user.getUsername())
                 .bind("email", user.getEmail())
                 .bind("fullName", user.getFullName())
-                .bind("role", user.getRole())
+                .bind("roleId", user.getRoleId())
                 .bind("status", user.getStatus())
                 .bind("isActive", user.getIsActive())
                 .executeAndReturnGeneratedKeys("id")
@@ -309,6 +317,32 @@ public class UserDao extends BaseDao {
                         .mapToBean(User.class)
                         .list()
         );
+    }
+
+
+    public List<String> getPermissionsByRoleId(int roleId) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT p.name
+                FROM permissions p
+                JOIN role_permissions rp
+                ON p.id = rp.permission_id
+                WHERE rp.role_id = :roleId
+                 """)
+                .bind("roleId", roleId)
+                .mapTo(String.class)
+                .list()
+        );
+    }
+
+    public int getRoleByIdName(String roleName) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT id
+                FROM roles
+                WHERE name = : roleName""")
+                .bind("roleName", roleName)
+                .mapTo(int.class)
+                .findOne()
+                .orElseThrow(() -> new RuntimeException("Role không tồn tại: " + roleName)));
     }
 }
 
