@@ -130,12 +130,7 @@
             <span>${totalOrders}</span>
           </div>
 
-          <div class="card">
-            Doanh thu
-            <span>
-                            <fmt:formatNumber value="${totalRevenue}"/>đ
-                        </span>
-          </div>
+            <div class="card">Doanh thu<span><fmt:formatNumber value="${totalRevenue}"/>đ</span></div>
 
           <div class="card">
             Sản phẩm
@@ -150,6 +145,7 @@
 
         <h2 style="margin-bottom: 12px;">Đơn hàng mới nhất</h2>
 
+        <div class="dashboard-grid">
         <div class="user-table-wrapper">
           <table class="order-table">
             <tr>
@@ -167,19 +163,66 @@
                   <fmt:formatNumber value="${o.totalPrice}"/>đ
                 </td>
                 <td>
-                                    <span class="order-status ${o.orderStatus}">
-                                        <c:choose>
-                                          <c:when test="${o.orderStatus == 'PENDING'}">Chờ xử lý</c:when>
-                                          <c:when test="${o.orderStatus == 'SHIPPING'}">Đang giao</c:when>
-                                          <c:when test="${o.orderStatus == 'COMPLETED'}">Hoàn thành</c:when>
-                                          <c:when test="${o.orderStatus == 'CANCELLED'}">Đã hủy</c:when>
-                                          <c:otherwise>${o.orderStatus}</c:otherwise>
-                                        </c:choose>
-                                    </span>
+                    <span class="order-status ${o.orderStatus}">
+                      <c:choose>
+                          <c:when test="${o.orderStatus == 'PENDING'}">Chờ xử lý</c:when>
+                          <c:when test="${o.orderStatus == 'SHIPPING'}">Đang giao</c:when>
+                          <c:when test="${o.orderStatus == 'COMPLETED'}">Hoàn thành</c:when>
+                          <c:when test="${o.orderStatus == 'CANCELLED'}">Đã hủy</c:when>
+                          <c:otherwise>${o.orderStatus}</c:otherwise>
+                      </c:choose>
+                    </span>
                 </td>
               </tr>
             </c:forEach>
           </table>
+        </div>
+
+          <div class="top-selling-card">
+            <h2 class="top-selling-title">
+              <i class="fa-solid fa-fire" style="color:#ff6b35;"></i>Top 5 sản phẩm bán chạy</h2>
+              <div class="top-selling-list">
+                <c:forEach items="${topSellingProducts}" var="p" varStatus="loop">
+                  <div class="top-selling-item">
+                    <span class="rank-badge rank-${loop.index + 1}">${loop.index + 1}</span>
+                      <c:choose>
+                        <c:when test="${not empty p.thumbnail}"><img src="${p.thumbnail}" alt="${p.name}" class="top-selling-img" onerror="this.src='${pageContext.request.contextPath}/img/default-product.png'">
+                        </c:when>
+                          <c:otherwise><div class="top-selling-img-placeholder"><i class="fa-solid fa-image"></i></div></c:otherwise>
+                      </c:choose>
+                      <div class="top-selling-info">
+                        <span class="top-selling-name">${p.name}</span>
+                        <span class="top-selling-price">
+                      <c:choose>
+                        <c:when test="${p.salePrice > 0}">
+                          <fmt:formatNumber value="${p.salePrice}"/>đ
+                        </c:when>
+                        <c:otherwise>
+                          <fmt:formatNumber value="${p.price}"/>đ
+                        </c:otherwise>
+                      </c:choose>
+                    </span>
+                      </div>
+                      <div class="top-selling-stat">
+                        <span class="sold-count">${p.totalSold}</span>
+                          <span class="sold-label">đã bán</span>
+                          <c:if test="${loop.index == 0}">
+                            <span class="hot-badge"><i class="fa-solid fa-fire-flame-curved"></i> Hot</span>
+                          </c:if>
+                          <c:if test="${loop.index > 0 && p.totalSold > 0}">
+                            <span class="selling-badge">Bán chạy</span>
+                          </c:if>
+                      </div>
+                  </div>
+                </c:forEach>
+                  <c:if test="${empty topSellingProducts}">
+                    <div class="empty-state">
+                      <i class="fa-solid fa-box-open"></i>
+                        <p>Chưa có dữ liệu bán hàng</p>
+                    </div>
+                  </c:if>
+              </div>
+          </div>
         </div>
 
       </section>

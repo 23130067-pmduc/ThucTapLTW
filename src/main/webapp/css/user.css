@@ -467,3 +467,172 @@ body, .admin {
 .sidebar .nav {
     padding-bottom: 24px;
 }
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+.top-selling-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px #0000000F;
+}
+
+.top-selling-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.top-selling-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.top-selling-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    transition: background 0.2s;
+    position: relative;
+}
+
+.top-selling-item:hover {
+    background: #f0f4ff;
+}
+
+.rank-badge {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    flex-shrink: 0;
+    color: #fff;
+}
+.rank-1 { background: linear-gradient(135deg, #f7c94b, #e8a800); box-shadow: 0 2px 6px rgba(232,168,0,0.4); }
+.rank-2 { background: linear-gradient(135deg, #b0b8c1, #8d9ba8); box-shadow: 0 2px 6px rgba(141,155,168,0.35); }
+.rank-3 { background: linear-gradient(135deg, #e0925a, #c96a30); box-shadow: 0 2px 6px rgba(201,106,48,0.35); }
+.rank-4, .rank-5 { background: #d0d4da; color: #555; }
+
+.top-selling-img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 8px;
+    flex-shrink: 0;
+    border: 1px solid #eee;
+}
+
+.top-selling-img-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    background: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.top-selling-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    overflow: hidden;
+}
+
+.top-selling-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #222;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.top-selling-price {
+    font-size: 13px;
+    color: #A9C87D;
+    font-weight: 600;
+}
+
+.top-selling-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    flex-shrink: 0;
+    min-width: 60px;
+}
+
+.sold-count {
+    font-size: 20px;
+    font-weight: 800;
+    color: #333;
+    line-height: 1;
+}
+
+.sold-label {
+    font-size: 11px;
+    color: #888;
+}
+
+.hot-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    margin-top: 2px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #ff6b35, #ff3d00);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.selling-badge {
+    display: inline-block;
+    margin-top: 2px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    background: #e3f7e9;
+    color: #2e7d32;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 30px 0;
+    color: #adb5bd;
+}
+
+.empty-state i {
+    font-size: 36px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.empty-state p {
+    font-size: 14px;
+}
