@@ -293,18 +293,41 @@
 }
 
 .promotion-action-btn {
+    width: 30px;
+    height: 30px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 6px;
+    border: none;
     border-radius: 6px;
     background: transparent;
     font-size: 16px;
     text-decoration: none;
+    cursor: pointer;
+}
+
+.promotion-actions-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.promotion-action-btn.view {
+    color: #228be6;
 }
 
 .promotion-action-btn.edit {
     color: #2f9e44;
+}
+
+.promotion-action-btn.lock {
+    color: #e03131;
+}
+
+.promotion-action-btn.unlock {
+    color: #d97706;
 }
 
 .promotion-action-btn:hover {
@@ -503,6 +526,99 @@
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
+}
+
+.promotion-form-readonly input,
+.promotion-form-readonly select,
+.promotion-form-readonly textarea {
+    background: #f8fafc;
+    color: #475569;
+    cursor: default;
+}
+
+.promotion-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.55);
+}
+
+.promotion-modal-overlay.show {
+    display: flex;
+}
+
+.promotion-modal {
+    width: min(420px, 100%);
+    padding: 24px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, 0.25);
+    text-align: center;
+}
+
+.promotion-modal-icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff4e6;
+    color: #d97706;
+    font-size: 20px;
+}
+
+.promotion-modal h3 {
+    margin: 0 0 10px;
+    color: #1e293b;
+    font-size: 19px;
+}
+
+.promotion-modal p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.promotion-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.promotion-modal-actions .btn-secondary,
+.btn-promotion-confirm {
+    min-width: 92px;
+    min-height: 40px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 9px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.promotion-modal-actions .btn-secondary {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.btn-promotion-confirm {
+    color: #fff;
+}
+
+.btn-promotion-confirm.lock {
+    background: #dc2626;
+}
+
+.btn-promotion-confirm.unlock {
+    background: #d97706;
 }
 
 .promotion-form-actions .btn-primary {

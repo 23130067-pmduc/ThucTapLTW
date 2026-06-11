@@ -36,7 +36,12 @@ public class PromotionEventAdminController extends HttpServlet {
         }
 
         if ("edit".equals(request.getParameter("action"))) {
-            showEditForm(request, response);
+            showEventForm(request, response, "edit");
+            return;
+        }
+
+        if ("detail".equals(request.getParameter("action")) || "view".equals(request.getParameter("action"))) {
+            showEventForm(request, response, "view");
             return;
         }
 
@@ -75,10 +80,15 @@ public class PromotionEventAdminController extends HttpServlet {
             return;
         }
 
+        if ("toggle-status".equals(action)) {
+            toggleStatus(request, response);
+            return;
+        }
+
         response.sendRedirect(request.getContextPath() + "/promotion-event-admin");
     }
 
-    private void showEditForm(HttpServletRequest request, HttpServletResponse response)
+    private void showEventForm(HttpServletRequest request, HttpServletResponse response, String mode)
             throws ServletException, IOException {
         int id = parsePositiveInt(request.getParameter("id"), 0);
         PromotionEvent event = promotionEventService.getById(id);
@@ -88,7 +98,7 @@ public class PromotionEventAdminController extends HttpServlet {
             return;
         }
 
-        request.setAttribute("mode", "edit");
+        request.setAttribute("mode", mode);
         request.setAttribute("promotionEvent", event);
         request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
     }
@@ -103,6 +113,18 @@ public class PromotionEventAdminController extends HttpServlet {
             request.setAttribute("promotionEvent", event);
             request.setAttribute("errorMessage", e.getMessage());
             request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
+        }
+    }
+
+    private void toggleStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        int id = parsePositiveInt(request.getParameter("id"), 0);
+        int status = parseStatus(request.getParameter("status"));
+        try {
+            promotionEventService.updateStatus(id, status);
+            response.sendRedirect(request.getContextPath() + "/promotion-event-admin?success="
+                    + (status == 0 ? "lock" : "unlock"));
+        } catch (IllegalArgumentException e) {
+            response.sendRedirect(request.getContextPath() + "/promotion-event-admin?error=" + urlEncode(e.getMessage()));
         }
     }
 
