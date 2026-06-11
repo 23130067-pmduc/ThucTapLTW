@@ -130,9 +130,9 @@
                                         </td>
                                         <td class="promotion-discount-cell">
                                             <span class="discount-badge">${event.discountLabel}</span>
-                                            <small class="event-tag">${event.tag}</small>
+                                            <small class="event-tag">${event.discountPercentLabel}</small>
                                         </td>
-                                        <td><span class="scope-badge">${event.scopeLabel}</span></td>
+                                        <td><span class="scope-badge scope-${event.scopeClass}">${event.scopeLabel}</span></td>
                                         <td><strong>${event.productCount}</strong> sản phẩm</td>
                                         <td class="date-cell">
                                             <strong>${event.startDateText}</strong>

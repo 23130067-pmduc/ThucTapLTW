@@ -265,6 +265,21 @@
     color: #1971c2;
 }
 
+.scope-badge.scope-all {
+    background: #e8f7ec;
+    color: #2e7d32;
+}
+
+.scope-badge.scope-category {
+    background: #fff3cd;
+    color: #996500;
+}
+
+.scope-badge.scope-product {
+    background: #e7f5ff;
+    color: #1971c2;
+}
+
 .event-status {
     min-width: 92px;
     padding: 6px 12px;
@@ -661,5 +676,242 @@
 
     .promotion-form-group-full {
         grid-column: auto;
+    }
+}
+
+/* Issue #120 - scope form, synced with admin promotion/voucher style */
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 400;
+}
+
+.alert i {
+    flex: 0 0 auto;
+}
+
+.promotion-scope-box {
+    margin-top: 22px;
+    padding: 18px;
+    border: 1px solid #edf0f2;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.promotion-scope-head {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.promotion-scope-head h3 {
+    margin: 0 0 6px;
+    color: #333;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.promotion-scope-head p {
+    margin: 0;
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.scope-helper {
+    padding: 6px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    background: #eef7e8;
+    color: #4f7f29;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.promotion-scope-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.promotion-scope-option {
+    min-height: 92px;
+    padding: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.promotion-scope-option:hover,
+.promotion-scope-option.active {
+    border-color: #4caf50;
+    background: #f6fbf3;
+}
+
+.promotion-scope-option input {
+    width: auto;
+    margin-top: 3px;
+    accent-color: #4caf50;
+}
+
+.promotion-scope-option strong,
+.promotion-scope-option small {
+    display: block;
+}
+
+.promotion-scope-option strong {
+    margin-bottom: 5px;
+    color: #333;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.promotion-scope-option small {
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.scope-panel {
+    margin-top: 16px;
+    padding: 16px;
+    border: 1px solid #edf0f2;
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.scope-panel-title {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.scope-panel-title i {
+    color: #4caf50;
+}
+
+.scope-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.scope-check-item,
+.scope-product-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    border: 1px solid #e5e7eb;
+    border-radius: 9px;
+    background: #fff;
+    color: #334155;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.scope-check-item {
+    padding: 10px 12px;
+}
+
+.scope-check-item input,
+.scope-product-item input {
+    width: auto;
+    flex: 0 0 auto;
+    accent-color: #4caf50;
+}
+
+.scope-product-list {
+    max-height: 340px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    padding-right: 4px;
+}
+
+.scope-product-item {
+    min-width: 0;
+    padding: 11px 12px;
+    flex-wrap: wrap;
+}
+
+.scope-product-name {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+    color: #333;
+    font-weight: 500;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.scope-product-item small {
+    width: 100%;
+    padding-left: 24px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.scope-selected-products {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #edf0f2;
+}
+
+.scope-selected-products h4 {
+    margin: 0 0 10px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.scope-selected-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.scope-selected-list span {
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: #e7f5ff;
+    color: #1971c2;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.promotion-form-readonly .promotion-scope-option,
+.promotion-form-readonly .scope-check-item,
+.promotion-form-readonly .scope-product-item {
+    cursor: default;
+}
+
+@media (max-width: 900px) {
+    .promotion-scope-options,
+    .scope-checkbox-grid,
+    .scope-product-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .promotion-scope-head {
+        flex-direction: column;
+        align-items: stretch;
     }
 }

@@ -1,6 +1,7 @@
 package vn.edu.nlu.fit.thuctapltw.Service;
 
 import vn.edu.nlu.fit.thuctapltw.DAO.PromotionEventDao;
+import vn.edu.nlu.fit.thuctapltw.model.Product;
 import vn.edu.nlu.fit.thuctapltw.model.PromotionEvent;
 
 import java.util.List;
@@ -36,8 +37,34 @@ public class PromotionEventService {
         return promotionEventDao.create(event);
     }
 
+    public int createEvent(PromotionEvent event, String scopeType, List<Integer> categoryIds,
+                           List<Integer> productIds, int discountPercent) {
+        prepareAndValidate(event);
+        validateDiscountPercent(discountPercent);
+        List<Integer> resolvedProductIds = resolveProductIds(scopeType, categoryIds, productIds);
+
+        event.setScopeType(scopeType);
+        event.setDiscountPercent(discountPercent);
+
+        int eventId = promotionEventDao.create(event);
+        promotionEventDao.syncEventProducts(eventId, resolvedProductIds, discountPercent);
+        return eventId;
+    }
+
     public PromotionEvent getById(int id) {
         return id <= 0 ? null : promotionEventDao.findById(id);
+    }
+
+    public List<Product> getProductsByEventId(int eventId) {
+        return eventId <= 0 ? List.of() : promotionEventDao.findProductsByEventId(eventId);
+    }
+
+    public List<Integer> getProductIdsByEventId(int eventId) {
+        return eventId <= 0 ? List.of() : promotionEventDao.findProductIdsByEventId(eventId);
+    }
+
+    public List<Integer> getCategoryIdsByEventId(int eventId) {
+        return eventId <= 0 ? List.of() : promotionEventDao.findCategoryIdsByEventId(eventId);
     }
 
     public void updateEvent(PromotionEvent event) {
@@ -52,6 +79,27 @@ public class PromotionEventService {
         if (!promotionEventDao.update(event)) {
             throw new IllegalArgumentException("Không thể cập nhật chương trình khuyến mãi. Vui lòng thử lại.");
         }
+    }
+
+    public void updateEvent(PromotionEvent event, String scopeType, List<Integer> categoryIds,
+                            List<Integer> productIds, int discountPercent) {
+        if (event == null || event.getId() <= 0) {
+            throw new IllegalArgumentException("Dữ liệu chương trình khuyến mãi không hợp lệ.");
+        }
+        if (promotionEventDao.findById(event.getId()) == null) {
+            throw new IllegalArgumentException("Không tìm thấy chương trình khuyến mãi cần sửa.");
+        }
+
+        prepareAndValidate(event);
+        validateDiscountPercent(discountPercent);
+        List<Integer> resolvedProductIds = resolveProductIds(scopeType, categoryIds, productIds);
+        event.setScopeType(scopeType);
+        event.setDiscountPercent(discountPercent);
+
+        if (!promotionEventDao.update(event)) {
+            throw new IllegalArgumentException("Không thể cập nhật chương trình khuyến mãi. Vui lòng thử lại.");
+        }
+        promotionEventDao.syncEventProducts(event.getId(), resolvedProductIds, discountPercent);
     }
 
     public void updateStatus(int id, int status) {
@@ -80,6 +128,38 @@ public class PromotionEventService {
 
     public int countEndedEvents() {
         return promotionEventDao.countEndedEvents();
+    }
+
+    private List<Integer> resolveProductIds(String scopeType, List<Integer> categoryIds, List<Integer> productIds) {
+        if ("all".equals(scopeType)) {
+            List<Integer> ids = promotionEventDao.findActiveProductIds();
+            if (ids.isEmpty()) {
+                throw new IllegalArgumentException("Không có sản phẩm đang bán để áp dụng chương trình.");
+            }
+            return ids;
+        }
+
+        if ("category".equals(scopeType)) {
+            if (categoryIds == null || categoryIds.isEmpty()) {
+                throw new IllegalArgumentException("Vui lòng chọn ít nhất một danh mục áp dụng.");
+            }
+            List<Integer> ids = promotionEventDao.findActiveProductIdsByCategories(categoryIds);
+            if (ids.isEmpty()) {
+                throw new IllegalArgumentException("Danh mục đã chọn chưa có sản phẩm đang bán.");
+            }
+            return ids;
+        }
+
+        if (productIds == null || productIds.isEmpty()) {
+            throw new IllegalArgumentException("Vui lòng chọn ít nhất một sản phẩm áp dụng.");
+        }
+        return productIds;
+    }
+
+    private void validateDiscountPercent(int discountPercent) {
+        if (discountPercent <= 0 || discountPercent >= 100) {
+            throw new IllegalArgumentException("Phần trăm giảm phải nằm trong khoảng từ 1 đến 99.");
+        }
     }
 
     private void prepareAndValidate(PromotionEvent event) {
