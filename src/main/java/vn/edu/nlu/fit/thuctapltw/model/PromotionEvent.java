@@ -13,6 +13,8 @@ public class PromotionEvent implements Serializable {
     private String icon;
     private String tag;
     private String discountLabel;
+    private String scopeType = "product";
+    private int discountPercent = 10;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
     private int status;
@@ -71,6 +73,33 @@ public class PromotionEvent implements Serializable {
 
     public void setDiscountLabel(String discountLabel) {
         this.discountLabel = discountLabel;
+    }
+
+    public String getScopeType() {
+        if (scopeType == null || scopeType.isBlank()) {
+            return "product";
+        }
+        return scopeType;
+    }
+
+    public void setScopeType(String scopeType) {
+        if ("all".equals(scopeType) || "category".equals(scopeType) || "product".equals(scopeType)) {
+            this.scopeType = scopeType;
+        } else {
+            this.scopeType = "product";
+        }
+    }
+
+    public int getDiscountPercent() {
+        return discountPercent <= 0 ? 10 : discountPercent;
+    }
+
+    public void setDiscountPercent(int discountPercent) {
+        this.discountPercent = discountPercent;
+    }
+
+    public String getDiscountPercentLabel() {
+        return "Giảm " + getDiscountPercent() + "%";
     }
 
     public LocalDateTime getStartDate() {
@@ -161,7 +190,19 @@ public class PromotionEvent implements Serializable {
     }
 
     public String getScopeLabel() {
-        return productCount > 0 ? "Sản phẩm được chọn" : "Toàn cửa hàng";
+        return switch (getScopeType()) {
+            case "all" -> "Toàn cửa hàng";
+            case "category" -> "Theo danh mục";
+            default -> "Theo sản phẩm";
+        };
+    }
+
+    public String getScopeClass() {
+        return switch (getScopeType()) {
+            case "all" -> "all";
+            case "category" -> "category";
+            default -> "product";
+        };
     }
 
     private String formatDateTime(LocalDateTime value) {

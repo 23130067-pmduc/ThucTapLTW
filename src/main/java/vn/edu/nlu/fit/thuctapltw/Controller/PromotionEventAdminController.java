@@ -5,6 +5,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vn.edu.nlu.fit.thuctapltw.DAO.CategoryDao;
+import vn.edu.nlu.fit.thuctapltw.DAO.ProductDao;
 import vn.edu.nlu.fit.thuctapltw.Service.PromotionEventService;
 import vn.edu.nlu.fit.thuctapltw.model.PromotionEvent;
 
@@ -13,34 +15,45 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @WebServlet(name = "PromotionEventAdminController", value = "/promotion-event-admin")
 public class PromotionEventAdminController extends HttpServlet {
     private PromotionEventService promotionEventService;
+    private CategoryDao categoryDao;
+    private ProductDao productDao;
 
     @Override
     public void init() {
         promotionEventService = new PromotionEventService();
+        categoryDao = new CategoryDao();
+        productDao = new ProductDao();
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        if ("create".equals(request.getParameter("action"))) {
+        String action = request.getParameter("action");
+
+        if ("create".equals(action)) {
             PromotionEvent event = new PromotionEvent();
             event.setIcon("fa-gift");
             event.setStatus(1);
             request.setAttribute("promotionEvent", event);
+            request.setAttribute("scopeType", "all");
+            request.setAttribute("discountPercent", 10);
+            prepareScopeData(request, 0);
             request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
             return;
         }
 
-        if ("edit".equals(request.getParameter("action"))) {
+        if ("edit".equals(action)) {
             showEventForm(request, response, "edit");
             return;
         }
 
-        if ("detail".equals(request.getParameter("action")) || "view".equals(request.getParameter("action"))) {
+        if ("detail".equals(action) || "view".equals(action)) {
             showEventForm(request, response, "view");
             return;
         }
@@ -100,18 +113,59 @@ public class PromotionEventAdminController extends HttpServlet {
 
         request.setAttribute("mode", mode);
         request.setAttribute("promotionEvent", event);
+        request.setAttribute("selectedProductIds", promotionEventService.getProductIdsByEventId(id));
+        request.setAttribute("selectedCategoryIds", promotionEventService.getCategoryIdsByEventId(id));
+        request.setAttribute("selectedProducts", promotionEventService.getProductsByEventId(id));
+        request.setAttribute("scopeType", event.getScopeType());
+        request.setAttribute("discountPercent", event.getDiscountPercent());
+        prepareScopeData(request, id);
         request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
     }
 
     private void createEvent(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         PromotionEvent event = readEvent(request);
+        String scopeType = normalizeScope(request.getParameter("scopeType"));
+        List<Integer> categoryIds = parseIntList(request.getParameterValues("categoryIds"));
+        List<Integer> productIds = parseIntList(request.getParameterValues("productIds"));
+        int discountPercent = parsePositiveInt(request.getParameter("discountPercent"), 10);
+
         try {
-            promotionEventService.createEvent(event);
+            promotionEventService.createEvent(event, scopeType, categoryIds, productIds, discountPercent);
             response.sendRedirect(request.getContextPath() + "/promotion-event-admin?success=create");
         } catch (IllegalArgumentException e) {
             request.setAttribute("promotionEvent", event);
             request.setAttribute("errorMessage", e.getMessage());
+            request.setAttribute("scopeType", scopeType);
+            request.setAttribute("selectedCategoryIds", categoryIds);
+            request.setAttribute("selectedProductIds", productIds);
+            request.setAttribute("discountPercent", discountPercent);
+            prepareScopeData(request, 0);
+            request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
+        }
+    }
+
+    private void updateEvent(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        PromotionEvent event = readEvent(request);
+        event.setId(parsePositiveInt(request.getParameter("id"), 0));
+        String scopeType = normalizeScope(request.getParameter("scopeType"));
+        List<Integer> categoryIds = parseIntList(request.getParameterValues("categoryIds"));
+        List<Integer> productIds = parseIntList(request.getParameterValues("productIds"));
+        int discountPercent = parsePositiveInt(request.getParameter("discountPercent"), 10);
+
+        try {
+            promotionEventService.updateEvent(event, scopeType, categoryIds, productIds, discountPercent);
+            response.sendRedirect(request.getContextPath() + "/promotion-event-admin?success=update");
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("mode", "edit");
+            request.setAttribute("promotionEvent", event);
+            request.setAttribute("errorMessage", e.getMessage());
+            request.setAttribute("scopeType", scopeType);
+            request.setAttribute("selectedCategoryIds", categoryIds);
+            request.setAttribute("selectedProductIds", productIds);
+            request.setAttribute("discountPercent", discountPercent);
+            prepareScopeData(request, event.getId());
             request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
         }
     }
@@ -128,19 +182,20 @@ public class PromotionEventAdminController extends HttpServlet {
         }
     }
 
-    private void updateEvent(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        PromotionEvent event = readEvent(request);
-        event.setId(parsePositiveInt(request.getParameter("id"), 0));
+    private void prepareScopeData(HttpServletRequest request, int eventId) {
+        request.setAttribute("categories", categoryDao.findAll());
+        request.setAttribute("products", productDao.findAll());
 
-        try {
-            promotionEventService.updateEvent(event);
-            response.sendRedirect(request.getContextPath() + "/promotion-event-admin?success=update");
-        } catch (IllegalArgumentException e) {
-            request.setAttribute("mode", "edit");
-            request.setAttribute("promotionEvent", event);
-            request.setAttribute("errorMessage", e.getMessage());
-            request.getRequestDispatcher("/promotion-event-form.jsp").forward(request, response);
+        if (request.getAttribute("selectedCategoryIds") == null) {
+            request.setAttribute("selectedCategoryIds", List.of());
+        }
+
+        if (eventId > 0 && request.getAttribute("selectedProductIds") == null) {
+            request.setAttribute("selectedProductIds", promotionEventService.getProductIdsByEventId(eventId));
+        }
+
+        if (request.getAttribute("selectedProductIds") == null) {
+            request.setAttribute("selectedProductIds", List.of());
         }
     }
 
@@ -151,6 +206,8 @@ public class PromotionEventAdminController extends HttpServlet {
         event.setIcon(request.getParameter("icon"));
         event.setTag(request.getParameter("tag"));
         event.setDiscountLabel(request.getParameter("discountLabel"));
+        event.setScopeType(normalizeScope(request.getParameter("scopeType")));
+        event.setDiscountPercent(parsePositiveInt(request.getParameter("discountPercent"), 10));
         event.setStatus(parseStatus(request.getParameter("status")));
         event.setStartDate(parseDateTime(request.getParameter("startDate")));
         event.setEndDate(parseDateTime(request.getParameter("endDate")));
@@ -170,6 +227,36 @@ public class PromotionEventAdminController extends HttpServlet {
 
     private int parseStatus(String value) {
         return "0".equals(value) ? 0 : 1;
+    }
+
+    private String normalizeScope(String value) {
+        if ("category".equals(value) || "product".equals(value)) {
+            return value;
+        }
+        return "all";
+    }
+
+    private List<Integer> parseIntList(String[] values) {
+        List<Integer> ids = new ArrayList<>();
+        if (values == null) {
+            return ids;
+        }
+        for (String value : values) {
+            Integer id = parseNullablePositiveInt(value);
+            if (id != null && !ids.contains(id)) {
+                ids.add(id);
+            }
+        }
+        return ids;
+    }
+
+    private Integer parseNullablePositiveInt(String value) {
+        try {
+            int parsed = Integer.parseInt(value);
+            return parsed > 0 ? parsed : null;
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private String trim(String value) {
