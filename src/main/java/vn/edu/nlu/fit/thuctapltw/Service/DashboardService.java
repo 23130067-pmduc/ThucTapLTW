@@ -2,6 +2,7 @@ package vn.edu.nlu.fit.thuctapltw.Service;
 
 import vn.edu.nlu.fit.thuctapltw.DAO.DashboardDao;
 import vn.edu.nlu.fit.thuctapltw.model.Order;
+import vn.edu.nlu.fit.thuctapltw.model.TopSellingProduct;
 
 import java.util.List;
 
@@ -27,5 +28,8 @@ public class DashboardService {
 
     public List<Order> latestOrders(int limit) {
         return dao.latestOrders(limit);
+    }
+
+    public List<TopSellingProduct> topSellingProducts(int limit) {return dao.topSellingProducts(limit);
     }
 }

@@ -1,6 +1,7 @@
 package vn.edu.nlu.fit.thuctapltw.DAO;
 
 import vn.edu.nlu.fit.thuctapltw.model.Order;
+import vn.edu.nlu.fit.thuctapltw.model.TopSellingProduct;
 
 import java.util.List;
 
@@ -47,6 +48,22 @@ public class DashboardDao extends BaseDao {
                 h.createQuery("SELECT COUNT(*) FROM users")
                         .mapTo(int.class)
                         .one()
+        );
+    }
+
+    public List<TopSellingProduct> topSellingProducts(int limit) {
+        return getJdbi().withHandle(h ->
+                h.createQuery("""
+            SELECT p.id AS productId, p.name, p.thumbnail, p.price, p.sale_price AS salePrice,
+                   COALESCE(SUM(oi.quantity), 0) AS totalSold
+            FROM products p
+            LEFT JOIN product_variants pv ON pv.product_id = p.id
+            LEFT JOIN order_items oi ON oi.variant_id = pv.id
+            LEFT JOIN orders o ON o.id = oi.order_id AND o.order_status = 'COMPLETED'
+            GROUP BY p.id, p.name, p.thumbnail, p.price, p.sale_price
+            ORDER BY totalSold DESC
+            LIMIT :limit
+        """).bind("limit", limit).mapToBean(TopSellingProduct.class).list()
         );
     }
 }
