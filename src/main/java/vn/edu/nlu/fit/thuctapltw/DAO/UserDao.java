@@ -6,30 +6,29 @@ import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
 public class UserDao extends BaseDao {
+    private static final String USER_SELECT = """
+            SELECT u.*, LOWER(r.name) AS role, r.name AS role_name
+            FROM users u
+            LEFT JOIN roles r ON u.role_id = r.id
+            """;
+
     public User finduser(String username) {
-        return getJdbi().withHandle(handle -> handle.createQuery("""
-                    SELECT u.*, r.name AS role_name
-                    FROM users u
-                    LEFT JOIN roles r ON u.role_id = r.id
-                    WHERE u.username = :username
-                    OR u.email = :username""")
-                .bind("username", username)
-                .mapToBean(User.class)
-                .findFirst()
-                .orElse(null)
+        return getJdbi().withHandle(handle ->
+                handle.createQuery(USER_SELECT + " WHERE u.username = :username OR u.email = :username")
+                        .bind("username", username).mapToBean(User.class).findFirst().orElse(null)
         );
     }
 
     public List<User> getListUser() {
         return getJdbi().withHandle(handle ->
-                handle.createQuery("SELECT * FROM users")
+                handle.createQuery(USER_SELECT + " ORDER BY u.id DESC")
                         .mapToBean(User.class)
                         .list()
         );
     }
     public void addUser(String username, String email, String password) {
         getJdbi().withHandle(handle ->
-                handle.createUpdate("insert into users (username,email,password) values(:username, :email, :password)").bind("username", username).bind("email", email).bind("password", password).execute()
+                handle.createUpdate("INSERT INTO users (username, email, password, role_id) VALUES (:username, :email, :password, 2)").bind("username", username).bind("email", email).bind("password", password).execute()
         );
     }
 
@@ -42,8 +41,8 @@ public class UserDao extends BaseDao {
                                   String otp, LocalDateTime expiredAt) {
         getJdbi().withHandle(h ->
                 h.createUpdate(
-                                "INSERT INTO users(username,email,password,otp_code,otp_expired_at,is_active,status) " +
-                                        "VALUES (:u,:e,:p,:otp,:exp,0,'PENDING')"
+                                "INSERT INTO users(username,email,password,otp_code,otp_expired_at,is_active,status,role_id) " +
+                                        "VALUES (:u,:e,:p,:otp,:exp,0,'PENDING',2)"
                         )
                         .bind("u", username)
                         .bind("e", email)
@@ -106,18 +105,10 @@ public class UserDao extends BaseDao {
     public User findUserById(int id) {
         return getJdbi().withHandle(handle ->
                 handle.createQuery("""
-                SELECT id,
-                       username,
-                       email,
-                       role,
-                       is_active,
-                       created_at,
-                       full_name,
-                       gender,
-                       phone,
-                       status
-                FROM users
-                WHERE id = :id
+                SELECT u.*, LOWER(r.name) AS role, r.name AS role_name
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
+                WHERE u.id = :id
             """)
                         .bind("id", id)
                         .mapToBean(User.class)
@@ -164,7 +155,7 @@ public class UserDao extends BaseDao {
                 WHERE id = :id""")
                 .bind("hash",hash)
                 .bind("id", id)
-                .execute()) > 0;        //Nếu update thành công thì trả về 1 không thì trả về 0
+                .execute()) > 0;
     }
 
     public int getCountInWeek() {
@@ -205,9 +196,11 @@ public class UserDao extends BaseDao {
 
     public List<User> searchByUsernameOrEmail(String keyword) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
-                SELECT *
-                FROM users
-                WHERE username LIKE :keyword OR email LIKE :keyword
+                SELECT u.*, LOWER(r.name) AS role, r.name AS role_name
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
+                WHERE u.username LIKE :keyword OR u.email LIKE :keyword
+                ORDER BY u.id DESC
                 """).bind("keyword", "%" + keyword + "%")
                 .mapToBean(User.class)
                 .list());
@@ -217,10 +210,12 @@ public class UserDao extends BaseDao {
         getJdbi().withHandle(handle ->
                 handle.createUpdate("""
                 INSERT INTO users
-                (username, email, password, role, status,
+                (username, email, password, role_id, status,
                  full_name,  gender, phone, created_at)
                 VALUES
-                (:username, :email, :password, :role, :status,
+                (:username, :email, :password,
+                 COALESCE((SELECT id FROM roles WHERE LOWER(name) = LOWER(:role) LIMIT 1), 2),
+                 :status,
                  :fullName, :gender, :phone, NOW())
             """)
                         .bindBean(user)
@@ -235,11 +230,11 @@ public class UserDao extends BaseDao {
                 UPDATE users
                 SET username = :username,
                     email = :email,
-                    role = :role,
+                    role_id = COALESCE((SELECT id FROM roles WHERE LOWER(name) = LOWER(:role) LIMIT 1), role_id),
                     status = :status,
                     full_name = :fullName,
                     phone = :phone,      
-                    gender = :gender,
+                    gender = :gender
                 WHERE id = :id
             """)
                         .bindBean(user)
@@ -281,7 +276,7 @@ public class UserDao extends BaseDao {
 
     public User findByEmail(String email) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
-                SELECT u.*, r.name AS role_name
+                SELECT u.*, LOWER(r.name) AS role, r.name AS role_name
                 FROM users u
                 LEFT JOIN roles r ON u.role_id = r.id
                 WHERE u.email = :email
@@ -296,13 +291,18 @@ public class UserDao extends BaseDao {
 
     public int createGoogleUser(User user) {
         return  getJdbi().withHandle(handle -> handle.createUpdate("""
-                INSERT INTO users (username, email, full_name, role_id, status, is_active)
-                VALUES (:username, :email, :fullName, :roleId, :status, :isActive)
+                INSERT INTO users (username, email, password, full_name, role_id, status, is_active)
+                VALUES (:username, :email, '', :fullName,
+                        COALESCE(NULLIF(:roleId, 0),
+                                 (SELECT id FROM roles WHERE LOWER(name) = LOWER(:role) LIMIT 1),
+                                 2),
+                        :status, :isActive)
                 """)
                 .bind("username", user.getUsername())
                 .bind("email", user.getEmail())
                 .bind("fullName", user.getFullName())
                 .bind("roleId", user.getRoleId())
+                .bind("role", user.getRole())
                 .bind("status", user.getStatus())
                 .bind("isActive", user.getIsActive())
                 .executeAndReturnGeneratedKeys("id")
@@ -311,23 +311,20 @@ public class UserDao extends BaseDao {
     }
 
     public List<User> findAll() {
-        String sql = "SELECT * FROM users ORDER BY id DESC";
         return getJdbi().withHandle(handle ->
-                handle.createQuery(sql)
+                handle.createQuery(USER_SELECT + " ORDER BY u.id DESC")
                         .mapToBean(User.class)
                         .list()
         );
     }
 
-
     public List<String> getPermissionsByRoleId(int roleId) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT p.name
                 FROM permissions p
-                JOIN role_permissions rp
-                ON p.id = rp.permission_id
+                JOIN role_permissions rp ON p.id = rp.permission_id
                 WHERE rp.role_id = :roleId
-                 """)
+                """)
                 .bind("roleId", roleId)
                 .mapTo(String.class)
                 .list()
@@ -338,11 +335,13 @@ public class UserDao extends BaseDao {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT id
                 FROM roles
-                WHERE name = : roleName""")
+                WHERE LOWER(name) = LOWER(:roleName)
+                """)
                 .bind("roleName", roleName)
                 .mapTo(int.class)
                 .findOne()
-                .orElseThrow(() -> new RuntimeException("Role không tồn tại: " + roleName)));
+                .orElseThrow(() -> new RuntimeException("Role không tồn tại: " + roleName))
+        );
     }
 }
 
