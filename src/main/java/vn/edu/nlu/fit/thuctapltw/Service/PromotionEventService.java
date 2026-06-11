@@ -54,6 +54,18 @@ public class PromotionEventService {
         }
     }
 
+    public void updateStatus(int id, int status) {
+        if (id <= 0 || (status != 0 && status != 1)) {
+            throw new IllegalArgumentException("Dữ liệu chương trình khuyến mãi không hợp lệ.");
+        }
+        if (promotionEventDao.findById(id) == null) {
+            throw new IllegalArgumentException("Không tìm thấy chương trình khuyến mãi.");
+        }
+        if (!promotionEventDao.updateStatus(id, status)) {
+            throw new IllegalArgumentException("Không thể thay đổi trạng thái chương trình khuyến mãi.");
+        }
+    }
+
     public int countAllEvents() {
         return promotionEventDao.countAllEvents();
     }

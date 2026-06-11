@@ -163,6 +163,15 @@ public class PromotionEventDao extends BaseDao {
         );
     }
 
+    public boolean updateStatus(int id, int status) {
+        return getJdbi().withHandle(handle ->
+                handle.createUpdate("UPDATE promotion_events SET status = :status WHERE id = :id")
+                        .bind("id", id)
+                        .bind("status", status)
+                        .execute() == 1
+        );
+    }
+
     public int countAllEvents() {
         return countByCondition("1 = 1");
     }

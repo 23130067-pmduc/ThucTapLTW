@@ -56,6 +56,18 @@
                     Đã cập nhật chương trình khuyến mãi thành công.
                 </div>
             </c:if>
+            <c:if test="${param.success == 'lock'}">
+                <div class="alert alert-success">
+                    <i class="fa-solid fa-lock"></i>
+                    Đã khóa chương trình khuyến mãi thành công.
+                </div>
+            </c:if>
+            <c:if test="${param.success == 'unlock'}">
+                <div class="alert alert-success">
+                    <i class="fa-solid fa-lock-open"></i>
+                    Đã mở chương trình khuyến mãi thành công.
+                </div>
+            </c:if>
             <c:if test="${not empty param.error}">
                 <div class="alert alert-error">
                     <i class="fa-solid fa-circle-exclamation"></i>
@@ -130,11 +142,27 @@
                                             <span class="event-status ${event.statusClass}">${event.statusLabel}</span>
                                         </td>
                                         <td>
+                                            <div class="promotion-actions-cell">
+                                            <a href="${pageContext.request.contextPath}/promotion-event-admin?action=detail&id=${event.id}"
+                                               class="promotion-action-btn view"
+                                               title="Xem chi tiết">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
                                             <a href="${pageContext.request.contextPath}/promotion-event-admin?action=edit&id=${event.id}"
                                                class="promotion-action-btn edit"
                                                title="Sửa chương trình">
                                                 <i class="fa-solid fa-pen"></i>
                                             </a>
+                                            <button type="button"
+                                                    class="promotion-action-btn ${event.status == 1 ? 'lock' : 'unlock'} js-open-promotion-status-modal"
+                                                    title="${event.status == 1 ? 'Khóa chương trình' : 'Mở chương trình'}"
+                                                    data-id="${event.id}"
+                                                    data-title="${event.title}"
+                                                    data-status="${event.status == 1 ? '0' : '1'}"
+                                                    data-action-label="${event.status == 1 ? 'Khóa' : 'Mở'}">
+                                                <i class="fa-solid ${event.status == 1 ? 'fa-trash' : 'fa-lock-open'}"></i>
+                                            </button>
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -180,5 +208,23 @@
         </main>
     </section>
 </div>
+
+<div id="promotionStatusModal" class="promotion-modal-overlay" aria-hidden="true">
+    <div class="promotion-modal" role="dialog" aria-modal="true" aria-labelledby="promotionStatusModalTitle">
+        <div class="promotion-modal-icon"><i id="promotionStatusModalIcon" class="fa-solid fa-lock"></i></div>
+        <h3 id="promotionStatusModalTitle">Xác nhận thay đổi trạng thái</h3>
+        <p id="promotionStatusModalMessage"></p>
+        <form method="post" action="${pageContext.request.contextPath}/promotion-event-admin">
+            <input type="hidden" name="action" value="toggle-status">
+            <input type="hidden" name="id" id="promotionStatusId">
+            <input type="hidden" name="status" id="promotionStatusValue">
+            <div class="promotion-modal-actions">
+                <button type="button" class="btn-secondary js-close-promotion-status-modal">Hủy</button>
+                <button type="submit" id="promotionStatusSubmit" class="btn-promotion-confirm">Xác nhận</button>
+            </div>
+        </form>
+    </div>
+</div>
+<script src="${pageContext.request.contextPath}/javaScript/promotion-event-admin.js"></script>
 </body>
 </html>
