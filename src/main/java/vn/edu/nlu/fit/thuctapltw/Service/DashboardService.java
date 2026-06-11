@@ -32,4 +32,8 @@ public class DashboardService {
 
     public List<TopSellingProduct> topSellingProducts(int limit) {return dao.topSellingProducts(limit);
     }
+
+    public int countOrdersByStatus(String status) {
+        return dao.countOrdersByStatus(status);
+    }
 }
