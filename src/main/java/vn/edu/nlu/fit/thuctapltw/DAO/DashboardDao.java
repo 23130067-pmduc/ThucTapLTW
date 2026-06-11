@@ -66,4 +66,9 @@ public class DashboardDao extends BaseDao {
         """).bind("limit", limit).mapToBean(TopSellingProduct.class).list()
         );
     }
+
+    public int countOrdersByStatus(String status) {
+        return getJdbi().withHandle(h -> h.createQuery("SELECT COUNT(*) FROM orders WHERE order_status = :status").bind("status", status).mapTo(int.class).one()
+        );
+    }
 }

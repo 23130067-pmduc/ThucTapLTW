@@ -636,3 +636,12 @@ body, .admin {
 .empty-state p {
     font-size: 14px;
 }
+
+.status-cards {
+    margin-top: 16px;
+}
+
+.card-pending span  { color: #f59e0b; }
+.card-shipping span { color: #3b82f6; }
+.card-completed span { color: #10b981; }
+.card-cancelled span { color: #ef4444; }

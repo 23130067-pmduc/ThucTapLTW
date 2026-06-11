@@ -143,6 +143,21 @@
           </div>
         </div>
 
+        <div class="cards status-cards">
+          <div class="card card-pending">Chờ xử lý
+            <span>${pendingOrders}</span>
+          </div>
+          <div class="card card-shipping">Đang giao
+            <span>${shippingOrders}</span>
+          </div>
+          <div class="card card-completed">Hoàn thành
+            <span>${completedOrders}</span>
+          </div>
+          <div class="card card-cancelled">Đã hủy
+            <span>${cancelledOrders}</span>
+          </div>
+        </div>
+
         <h2 style="margin-bottom: 12px;">Đơn hàng mới nhất</h2>
 
         <div class="dashboard-grid">
