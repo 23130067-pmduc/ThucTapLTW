@@ -23,7 +23,7 @@ public class loginController extends HttpServlet {
     private UserService userService;
     private CartDao cartDao;
     private static final String CLIENT_ID =
-            "1001120059484-ffncp4n4pvstlq3v1q4gtlu0hprkcedd.apps.googleusercontent.com";
+            "699216537172-ujqitep38asgg355gt1veaogdvpg1d9g.apps.googleusercontent.com";
 
     @Override
     public void init() {

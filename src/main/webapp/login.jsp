@@ -56,7 +56,7 @@
 
             <div class="google-login-wrap">
                 <div id="g_id_onload"
-                     data-client_id="1001120059484-ffncp4n4pvstlq3v1q4gtlu0hprkcedd.apps.googleusercontent.com"
+                     data-client_id="699216537172-ujqitep38asgg355gt1veaogdvpg1d9g.apps.googleusercontent.com"
                      data-callback="handleCredentialResponse">
                 </div>
 
