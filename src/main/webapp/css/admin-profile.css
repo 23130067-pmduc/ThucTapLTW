@@ -430,12 +430,21 @@ body {
     flex: 1;
 }
 
-/* Đồng bộ sidebar admin: cho phép cuộn menu như trang Thống kê */
 .sidebar {
     height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-    flex-shrink: 0;
+    max-height: 100vh;
+    min-height: 0;
+    flex: 0 0 220px;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.sidebar .nav {
+    flex: 0 0 auto;
+    min-height: max-content;
+    overflow: visible !important;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -443,19 +452,15 @@ body {
 }
 
 .sidebar::-webkit-scrollbar-track {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
 }
 
 .sidebar::-webkit-scrollbar-thumb {
     background: rgba(255, 255, 255, 0.45);
-    border-radius: 10px;
+    border-radius: 999px;
 }
 
 .sidebar::-webkit-scrollbar-thumb:hover {
     background: rgba(255, 255, 255, 0.7);
 }
-
-.sidebar .nav {
-    padding-bottom: 24px;
-}
-
