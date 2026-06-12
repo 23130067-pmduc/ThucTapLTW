@@ -140,3 +140,20 @@ html, body {
 .form-links a:hover {
     text-decoration: underline;
 }
+.google-login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin: 0px 0 12px;
+}
+
+.google-login-wrapper .g_id_signin {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.google-login-wrapper iframe {
+    max-width: 100% !important;
+}
