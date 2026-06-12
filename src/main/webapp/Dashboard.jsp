@@ -10,7 +10,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thống kê</title>
-  <link rel="stylesheet" href="css/user.css">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css?v=20260612-urgent-tasks">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 
 
@@ -155,6 +155,115 @@
           </div>
           <div class="card card-cancelled">Đã hủy
             <span>${cancelledOrders}</span>
+          </div>
+        </div>
+
+        <div class="urgent-tasks-card">
+          <div class="urgent-tasks-header">
+            <h2 class="urgent-tasks-title">
+              <i class="fa-solid fa-triangle-exclamation"></i> Cần xử lý ngay
+            </h2>
+            <c:set var="totalUrgent" value="${pendingOrders + pendingReturnOrders + lowStockProducts + newContacts}" />
+              <c:choose>
+                <c:when test="${totalUrgent > 0}">
+                  <span class="urgent-total-badge">${totalUrgent} việc cần làm</span>
+                </c:when>
+                <c:otherwise>
+                  <span class="urgent-all-done"><i class="fa-solid fa-circle-check"></i> Đã xử lý hết</span>
+                </c:otherwise>
+              </c:choose>
+          </div>
+
+          <div class="urgent-tasks-grid">
+
+            <c:choose>
+              <c:when test="${pendingOrders > 0}">
+                <a href="${pageContext.request.contextPath}/order-admin" class="urgent-task-item has-alert">
+                  <div class="urgent-task-icon warning"><i class="fa-solid fa-receipt"></i></div>
+                  <div class="urgent-task-info">
+                    <span class="urgent-task-name">Đơn hàng chờ xử lý</span>
+                    <span class="urgent-task-count count-alert">${pendingOrders}</span>
+                  </div>
+                    <span class="urgent-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+              </c:when>
+              <c:otherwise>
+                <a href="${pageContext.request.contextPath}/order-admin" class="urgent-task-item no-alert">
+                  <div class="urgent-task-icon warning"><i class="fa-solid fa-receipt"></i></div>
+                  <div class="urgent-task-info">
+                    <span class="urgent-task-name">Đơn hàng chờ xử lý</span>
+                    <span class="urgent-task-count count-ok">${pendingOrders}</span>
+                  </div>
+                </a>
+              </c:otherwise>
+            </c:choose>
+
+            <c:choose>
+              <c:when test="${pendingReturnOrders > 0}">
+                <a href="${pageContext.request.contextPath}/return-order-admin" class="urgent-task-item has-alert">
+                  <div class="urgent-task-icon danger"><i class="fa-solid fa-rotate-left"></i></div>
+                    <div class="urgent-task-info">
+                      <span class="urgent-task-name">Hoàn hàng chờ duyệt</span>
+                      <span class="urgent-task-count count-alert">${pendingReturnOrders}</span>
+                    </div>
+                      <span class="urgent-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+              </c:when>
+            <c:otherwise>
+              <a href="${pageContext.request.contextPath}/return-order-admin" class="urgent-task-item no-alert">
+                <div class="urgent-task-icon danger"><i class="fa-solid fa-rotate-left"></i></div>
+                <div class="urgent-task-info">
+                  <span class="urgent-task-name">Hoàn hàng chờ duyệt</span>
+                  <span class="urgent-task-count count-ok">${pendingReturnOrders}</span>
+                </div>
+              </a>
+            </c:otherwise>
+            </c:choose>
+
+            <c:choose>
+              <c:when test="${lowStockProducts > 0}">
+                <a href="${pageContext.request.contextPath}/inventory-admin?stockStatus=LOW" class="urgent-task-item has-alert">
+                  <div class="urgent-task-icon orange"><i class="fa-solid fa-boxes-stacked"></i></div>
+                  <div class="urgent-task-info">
+                    <span class="urgent-task-name">Biến thể sắp hết hàng</span>
+                    <span class="urgent-task-count count-alert">${lowStockProducts}</span>
+                  </div>
+                    <span class="urgent-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+              </c:when>
+              <c:otherwise>
+                <a href="${pageContext.request.contextPath}/inventory-admin?stockStatus=LOW" class="urgent-task-item no-alert">
+                  <div class="urgent-task-icon orange"><i class="fa-solid fa-boxes-stacked"></i></div>
+                  <div class="urgent-task-info">
+                    <span class="urgent-task-name">Biến thể sắp hết hàng</span>
+                    <span class="urgent-task-count count-ok">${lowStockProducts}</span>
+                  </div>
+                </a>
+              </c:otherwise>
+            </c:choose>
+
+            <c:choose>
+              <c:when test="${newContacts > 0}">
+                <a href="${pageContext.request.contextPath}/contact-admin" class="urgent-task-item has-alert">
+                  <div class="urgent-task-icon info"><i class="fa-solid fa-envelope"></i></div>
+                  <div class="urgent-task-info">
+                    <span class="urgent-task-name">Liên hệ chưa phản hồi</span>
+                    <span class="urgent-task-count count-alert">${newContacts}</span>
+                  </div>
+                    <span class="urgent-arrow"><i class="fa-solid fa-arrow-right"></i></span>
+                </a>
+              </c:when>
+              <c:otherwise>
+                <a href="${pageContext.request.contextPath}/contact-admin" class="urgent-task-item no-alert">
+                  <div class="urgent-task-icon info"><i class="fa-solid fa-envelope"></i></div>
+                  <div class="urgent-task-info">
+                    <span class="urgent-task-name">Liên hệ chưa phản hồi</span>
+                    <span class="urgent-task-count count-ok">${newContacts}</span>
+                  </div>
+                </a>
+              </c:otherwise>
+            </c:choose>
+
           </div>
         </div>
 

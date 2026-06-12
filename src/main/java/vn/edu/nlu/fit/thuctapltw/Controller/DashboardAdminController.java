@@ -29,6 +29,10 @@ public class DashboardAdminController extends HttpServlet {
         request.setAttribute("shippingOrders",  service.countOrdersByStatus("SHIPPING"));
         request.setAttribute("completedOrders", service.countOrdersByStatus("COMPLETED"));
         request.setAttribute("cancelledOrders", service.countOrdersByStatus("CANCELLED"));
+
+        request.setAttribute("pendingReturnOrders", service.countPendingReturnOrders());
+        request.setAttribute("newContacts", service.countNewContacts());
+        request.setAttribute("lowStockProducts", service.countLowStockProducts());
         request.getRequestDispatcher("/Dashboard.jsp").forward(request, response);
     }
 

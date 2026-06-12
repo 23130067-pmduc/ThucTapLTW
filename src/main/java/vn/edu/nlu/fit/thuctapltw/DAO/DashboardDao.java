@@ -71,4 +71,15 @@ public class DashboardDao extends BaseDao {
         return getJdbi().withHandle(h -> h.createQuery("SELECT COUNT(*) FROM orders WHERE order_status = :status").bind("status", status).mapTo(int.class).one()
         );
     }
+
+    public int countPendingReturnOrders() {
+        return getJdbi().withHandle(h -> h.createQuery("SELECT COUNT(*) FROM return_orders WHERE status = 'PENDING'").mapTo(int.class).one()
+        );
+    }
+
+    public int countNewContacts() {
+        return getJdbi().withHandle(h -> h.createQuery("SELECT COUNT(*) FROM contacts WHERE status = 'New' AND is_deleted = 0").mapTo(int.class).one()
+        );
+    }
+
 }
