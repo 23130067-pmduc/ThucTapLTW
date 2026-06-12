@@ -447,3 +447,38 @@ body, .admin {
 .nav .nav-item span {
     flex: 1;
 }
+
+.sidebar {
+    height: 100vh;
+    max-height: 100vh;
+    min-height: 0;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    flex: 0 0 220px;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.sidebar .nav {
+    flex: 0 0 auto;
+    min-height: max-content;
+    overflow: visible !important;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 999px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 999px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.7);
+}

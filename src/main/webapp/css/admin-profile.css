@@ -429,3 +429,33 @@ body {
 .nav .nav-item span {
     flex: 1;
 }
+
+/* Đồng bộ sidebar admin: cho phép cuộn menu như trang Thống kê */
+.sidebar {
+    height: 100vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-shrink: 0;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 10px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.sidebar .nav {
+    padding-bottom: 24px;
+}
+
