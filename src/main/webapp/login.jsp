@@ -54,10 +54,11 @@
             <button type="submit" class="btn-primary">Đăng nhập</button>
 
 
-            <div class="google-login-wrap">
+            <div class="google-login-wrapper">
                 <div id="g_id_onload"
                      data-client_id="699216537172-ujqitep38asgg355gt1veaogdvpg1d9g.apps.googleusercontent.com"
-                     data-callback="handleCredentialResponse">
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
                 </div>
 
                 <div class="g_id_signin"
@@ -67,10 +68,9 @@
                      data-text="signin_with"
                      data-shape="pill"
                      data-logo_alignment="left"
-                     data-width="100%">
+                     data-width="350">
                 </div>
             </div>
-
             <div class="form-links">
 
                 <p class="notAccount">Chưa có tài khoản? <a href="./register.jsp">Đăng ký ngay</a></p>
@@ -88,8 +88,18 @@
 
 <script>
     function handleCredentialResponse(response) {
-        document.getElementById("googleCredential").value = response.credential;
-        document.getElementById("googleLoginForm").submit();
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = window.location.origin + "${pageContext.request.contextPath}/login";
+
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "credential";
+        input.value = response.credential;
+
+        form.appendChild(input);
+        document.body.appendChild(form);
+        form.submit();
     }
 </script>
 
