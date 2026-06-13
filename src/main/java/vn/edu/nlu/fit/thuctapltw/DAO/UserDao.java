@@ -5,6 +5,8 @@ import java.util.List;
 import org.jdbi.v3.core.mapper.reflect.BeanMapper;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
+import javax.management.relation.Role;
+
 public class UserDao extends BaseDao {
     private static final String USER_SELECT = """
             SELECT u.*, LOWER(r.name) AS role, r.name AS role_name
@@ -342,6 +344,73 @@ public class UserDao extends BaseDao {
                 .findOne()
                 .orElseThrow(() -> new RuntimeException("Role không tồn tại: " + roleName))
         );
+    }
+
+    public int countAllUsers() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM users""")
+                .mapTo(Integer.class)
+                .one());
+    }
+
+    public List<User> getUserByPage(int pageSize, int offset) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT u.id, u.username, u.full_name AS fullName, u.email, u.phone, u.gender, u.status, r.name AS roleName
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
+                ORDER BY u.id DESC
+                LIMIT :pageSize OFFSET :offset""")
+                .bind("pageSize", pageSize)
+                .bind("offset", offset)
+                .mapToBean(User.class)
+                .list());
+    }
+
+    public int countUserByFilter(String keyword, String role, String status) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
+                WHERE (:keyword = ''OR u.username LIKE :keywordLike OR u.email LIKE :keywordLike OR u.full_name LIKE :keywordLike)
+                AND (:role = '' OR r.name = :role)
+                AND (:status = '' OR u.status = :status)""")
+                .bind("keyword", keyword)
+                .bind("keywordLike", "%" + keyword + "%")
+                .bind("role", role)
+                .bind("status", status)
+                .mapTo(Integer.class)
+                .one());
+    }
+
+    public List<User> searchUserByFilter(String keyword, String role, String status, int pageSize, int offset) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT u.id, u.username, u.full_name AS fullName, u.email, u.phone, u.gender, u.status, r.name AS roleName
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
+                WHERE (:keyword = '' OR u.username LIKE :keywordLike OR u.email LIKE :keywordLike OR u.full_name LIKE :keywordLike)
+                AND (:role = '' OR r.name = :role)
+                AND (:status = '' OR u.status = :status)
+                ORDER BY u.id ASC
+                LIMIT :pageSize OFFSET :offset""")
+                .bind("keyword", keyword)
+                .bind("keywordLike", "%" + keyword + "%")
+                .bind("role", role)
+                .bind("status", status)
+                .bind("pageSize", pageSize)
+                .bind("offset", offset)
+                .mapToBean(User.class)
+                .list());
+    }
+
+    public List<Role> getAllRoleNames() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT *
+                FROM roles
+                ORDER BY id
+            """)
+                .mapTo(Role.class)
+                .list());
     }
 }
 

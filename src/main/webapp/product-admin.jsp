@@ -404,5 +404,6 @@
 
 <script src="javaScript/searchProduct.js"></script>
 
+
 </body>
 </html>
