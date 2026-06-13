@@ -158,10 +158,12 @@
                             <a href="${pageContext.request.contextPath}/voucher-admin" class="btn-reset">Đặt lại</a>
                         </c:if>
                 </form>
-                <a href="${pageContext.request.contextPath}/voucher-admin?action=create" class="btn-add">
-                    <i class="fa-solid fa-plus"></i>
-                    Thêm mã giảm giá
-                </a>
+                <c:if test="${userlogin.permissions.contains('VOUCHER_CREATE')}">
+                    <a href="${pageContext.request.contextPath}/voucher-admin?action=create" class="btn-add">
+                        <i class="fa-solid fa-plus"></i>
+                        Thêm mã giảm giá
+                    </a>
+                </c:if>
             </div>
 
             <div class="voucher-table-wrapper">
@@ -218,18 +220,22 @@
                                                 <a class="voucher-action-btn view" href="${pageContext.request.contextPath}/voucher-admin?action=detail&id=${v.id}" title="Xem chi tiết">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
-                                                <a class="voucher-action-btn edit" href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${v.id}" title="Sửa mã">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                </a>
-                                                <button type="button"
-                                                        class="voucher-action-btn ${v.status == 1 ? 'lock' : 'unlock'} js-open-voucher-status-modal"
-                                                        title="${v.status == 1 ? 'Khóa mã' : 'Mở mã'}"
-                                                        data-id="${v.id}"
-                                                        data-code="${v.code}"
-                                                        data-status="${v.status == 1 ? 0 : 1}"
-                                                        data-action-label="${v.status == 1 ? 'Khóa' : 'Mở'}">
-                                                    <i class="fa-solid ${v.status == 1 ? 'fa-lock' : 'fa-lock-open'}"></i>
-                                                </button>
+                                                <c:if test="${userlogin.permissions.contains('VOUCHER_UPDATE')}">
+                                                    <a class="voucher-action-btn edit" href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${v.id}" title="Sửa mã">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </a>
+                                                </c:if>
+                                                <c:if test="${userlogin.permissions.contains('VOUCHER_DELETE')}">
+                                                    <button type="button"
+                                                            class="voucher-action-btn ${v.status == 1 ? 'lock' : 'unlock'} js-open-voucher-status-modal"
+                                                            title="${v.status == 1 ? 'Khóa mã' : 'Mở mã'}"
+                                                            data-id="${v.id}"
+                                                            data-code="${v.code}"
+                                                            data-status="${v.status == 1 ? 0 : 1}"
+                                                            data-action-label="${v.status == 1 ? 'Khóa' : 'Mở'}">
+                                                        <i class="fa-solid ${v.status == 1 ? 'fa-lock' : 'fa-lock-open'}"></i>
+                                                    </button>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </tr>

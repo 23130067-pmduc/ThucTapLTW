@@ -167,10 +167,12 @@
                         <a href="${pageContext.request.contextPath}/promotion-event-admin" class="btn-reset">Đặt lại</a>
                     </c:if>
                 </form>
-                <a href="${pageContext.request.contextPath}/promotion-event-admin?action=create" class="btn-add">
-                    <i class="fa-solid fa-plus"></i>
-                    Thêm chương trình
-                </a>
+                <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_CREATE')}">
+                    <a href="${pageContext.request.contextPath}/promotion-event-admin?action=create" class="btn-add">
+                        <i class="fa-solid fa-plus"></i>
+                        Thêm chương trình
+                    </a>
+                </c:if>
             </div>
 
             <div class="promotion-table-wrapper">
@@ -222,20 +224,24 @@
                                                title="Xem chi tiết">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
-                                            <a href="${pageContext.request.contextPath}/promotion-event-admin?action=edit&id=${event.id}"
-                                               class="promotion-action-btn edit"
-                                               title="Sửa chương trình">
-                                                <i class="fa-solid fa-pen"></i>
-                                            </a>
-                                            <button type="button"
-                                                    class="promotion-action-btn ${event.status == 1 ? 'lock' : 'unlock'} js-open-promotion-status-modal"
-                                                    title="${event.status == 1 ? 'Khóa chương trình' : 'Mở chương trình'}"
-                                                    data-id="${event.id}"
-                                                    data-title="${event.title}"
-                                                    data-status="${event.status == 1 ? '0' : '1'}"
-                                                    data-action-label="${event.status == 1 ? 'Khóa' : 'Mở'}">
-                                                <i class="fa-solid ${event.status == 1 ? 'fa-trash' : 'fa-lock-open'}"></i>
-                                            </button>
+                                            <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_UPDATE')}">
+                                                <a href="${pageContext.request.contextPath}/promotion-event-admin?action=edit&id=${event.id}"
+                                                   class="promotion-action-btn edit"
+                                                   title="Sửa chương trình">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </a>
+                                            </c:if>
+                                            <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_DELETE')}">
+                                                <button type="button"
+                                                        class="promotion-action-btn ${event.status == 1 ? 'lock' : 'unlock'} js-open-promotion-status-modal"
+                                                        title="${event.status == 1 ? 'Khóa chương trình' : 'Mở chương trình'}"
+                                                        data-id="${event.id}"
+                                                        data-title="${event.title}"
+                                                        data-status="${event.status == 1 ? '0' : '1'}"
+                                                        data-action-label="${event.status == 1 ? 'Khóa' : 'Mở'}">
+                                                    <i class="fa-solid ${event.status == 1 ? 'fa-trash' : 'fa-lock-open'}"></i>
+                                                </button>
+                                            </c:if>
                                             </div>
                                         </td>
                                     </tr>
