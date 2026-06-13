@@ -18,6 +18,8 @@ import java.io.IOException;
         "/order-admin",
         "/user-admin",
         "/banner-admin",
+        "/voucher-admin",
+        "/promotion-event-admin",
         "/news-admin",
         "/notification-admin",
         "/contact-admin",

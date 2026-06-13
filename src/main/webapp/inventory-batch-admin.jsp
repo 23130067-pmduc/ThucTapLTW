@@ -84,9 +84,12 @@
                         </a>
                     </c:if>
 
-                    <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
-                        <i class="fa-solid fa-tags"></i><span>Khuyến mãi</span>
-                    </a>
+                    <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
+                            <i class="fa-solid fa-tags"></i>
+                            <span>Khuyến mãi</span>
+                        </a>
+                    </c:if>
 
                     <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
                         <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">

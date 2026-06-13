@@ -19,21 +19,95 @@
         <p>ADMIN</p>
 
         <div class="nav">
-            <a href="${pageContext.request.contextPath}/dashboard" class="nav-item"><i class="fa-solid fa-gauge"></i><span>Thống kê</span></a>
-            <a href="${pageContext.request.contextPath}/product-admin" class="nav-item"><i class="fa-solid fa-shirt"></i><span>Sản phẩm</span></a>
-            <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span></a>
-            <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item"><i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span></a>
-            <a href="${pageContext.request.contextPath}/profit-report" class="nav-item"><i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span></a>
-            <a href="${pageContext.request.contextPath}/category-admin" class="nav-item"><i class="fa-solid fa-list"></i><span>Danh mục</span></a>
-            <a href="${pageContext.request.contextPath}/order-admin" class="nav-item"><i class="fa-solid fa-receipt"></i><span>Đơn hàng</span></a>
-            <a href="${pageContext.request.contextPath}/user-admin" class="nav-item"><i class="fa-solid fa-users"></i><span>Người dùng</span></a>
-            <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item"><i class="fa-solid fa-image"></i><span>Banner</span></a>
-            <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item active"><i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span></a>
-            <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item"><i class="fa-solid fa-tags"></i><span>Khuyến mãi</span></a>
-            <a href="${pageContext.request.contextPath}/news-admin" class="nav-item"><i class="fa-solid fa-newspaper"></i><span>Tin tức</span></a>
-            <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item"><i class="fa-solid fa-bell"></i><span>Thông báo</span></a>
-            <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item"><i class="fa-solid fa-envelope"></i><span>Liên hệ</span></a>
-            <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item"><i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span></a>
+            <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
+                <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
+                    <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
+                <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
+                    <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
+                <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item">
+                    <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
+                <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
+                    <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
+                <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
+                    <i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
+                <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
+                    <i class="fa-solid fa-list"></i><span>Danh mục</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('ORDER_VIEW')}">
+                <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">
+                    <i class="fa-solid fa-receipt"></i><span>Đơn hàng</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
+                <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">
+                    <i class="fa-solid fa-users"></i><span>Người dùng</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
+                <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
+                    <i class="fa-solid fa-image"></i><span>Banner</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('VOUCHER_VIEW')}">
+                <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item active">
+                    <i class="fa-solid fa-ticket"></i>
+                    <span>Mã giảm giá</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_VIEW')}">
+                <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
+                    <i class="fa-solid fa-tags"></i>
+                    <span>Khuyến mãi</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
+                <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
+                    <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('NOTIFICATION_VIEW')}">
+                <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
+                    <i class="fa-solid fa-bell"></i><span>Thông báo</span>
+                </a>
+            </c:if>
+
+            <c:if test="${userlogin.permissions.contains('CONTACT_VIEW')}">
+                <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
+                    <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
+                </a>
+            </c:if>
+
+            <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">
+                <i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span>
+            </a>
         </div>
     </aside>
 
@@ -84,10 +158,12 @@
                             <a href="${pageContext.request.contextPath}/voucher-admin" class="btn-reset">Đặt lại</a>
                         </c:if>
                 </form>
-                <a href="${pageContext.request.contextPath}/voucher-admin?action=create" class="btn-add">
-                    <i class="fa-solid fa-plus"></i>
-                    Thêm mã giảm giá
-                </a>
+                <c:if test="${userlogin.permissions.contains('VOUCHER_CREATE')}">
+                    <a href="${pageContext.request.contextPath}/voucher-admin?action=create" class="btn-add">
+                        <i class="fa-solid fa-plus"></i>
+                        Thêm mã giảm giá
+                    </a>
+                </c:if>
             </div>
 
             <div class="voucher-table-wrapper">
@@ -144,18 +220,22 @@
                                                 <a class="voucher-action-btn view" href="${pageContext.request.contextPath}/voucher-admin?action=detail&id=${v.id}" title="Xem chi tiết">
                                                     <i class="fa-solid fa-eye"></i>
                                                 </a>
-                                                <a class="voucher-action-btn edit" href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${v.id}" title="Sửa mã">
-                                                    <i class="fa-solid fa-pen"></i>
-                                                </a>
-                                                <button type="button"
-                                                        class="voucher-action-btn ${v.status == 1 ? 'lock' : 'unlock'} js-open-voucher-status-modal"
-                                                        title="${v.status == 1 ? 'Khóa mã' : 'Mở mã'}"
-                                                        data-id="${v.id}"
-                                                        data-code="${v.code}"
-                                                        data-status="${v.status == 1 ? 0 : 1}"
-                                                        data-action-label="${v.status == 1 ? 'Khóa' : 'Mở'}">
-                                                    <i class="fa-solid ${v.status == 1 ? 'fa-lock' : 'fa-lock-open'}"></i>
-                                                </button>
+                                                <c:if test="${userlogin.permissions.contains('VOUCHER_UPDATE')}">
+                                                    <a class="voucher-action-btn edit" href="${pageContext.request.contextPath}/voucher-admin?action=edit&id=${v.id}" title="Sửa mã">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </a>
+                                                </c:if>
+                                                <c:if test="${userlogin.permissions.contains('VOUCHER_DELETE')}">
+                                                    <button type="button"
+                                                            class="voucher-action-btn ${v.status == 1 ? 'lock' : 'unlock'} js-open-voucher-status-modal"
+                                                            title="${v.status == 1 ? 'Khóa mã' : 'Mở mã'}"
+                                                            data-id="${v.id}"
+                                                            data-code="${v.code}"
+                                                            data-status="${v.status == 1 ? 0 : 1}"
+                                                            data-action-label="${v.status == 1 ? 'Khóa' : 'Mở'}">
+                                                        <i class="fa-solid ${v.status == 1 ? 'fa-lock' : 'fa-lock-open'}"></i>
+                                                    </button>
+                                                </c:if>
                                             </div>
                                         </td>
                                     </tr>
