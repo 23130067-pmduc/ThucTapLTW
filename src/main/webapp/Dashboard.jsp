@@ -10,9 +10,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Thống kê</title>
-  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css?v=20260612-urgent-tasks">
+  <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css?v=20260613-chart">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
-
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
 </head>
 <body>
@@ -270,6 +270,23 @@
           </div>
         </div>
 
+        <div class="revenue-chart-card">
+          <div class="revenue-chart-header">
+            <div class="revenue-chart-title">
+              <i class="fa-solid fa-chart-line" style="color:#A9C87D;"></i>
+              <span>Biểu đồ doanh thu</span>
+            </div>
+            <div class="revenue-period-btns">
+              <button class="period-btn active" id="btn7day"  onclick="switchPeriod('7day' ,this)">7 ngày</button>
+              <button class="period-btn"        id="btn30day" onclick="switchPeriod('30day',this)">30 ngày</button>
+              <button class="period-btn"        id="btn12mo"  onclick="switchPeriod('12mo' ,this)">12 tháng</button>
+            </div>
+          </div>
+          <div class="revenue-chart-body">
+            <canvas id="revenueChart" height="90"></canvas>
+          </div>
+        </div>
+
         <h2 style="margin-bottom: 12px;">Đơn hàng mới nhất</h2>
 
         <div class="dashboard-grid">
@@ -358,15 +375,13 @@
   </section>
 </div>
 </body>
+<script src="${pageContext.request.contextPath}/javaScript/dashboard.js"></script>
 <script>
-  function openConfirmModal(userId) {
-    document.getElementById("confirmUserId").value = userId;
-    document.getElementById("confirmModal").style.display = "flex";
-  }
-
-  function closeModal() {
-    document.getElementById("confirmModal").style.display = "none";
-  }
+  initRevenueChart({
+    '7day' : { labels: ${chartLabels7day},    values: ${chartValues7day} },
+    '30day': { labels: ${chartLabels30day},   values: ${chartValues30day} },
+    '12mo' : { labels: ${chartLabels12month}, values: ${chartValues12month} }
+  });
 </script>
 
 </html>
