@@ -29,7 +29,7 @@ public class AdminProfileController extends HttpServlet {
 
         User sessionUser = (User) session.getAttribute("userlogin");
 
-        if (sessionUser.getRole() == null || !sessionUser.getRole().equalsIgnoreCase("admin")) {
+        if (sessionUser.getPermissions() == null || sessionUser.getPermissions().isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/login.jsp");
             return;
         }
