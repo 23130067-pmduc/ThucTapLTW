@@ -806,3 +806,70 @@ body, .admin {
     transform: translateX(4px);
     color: #e03131;
 }
+
+.revenue-chart-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    margin-bottom: 24px;
+    border-top: 3px solid #A9C87D;
+}
+
+.revenue-chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.revenue-chart-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 700;
+    color: #333;
+}
+
+.revenue-chart-title i {
+    font-size: 18px;
+}
+
+.revenue-period-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.period-btn {
+    padding: 6px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #d9e8c6;
+    background: #f8fff4;
+    color: #6b8f4a;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.period-btn:hover {
+    background: #edf7e4;
+    border-color: #A9C87D;
+    color: #4a7a2a;
+}
+
+.period-btn.active {
+    background: #A9C87D;
+    border-color: #A9C87D;
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(169, 200, 125, 0.4);
+    transform: none;
+}
+
+.revenue-chart-body {
+    position: relative;
+    width: 100%;
+}

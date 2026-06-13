@@ -6,6 +6,7 @@ import vn.edu.nlu.fit.thuctapltw.model.Order;
 import vn.edu.nlu.fit.thuctapltw.model.TopSellingProduct;
 
 import java.util.List;
+import java.util.Map;
 
 public class DashboardService {
 
@@ -49,5 +50,13 @@ public class DashboardService {
 
     public int countLowStockProducts() {
         return inventoryDao.countLowStock();
+    }
+
+    public Map<String, Double> getRevenueByDay(int days) {
+        return dao.getRevenueByDay(days);
+    }
+
+    public Map<String, Double> getRevenueByMonth(int months) {
+        return dao.getRevenueByMonth(months);
     }
 }
