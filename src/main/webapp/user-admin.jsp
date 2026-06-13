@@ -136,16 +136,33 @@
         </div>
 
         <div class="user-toolbar">
-          <form method="get" action="user-admin" class="user-toolbar">
-            <input
-                    type="text"
-                    name="keyword"
-                    value="${param.keyword}"
-                    placeholder="Tìm theo username, email..."
-            >
+          <form action="user-admin" method="get" class="user-search-form" id="userSearchForm">
+            <div class="search-box">
+              <input type="text"
+                     name="keyword"
+                     id="keywordInput"
+                     placeholder="Tìm theo username, email, họ tên..."
+                     value="${keyword}">
+            </div>
 
-            <button type="submit" class="btn-search">
-              <i class="fa fa-search"></i> Tìm
+            <select name="role" id="roleFilter" class="filter-select">
+              <option value="">Tất cả vai trò</option>
+              <option value="ADMIN" ${role == 'ADMIN' ? 'selected' : ''}>Quản trị</option>
+              <option value="CUSTOMER" ${role == 'CUSTOMER' ? 'selected' : ''}>Khách hàng</option>
+              <option value="STAFF_ORDER" ${role == 'STAFF_ORDER' ? 'selected' : ''}>Nhân viên quản lý đơn hàng</option>
+              <option value="STAFF_PRODUCT" ${role == 'STAFF_PRODUCT' ? 'selected' : ''}>Nhân viên quản lý sản phẩm</option>
+              <option value="STAFF_MARKETING" ${role == 'STAFF_MARKETING' ? 'selected' : ''}>Nhân viên marketing</option>
+            </select>
+
+            <select name="status" id="statusFilter" class="filter-select">
+              <option value="">Tất cả trạng thái</option>
+              <option value="ACTIVE" ${status == 'ACTIVE' ? 'selected' : ''}>Hoạt động</option>
+              <option value="BLOCKED" ${status == 'BLOCKED' ? 'selected' : ''}>Bị khóa</option>
+            </select>
+
+            <button type="button" class="btn-search" id="searchBtn">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span>Tìm</span>
             </button>
           </form>
 
@@ -301,5 +318,11 @@
     document.getElementById("confirmModal").style.display = "none";
   }
 </script>
-
+<script>
+  window.userPermissions = {
+    canUpdateUser: ${userlogin.permissions.contains('USER_UPDATE')},
+    canLockUser: ${userlogin.permissions.contains('USER_LOCK')}
+  };
+</script>
+<script src="javaScript/searchUser.js"></script>
 </html>
