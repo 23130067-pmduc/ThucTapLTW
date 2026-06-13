@@ -25,25 +25,52 @@ public class UserAdminController extends HttpServlet {
         String mode = request.getParameter("mode");
 
         if(mode == null){
-            List<User> users = userService.getAllUser();
+            int pageSize = 20;
+            int currentPage = 1;
 
-            int total = users.size();
+            String pageParam = request.getParameter("page");
+
+            if (pageParam != null){
+                try {
+                    currentPage = Integer.parseInt(pageParam);
+                } catch (NumberFormatException e){
+                    currentPage = 1;
+                }
+            }
+
+            if (currentPage < 1){
+                currentPage = 1;
+            }
+
+            int totalUsers = userService.countAllUsers();
+
+            int totalPages = (int) Math.ceil((double) totalUsers / pageSize);
+
+            if (totalPages == 0){
+                totalPages = 1;
+            }
+
+            if (currentPage > totalPages){
+                currentPage = totalPages;
+            }
+
+            int offset = (currentPage - 1) * pageSize;
+
+
+            List<User> users = userService.getUserByPage(pageSize, offset);
+
             int countInWeek = userService.getCountInWeek();
             int countActive = userService.getCountActive();
             int countBlock = userService.getCountBlock();
 
-            String keyword = request.getParameter("keyword");
 
-            if (keyword != null && !keyword.trim().isEmpty()) {
-                users = userService.searchByUsernameOrEmail(keyword);
-            }
-
-
-            request.setAttribute("total", total);
+            request.setAttribute("total", totalUsers);
             request.setAttribute("countInWeek", countInWeek);
             request.setAttribute("countActive", countActive);
             request.setAttribute("countBlock", countBlock);
             request.setAttribute("users", users);
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
             request.getRequestDispatcher("/user-admin.jsp").forward(request,response);
             return;
         }

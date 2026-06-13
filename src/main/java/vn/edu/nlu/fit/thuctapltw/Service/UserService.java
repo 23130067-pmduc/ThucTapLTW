@@ -194,4 +194,12 @@ public class UserService {
     public int getRoleIdByName(String roleName) {
         return userDao.getRoleByIdName(roleName);
     }
+
+    public int countAllUsers() {
+        return userDao.countAllUsers();
+    }
+
+    public List<User> getUserByPage(int pageSize, int offset) {
+        return userDao.getUserByPage(pageSize, offset);
+    }
 }

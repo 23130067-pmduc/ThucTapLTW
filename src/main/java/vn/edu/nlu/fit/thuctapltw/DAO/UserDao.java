@@ -343,5 +343,26 @@ public class UserDao extends BaseDao {
                 .orElseThrow(() -> new RuntimeException("Role không tồn tại: " + roleName))
         );
     }
+
+    public int countAllUsers() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM users""")
+                .mapTo(Integer.class)
+                .one());
+    }
+
+    public List<User> getUserByPage(int pageSize, int offset) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT u.id, u.username, u.full_name AS fullName, u.email, u.phone, u.gender, u.status, r.name AS roleName
+                FROM users u
+                LEFT JOIN roles r ON u.role_id = r.id
+                ORDER BY u.id DESC
+                LIMIT :pageSize OFFSET :offset""")
+                .bind("pageSize", pageSize)
+                .bind("offset", offset)
+                .mapToBean(User.class)
+                .list());
+    }
 }
 
