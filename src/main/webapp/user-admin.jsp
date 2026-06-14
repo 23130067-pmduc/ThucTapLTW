@@ -197,9 +197,9 @@
                 <td>${u.email}</td>
                 <td>
                   <c:choose>
-                    <c:when test="${u.roleName == 'ADMIN'}">Quản trị</c:when>
-                    <c:when test="${u.roleName == 'STAFF_PRODUCT'}">Nhân viên sản phẩm</c:when>
-                    <c:when test="${u.roleName == 'STAFF_ORDER'}">Nhân viên đơn hàng</c:when>
+                    <c:when test="${u.roleName == 'ADMIN'}">Quản trị viên</c:when>
+                    <c:when test="${u.roleName == 'STAFF_PRODUCT'}">Nhân viên quản lý sản phẩm</c:when>
+                    <c:when test="${u.roleName == 'STAFF_ORDER'}">Nhân viên quản lý đơn hàng</c:when>
                     <c:when test="${u.roleName == 'STAFF_MARKETING'}">Nhân viên marketing</c:when>
                     <c:otherwise>Khách hàng</c:otherwise>
                   </c:choose>

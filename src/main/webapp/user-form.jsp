@@ -54,9 +54,13 @@
 
         <div class="col">
           <label>Vai trò</label>
-          <select name="role">
-            <option value="admin" <c:if test="${user.role == 'admin'}">selected</c:if>>Quản trị</option>
-            <option value="customer" <c:if test="${user.role == 'customer'}">selected</c:if>>Khách hàng</option>
+          <select name="role" <c:if test="${mode == 'view'}">disabled</c:if>>
+            <c:forEach var="roleItem" items="${roles}">
+              <option value="${roleItem.name}"
+                      <c:if test="${user.roleName == roleItem.name}">selected</c:if>>
+                  ${roleItem.description}
+              </option>
+            </c:forEach>
           </select>
         </div>
       </div>

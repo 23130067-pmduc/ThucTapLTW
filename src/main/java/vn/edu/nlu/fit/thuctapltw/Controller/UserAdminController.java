@@ -5,10 +5,11 @@ import com.google.gson.GsonBuilder;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import vn.edu.nlu.fit.thuctapltw.Service.RoleService;
 import vn.edu.nlu.fit.thuctapltw.Service.UserService;
+import vn.edu.nlu.fit.thuctapltw.model.Role;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
-import javax.management.relation.Role;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,10 +19,12 @@ import java.util.Map;
 @WebServlet(name = "UserAdminController", value = "/user-admin")
 public class UserAdminController extends HttpServlet {
     private UserService userService;
+    private RoleService roleService;
 
     @Override
     public void init(){
         userService = new UserService();
+        roleService = new RoleService();
     }
 
     @Override
@@ -198,15 +201,21 @@ public class UserAdminController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             User user = userService.findById(id);
 
+            List<Role> roles = roleService.getAllRoles();
+
             request.setAttribute("user", user);
             request.setAttribute("mode", mode);
+            request.setAttribute("roles", roles);
 
             request.getRequestDispatcher("/user-form.jsp").forward(request,response);
             return;
         }
 
         if("add".equals(mode)){
+            List<Role> roles = roleService.getAllRoles();
+
             request.setAttribute("mode", "add");
+            request.setAttribute("roles", roles);
             request.getRequestDispatcher("/user-form.jsp").forward(request, response);
         }
 
@@ -227,7 +236,7 @@ public class UserAdminController extends HttpServlet {
             user.setStatus(request.getParameter("status"));
             user.setFullName(request.getParameter("full_name"));
             user.setPhone(request.getParameter("phone"));
-            user.setGender(request.getParameter("gander"));
+            user.setGender(request.getParameter("gender"));
 
 
 
