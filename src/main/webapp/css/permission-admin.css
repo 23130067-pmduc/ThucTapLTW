@@ -226,6 +226,7 @@ body {
     justify-content: space-between;
     align-items: center;
     transition: all 0.25s;
+    text-decoration: none;
 }
 
 .role-item strong {
