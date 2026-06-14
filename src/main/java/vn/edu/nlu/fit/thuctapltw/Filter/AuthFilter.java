@@ -17,6 +17,7 @@ import java.io.IOException;
         "/category-admin",
         "/order-admin",
         "/user-admin",
+        "/permission-admin",
         "/banner-admin",
         "/voucher-admin",
         "/promotion-event-admin",
