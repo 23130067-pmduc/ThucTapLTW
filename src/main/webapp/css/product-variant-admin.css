@@ -475,3 +475,45 @@ body {
 .variant-table tr.variant-out-stock-row:hover {
     background: #ffe8e8;
 }
+
+
+.status-active {
+    background: #e3f7e9;
+    color: #2e7d32;
+}
+
+.status-locked {
+    background: #eceff3;
+    color: #667085;
+}
+
+.icon-btn.lock {
+    color: #e03131;
+}
+
+.icon-btn.restore {
+    color: #2f9e44;
+}
+
+.btn-success {
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    background: #4caf50;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #43a047;
+}
+
+.variant-locked-row {
+    background: #f6f7f9;
+    color: #667085;
+}
+
+.variant-table tr.variant-locked-row:hover {
+    background: #eceff3;
+}

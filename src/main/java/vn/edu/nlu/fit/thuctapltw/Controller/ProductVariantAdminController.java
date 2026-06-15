@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vn.edu.nlu.fit.thuctapltw.DAO.ProductVariantDao;
 import vn.edu.nlu.fit.thuctapltw.Service.ProductVariantService;
 import vn.edu.nlu.fit.thuctapltw.model.ProductVariant;
 
@@ -99,8 +100,8 @@ public class ProductVariantAdminController extends HttpServlet {
             case "update":
                 handleUpdate(request, response);
                 return;
-            case "delete":
-                handleDelete(request, response);
+            case "updateStatus":
+                handleUpdateStatus(request, response);
                 return;
             default:
                 response.sendRedirect("product-admin");
@@ -116,6 +117,7 @@ public class ProductVariantAdminController extends HttpServlet {
             variant.setStock(parseOptionalInt(request.getParameter("stock"), 0));
             variant.setPrice(parseOptionalDouble(request.getParameter("price"), 0.0));
             variant.setSalePrice(parseOptionalDouble(request.getParameter("salePrice"), 0.0));
+            variant.setStatus(ProductVariantDao.STATUS_ACTIVE);
 
             productVariantService.createVariant(variant);
             response.sendRedirect("product-variant-admin?productId=" + variant.getProductId());
@@ -142,12 +144,18 @@ public class ProductVariantAdminController extends HttpServlet {
         }
     }
 
-    private void handleDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    private void handleUpdateStatus(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             int id = parseRequiredInt(request.getParameter("id"));
             int productId = parseRequiredInt(request.getParameter("productId"));
+            String status = request.getParameter("status");
 
-            productVariantService.deleteVariant(id);
+            if (!ProductVariantDao.STATUS_ACTIVE.equals(status) && !ProductVariantDao.STATUS_INACTIVE.equals(status)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Trạng thái biến thể không hợp lệ");
+                return;
+            }
+
+            productVariantService.updateVariantStatus(id, status);
             response.sendRedirect("product-variant-admin?productId=" + productId);
         } catch (NumberFormatException e) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Dữ liệu không hợp lệ: " + e.getMessage());

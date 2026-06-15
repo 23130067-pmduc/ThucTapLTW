@@ -13,29 +13,18 @@ public class ProductVariant {
 
     @ColumnName("color_id")
     private int colorId;
+
     private int stock;
     private double price;
 
     @ColumnName("sale_price")
     private double salePrice;
 
+    private String status;
     private String sizeName;
     private String colorName;
 
-    public String getSizeName() {
-        return sizeName;
-    }
-
-    public void setSizeName(String sizeName) {
-        this.sizeName = sizeName;
-    }
-
-    public String getColorName() {
-        return colorName;
-    }
-
-    public void setColorName(String colorName) {
-        this.colorName = colorName;
+    public ProductVariant() {
     }
 
     public ProductVariant(int id, int productId, int sizeId, int colorId, int stock, double price, double salePrice) {
@@ -48,7 +37,15 @@ public class ProductVariant {
         this.salePrice = salePrice;
     }
 
-    public ProductVariant() {
+    public ProductVariant(int id, int productId, int sizeId, int colorId, int stock, double price, double salePrice, String status) {
+        this.id = id;
+        this.productId = productId;
+        this.sizeId = sizeId;
+        this.colorId = colorId;
+        this.stock = stock;
+        this.price = price;
+        this.salePrice = salePrice;
+        this.status = status;
     }
 
     public int getId() {
@@ -105,5 +102,29 @@ public class ProductVariant {
 
     public void setSalePrice(double salePrice) {
         this.salePrice = salePrice;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getSizeName() {
+        return sizeName;
+    }
+
+    public void setSizeName(String sizeName) {
+        this.sizeName = sizeName;
+    }
+
+    public String getColorName() {
+        return colorName;
+    }
+
+    public void setColorName(String colorName) {
+        this.colorName = colorName;
     }
 }

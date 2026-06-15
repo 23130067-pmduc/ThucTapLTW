@@ -1,10 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const deleteModal = document.getElementById('deleteModal');
-    const deleteMessage = document.getElementById('deleteMessage');
-    const deleteVariantId = document.getElementById('deleteVariantId');
+    const statusModal = document.getElementById('statusModal');
+    const statusMessage = document.getElementById('statusMessage');
+    const statusVariantId = document.getElementById('statusVariantId');
+    const statusVariantValue = document.getElementById('statusVariantValue');
+    const statusSubmitBtn = document.getElementById('statusSubmitBtn');
+    const statusModalTitle = document.getElementById('statusModalTitle');
 
-    const deleteOpenButtons = document.querySelectorAll('.js-open-delete-modal');
-    const deleteCloseButtons = document.querySelectorAll('.js-close-delete-modal');
+    const statusOpenButtons = document.querySelectorAll('.js-open-status-modal');
+    const statusCloseButtons = document.querySelectorAll('.js-close-status-modal');
 
     function openModal(modal) {
         if (!modal) {
@@ -24,39 +27,54 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.setAttribute('aria-hidden', 'true');
     }
 
-    function openDeleteModal(id, name) {
-        if (!deleteVariantId || !deleteMessage) {
+    function openStatusModal(id, name, status, actionLabel) {
+        if (!statusVariantId || !statusVariantValue || !statusMessage || !statusSubmitBtn || !statusModalTitle) {
             return;
         }
 
-        deleteVariantId.value = id;
-        deleteMessage.innerHTML = 'Bạn có chắc muốn xóa biến thể <b>' + name + '</b> không?';
-        openModal(deleteModal);
+        statusVariantId.value = id;
+        statusVariantValue.value = status;
+
+        if (status === 'Đang bán') {
+            statusModalTitle.innerText = 'Xác nhận mở biến thể';
+            statusMessage.innerHTML = 'Bạn có chắc muốn mở lại biến thể <b>' + name + '</b> không?';
+            statusSubmitBtn.innerText = 'Mở biến thể';
+            statusSubmitBtn.classList.remove('btn-danger');
+            statusSubmitBtn.classList.add('btn-success');
+        } else {
+            statusModalTitle.innerText = 'Xác nhận khóa biến thể';
+            statusMessage.innerHTML = 'Bạn có chắc muốn khóa biến thể <b>' + name + '</b> không? Biến thể sẽ không hiển thị cho khách hàng chọn mua.';
+            statusSubmitBtn.innerText = 'Khóa biến thể';
+            statusSubmitBtn.classList.remove('btn-success');
+            statusSubmitBtn.classList.add('btn-danger');
+        }
+
+        openModal(statusModal);
     }
 
-    deleteOpenButtons.forEach(function (button) {
+    statusOpenButtons.forEach(function (button) {
         button.addEventListener('click', function () {
-            openDeleteModal(button.dataset.id, button.dataset.name);
+            openStatusModal(button.dataset.id, button.dataset.name, button.dataset.status, button.dataset.actionLabel);
         });
     });
 
-    deleteCloseButtons.forEach(function (button) {
+    statusCloseButtons.forEach(function (button) {
         button.addEventListener('click', function () {
-            closeModal(deleteModal);
+            closeModal(statusModal);
         });
     });
 
-    if (deleteModal) {
-        deleteModal.addEventListener('click', function (event) {
-            if (event.target === deleteModal) {
-                closeModal(deleteModal);
+    if (statusModal) {
+        statusModal.addEventListener('click', function (event) {
+            if (event.target === statusModal) {
+                closeModal(statusModal);
             }
         });
     }
 
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
-            closeModal(deleteModal);
+            closeModal(statusModal);
         }
     });
 });

@@ -162,6 +162,7 @@
                         <th>Giá</th>
                         <th>Giá sale</th>
                         <th>Tồn kho</th>
+                        <th>Trạng thái</th>
                         <th>Hành động</th>
                     </tr>
                     </thead>
@@ -169,7 +170,7 @@
                     <c:choose>
                         <c:when test="${not empty variants}">
                             <c:forEach items="${variants}" var="variant">
-                                <tr class="${variant.stock == 0 ? 'variant-out-stock-row' : (variant.stock <= 10 ? 'variant-low-stock-row' : '')}">
+                                <tr class="${variant.status eq 'Ngừng bán' ? 'variant-locked-row' : (variant.stock == 0 ? 'variant-out-stock-row' : (variant.stock <= 10 ? 'variant-low-stock-row' : ''))}">
                                     <td>${variant.id}</td>
                                     <td>${variant.sizeName}</td>
                                     <td>${variant.colorName}</td>
@@ -189,6 +190,16 @@
                                         </c:choose>
                                     </td>
                                     <td>
+                                        <c:choose>
+                                            <c:when test="${variant.status eq 'Đang bán'}">
+                                                <span class="status status-active">Đang bán</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="status status-locked">Ngừng bán</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
                                         <div class="table-actions">
                                             <a href="product-variant-admin?mode=view&amp;id=${variant.id}&amp;productId=${productId}"
                                                class="icon-btn view"
@@ -202,13 +213,30 @@
                                                 <i class="fa-solid fa-pen"></i>
                                             </a>
 
-                                            <button type="button"
-                                                    class="icon-btn delete js-open-delete-modal"
-                                                    title="Xóa"
-                                                    data-id="${variant.id}"
-                                                    data-name="${variant.sizeName} - ${variant.colorName}">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
+                                            <c:choose>
+                                                <c:when test="${variant.status eq 'Đang bán'}">
+                                                    <button type="button"
+                                                            class="icon-btn lock js-open-status-modal"
+                                                            title="Khóa biến thể"
+                                                            data-id="${variant.id}"
+                                                            data-name="${variant.sizeName} - ${variant.colorName}"
+                                                            data-status="Ngừng bán"
+                                                            data-action-label="khóa">
+                                                        <i class="fa fa-lock"></i>
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button type="button"
+                                                            class="icon-btn restore js-open-status-modal"
+                                                            title="Mở biến thể"
+                                                            data-id="${variant.id}"
+                                                            data-name="${variant.sizeName} - ${variant.colorName}"
+                                                            data-status="Đang bán"
+                                                            data-action-label="mở">
+                                                        <i class="fa fa-lock-open"></i>
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </td>
                                 </tr>
@@ -216,7 +244,7 @@
                         </c:when>
                         <c:otherwise>
                             <tr>
-                                <td colspan="7" class="empty-state">Chưa có biến thể nào cho sản phẩm này.</td>
+                                <td colspan="8" class="empty-state">Chưa có biến thể nào cho sản phẩm này.</td>
                             </tr>
                         </c:otherwise>
                     </c:choose>
@@ -227,19 +255,20 @@
     </section>
 </div>
 
-<div id="deleteModal" class="modal-overlay" aria-hidden="true">
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
-        <h3 id="deleteModalTitle">Xác nhận xóa</h3>
-        <p id="deleteMessage">Bạn có chắc muốn xóa biến thể này không?</p>
+<div id="statusModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="statusModalTitle">
+        <h3 id="statusModalTitle">Xác nhận</h3>
+        <p id="statusMessage"></p>
 
         <form method="post" action="product-variant-admin">
-            <input type="hidden" name="action" value="delete">
-            <input type="hidden" name="id" id="deleteVariantId">
+            <input type="hidden" name="action" value="updateStatus">
+            <input type="hidden" name="id" id="statusVariantId">
+            <input type="hidden" name="status" id="statusVariantValue">
             <input type="hidden" name="productId" value="${productId}">
 
             <div class="modal-actions">
-                <button type="button" class="btn-secondary js-close-delete-modal">Hủy</button>
-                <button type="submit" class="btn-danger">Xóa</button>
+                <button type="button" class="btn-secondary js-close-status-modal">Hủy</button>
+                <button type="submit" class="btn-danger" id="statusSubmitBtn">Xác nhận</button>
             </div>
         </form>
     </div>

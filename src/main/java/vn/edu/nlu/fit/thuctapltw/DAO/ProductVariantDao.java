@@ -6,13 +6,20 @@ import vn.edu.nlu.fit.thuctapltw.model.Size;
 
 import java.util.List;
 
-public class ProductVariantDao extends BaseDao{
+public class ProductVariantDao extends BaseDao {
+    public static final String STATUS_ACTIVE = "Đang bán";
+    public static final String STATUS_INACTIVE = "Ngừng bán";
+
     public List<ProductVariant> getVariantByProduct(int id) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT *
                 FROM product_variants
                 WHERE product_id = :id
-                """).bind("id", id)
+                  AND status = :status
+                ORDER BY id ASC
+                """)
+                .bind("id", id)
+                .bind("status", STATUS_ACTIVE)
                 .mapToBean(ProductVariant.class)
                 .list());
     }
@@ -37,10 +44,12 @@ public class ProductVariantDao extends BaseDao{
             SELECT *
             FROM product_variants
             WHERE product_id = :pid
+              AND status = :status
             ORDER BY id ASC
             LIMIT 1
         """)
                         .bind("pid", productId)
+                        .bind("status", STATUS_ACTIVE)
                         .mapToBean(ProductVariant.class)
                         .findOne()
                         .orElse(null)
@@ -62,13 +71,32 @@ public class ProductVariantDao extends BaseDao{
     }
 
     public int getStockByVariantId(int variantId) {
-        String sql = "SELECT stock FROM product_variants WHERE id = ?";
         return getJdbi().withHandle(handle ->
-                handle.createQuery(sql)
-                        .bind(0, variantId)
-                        .mapTo(int.class)
-                        .one()
+                handle.createQuery("""
+                        SELECT stock
+                        FROM product_variants
+                        WHERE id = :vid
+                          AND status = :status
+                        """)
+                        .bind("vid", variantId)
+                        .bind("status", STATUS_ACTIVE)
+                        .mapTo(Integer.class)
+                        .findOne()
+                        .orElse(0)
         );
+    }
+
+    public boolean isVariantActive(int variantId) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM product_variants
+                WHERE id = :id
+                  AND status = :status
+                """)
+                .bind("id", variantId)
+                .bind("status", STATUS_ACTIVE)
+                .mapTo(Integer.class)
+                .one() > 0);
     }
 
 
@@ -78,16 +106,18 @@ public class ProductVariantDao extends BaseDao{
             UPDATE product_variants
             SET stock = stock - :q
             WHERE id = :vid
+              AND status = :status
         """)
                         .bind("q", qty)
                         .bind("vid", variantId)
+                        .bind("status", STATUS_ACTIVE)
                         .execute()
         );
     }
 
     public int countVariant(int productId) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
-            SELECT COUNT(*) 
+            SELECT COUNT(*)
             FROM product_variants
             WHERE product_id = :productId
                 """)
@@ -147,19 +177,26 @@ public class ProductVariantDao extends BaseDao{
 
     public ProductVariant getVariantById(int id) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
-                SELECT id, product_id, size_id, color_id, stock, price, sale_price
+                SELECT id, product_id, size_id, color_id, stock, price, sale_price, status
                 FROM product_variants
                 WHERE id = :id""")
                 .bind("id", id)
                 .mapToBean(ProductVariant.class)
-                .one());
+                .findOne()
+                .orElse(null));
     }
 
     public void createVariant(ProductVariant variant) {
         getJdbi().useHandle(handle -> handle.createUpdate("""
-                INSERT INTO product_variants(product_id, size_id, color_id, stock, price, sale_price)
-                VALUES (:productId, :sizeId, :colorId, :stock, :price, :salePrice)""")
-                .bindBean(variant)
+                INSERT INTO product_variants(product_id, size_id, color_id, stock, price, sale_price, status)
+                VALUES (:productId, :sizeId, :colorId, :stock, :price, :salePrice, :status)""")
+                .bind("productId", variant.getProductId())
+                .bind("sizeId", variant.getSizeId())
+                .bind("colorId", variant.getColorId())
+                .bind("stock", variant.getStock())
+                .bind("price", variant.getPrice())
+                .bind("salePrice", variant.getSalePrice())
+                .bind("status", variant.getStatus() == null || variant.getStatus().isBlank() ? STATUS_ACTIVE : variant.getStatus())
                 .execute());
     }
 
@@ -174,21 +211,33 @@ public class ProductVariantDao extends BaseDao{
                 .execute());
     }
 
-    public void deleteVariant(int id) {
+    public void updateVariantStatus(int id, String status) {
         getJdbi().useHandle(handle -> handle.createUpdate("""
-                DELETE FROM product_variants
+                UPDATE product_variants
+                SET status = :status
                 WHERE id = :id""")
                 .bind("id", id)
+                .bind("status", status)
                 .execute());
     }
 
     public List<ProductVariant> getProductVariantByProductId(int productId) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
-                SELECT pv.id, pv.product_id, pv.size_id, pv.color_id, pv.stock, pv.price, pv.sale_price, s.code AS sizeName, c.name AS colorName
+                SELECT pv.id,
+                       pv.product_id,
+                       pv.size_id,
+                       pv.color_id,
+                       pv.stock,
+                       pv.price,
+                       pv.sale_price,
+                       pv.status,
+                       s.code AS sizeName,
+                       c.name AS colorName
                 FROM product_variants pv
                 JOIN sizes s ON pv.size_id = s.id
                 JOIN colors c ON pv.color_id = c.id
                 WHERE pv.product_id = :productId
+                ORDER BY pv.id DESC
                 """)
                 .bind("productId", productId)
                 .mapToBean(ProductVariant.class)
