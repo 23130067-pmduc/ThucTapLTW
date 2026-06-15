@@ -65,6 +65,12 @@
         </a>
       </c:if>
 
+      <c:if test="${userlogin.permissions.contains('PERMISSION_VIEW')}">
+        <a href="${pageContext.request.contextPath}/permission-admin" class="nav-item">
+          <i class="fa-solid fa-user-shield"></i><span>Phân quyền</span>
+        </a>
+      </c:if>
+
       <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
         <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
           <i class="fa-solid fa-image"></i><span>Banner</span>

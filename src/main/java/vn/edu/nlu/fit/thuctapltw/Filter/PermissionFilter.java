@@ -19,6 +19,7 @@ import java.util.Map;
         "/category-admin",
         "/order-admin",
         "/user-admin",
+        "/permission-admin",
         "/banner-admin",
         "/voucher-admin",
         "/promotion-event-admin",
@@ -40,6 +41,7 @@ public class PermissionFilter implements Filter {
         permissionMap.put("/category-admin", "CATEGORY_VIEW");
         permissionMap.put("/order-admin", "ORDER_VIEW");
         permissionMap.put("/user-admin", "USER_VIEW");
+        permissionMap.put("/permission-admin", "PERMISSION_VIEW");
         permissionMap.put("/banner-admin", "BANNER_VIEW");
         permissionMap.put("/voucher-admin", "VOUCHER_VIEW");
         permissionMap.put("/promotion-event-admin", "PROMOTION_EVENT_VIEW");
