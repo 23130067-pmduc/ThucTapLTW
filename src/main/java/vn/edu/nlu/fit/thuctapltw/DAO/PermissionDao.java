@@ -33,4 +33,24 @@ public class PermissionDao extends BaseDao{
         return new HashSet<>(permissions);
     }
 
+    public void updatePermissionsForRole(int roleId, List<Integer> permissionIds) {
+        getJdbi().useTransaction(handle -> {
+            handle.createUpdate("""
+                DELETE FROM role_permissions
+                WHERE role_id = :roleId
+                """)
+                    .bind("roleId", roleId)
+                    .execute();
+
+            for (Integer permissionId : permissionIds) {
+                handle.createUpdate("""
+                    INSERT INTO role_permissions(role_id, permission_id)
+                    VALUES (:roleId, :permissionId)
+                    """)
+                        .bind("roleId", roleId)
+                        .bind("permissionId", permissionId)
+                        .execute();
+            }
+        });
+    }
 }

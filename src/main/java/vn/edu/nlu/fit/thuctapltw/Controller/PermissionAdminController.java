@@ -35,10 +35,12 @@ public class PermissionAdminController extends HttpServlet {
 
         int selectedRoleId = 0;
         String selectedRoleName = "";
+        String selectedRoleDescription = "";
 
         if (!roles.isEmpty()) {
             selectedRoleId = roles.get(0).getId();
             selectedRoleName = roles.get(0).getName();
+            selectedRoleDescription = roles.get(0).getDescription();
         }
 
         String roleIdParam = request.getParameter("roleId");
@@ -52,6 +54,7 @@ public class PermissionAdminController extends HttpServlet {
         for (Role role : roles) {
             if (role.getId() == selectedRoleId) {
                 selectedRoleName = role.getName();
+                selectedRoleDescription = role.getDescription();
                 break;
             }
         }
@@ -65,13 +68,52 @@ public class PermissionAdminController extends HttpServlet {
         request.setAttribute("permissionGroups", permissionGroups);
         request.setAttribute("selectedRoleId", selectedRoleId);
         request.setAttribute("selectedRoleName", selectedRoleName);
+        request.setAttribute("selectedRoleDescription", selectedRoleDescription);
         request.setAttribute("selectedRolePermissions", selectedRolePermissions);
 
         request.getRequestDispatcher("/permission-admin.jsp").forward(request, response);
     }
 
 
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
+        int roleId = parseInt(request.getParameter("roleId"), 0);
+
+        if (roleId <= 0) {
+            response.sendRedirect(request.getContextPath() + "/permission-admin");
+            return;
+        }
+
+        String[] permissionIdParams = request.getParameterValues("permissions");
+        List<Integer> permissionIds = new ArrayList<>();
+
+        if (permissionIdParams != null) {
+            for (String permissionIdParam : permissionIdParams) {
+                int permissionId = parseInt(permissionIdParam, 0);
+
+                if (permissionId > 0) {
+                    permissionIds.add(permissionId);
+                }
+            }
+        }
+
+        permissionService.updatePermissionsForRole(roleId, permissionIds);
+
+        response.sendRedirect(request.getContextPath() + "/permission-admin?roleId=" + roleId);
+    }
+
+    private int parseInt(String value, int defaultValue) {
+        if (value == null || value.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
 
 
     private Map<String, List<Permission>> groupPermissions(List<Permission> permissions) {

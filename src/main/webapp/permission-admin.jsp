@@ -149,8 +149,7 @@
                 <a href="${pageContext.request.contextPath}/permission-admin?roleId=${role.id}"
                    class="role-item ${role.id == selectedRoleId ? 'active' : ''}">
                   <div>
-                    <strong>${role.name}</strong>
-                    <p>${role.description}</p>
+                    <strong>${role.description}</strong>
                   </div>
                   <i class="fa-solid fa-chevron-right"></i>
                 </a>
@@ -166,7 +165,7 @@
               <div class="card-header permission-header">
                 <div>
                   <h2>Danh sách quyền</h2>
-                  <p>Vai trò đang chọn: <strong id="selectedRoleName">${selectedRoleName}</strong></p>
+                  <p>Vai trò đang chọn: <strong id="selectedRoleName">${selectedRoleDescription}</strong></p>
                 </div>
 
                 <c:if test="${userlogin.permissions.contains('PERMISSION_UPDATE')}">
@@ -180,7 +179,6 @@
               <c:forEach items="${permissionGroups}" var="group">
                 <div class="permission-group">
                   <div class="group-title">
-                    <i class="fa-solid fa-folder-open"></i>
                     <span>${group.key}</span>
                   </div>
 
@@ -192,8 +190,7 @@
                                value="${permission.id}"
                           ${selectedRolePermissions.contains(permission.name) ? 'checked' : ''}>
                         <div>
-                          <strong>${permission.name}</strong>
-                          <p>${permission.description}</p>
+                          <strong>${permission.description}</strong>
                         </div>
                       </label>
                     </c:forEach>

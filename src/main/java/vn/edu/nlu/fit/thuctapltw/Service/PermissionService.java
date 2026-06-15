@@ -16,4 +16,8 @@ public class PermissionService {
     public Set<String> getPermissionNamesByRoleId(int roleId){
         return permissionDao.getPermissionNamesByRoleId(roleId);
     }
+
+    public void updatePermissionsForRole(int roleId, List<Integer> permissionIds) {
+        permissionDao.updatePermissionsForRole(roleId, permissionIds);
+    }
 }
