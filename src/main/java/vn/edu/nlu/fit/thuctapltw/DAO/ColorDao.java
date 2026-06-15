@@ -11,6 +11,7 @@ public class ColorDao extends BaseDao {
                 FROM product_variants p
                 JOIN colors c ON p.color_id = c.id
                 WHERE p.product_id = :id
+                  AND p.status = 'Đang bán'
                 """)
                 .bind("id",id)
                 .mapToBean(Color.class)

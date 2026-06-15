@@ -14,7 +14,6 @@ public class ProductVariantService {
         return productVariantDao.getVariantByProduct(id);
     }
 
-
     public int countVariant(int productId) {
         return productVariantDao.countVariant(productId);
     }
@@ -39,12 +38,14 @@ public class ProductVariantService {
         return productVariantDao.getAllColor();
     }
 
-
     public ProductVariant getVariantById(int id) {
         return productVariantDao.getVariantById(id);
     }
 
     public void createVariant(ProductVariant variant) {
+        if (variant.getStatus() == null || variant.getStatus().isBlank()) {
+            variant.setStatus(ProductVariantDao.STATUS_ACTIVE);
+        }
         productVariantDao.createVariant(variant);
     }
 
@@ -52,8 +53,8 @@ public class ProductVariantService {
         productVariantDao.updateVariant(variant);
     }
 
-    public void deleteVariant(int id) {
-        productVariantDao.deleteVariant(id);
+    public void updateVariantStatus(int id, String status) {
+        productVariantDao.updateVariantStatus(id, status);
     }
 
     public List<ProductVariant> getProductVariantByProductId(int productId) {

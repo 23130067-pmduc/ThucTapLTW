@@ -100,6 +100,18 @@ public class AddCart extends HttpServlet {
                 return;
             }
 
+            if (!variantDao.isVariantActive(variantId)) {
+                if (isAjax) {
+                    response.setContentType("application/json");
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("{\"success\":false,\"message\":\"Biến thể này đang ngừng bán\"}");
+                    return;
+                }
+
+                response.sendRedirect(request.getContextPath() + "/my-cart?error=variant_inactive");
+                return;
+            }
+
             int quantity = 1;
             String qtyParam = request.getParameter("quantity");
             if (qtyParam != null && !qtyParam.trim().isEmpty()) {

@@ -11,6 +11,7 @@ public class SizeDao extends BaseDao {
                 FROM product_variants p
                 JOIN sizes s ON p.size_id = s.id
                 WHERE p.product_id = :id
+                  AND p.status = 'Đang bán'
                 ORDER BY s.sort_order
                 """)
                 .bind("id",id)
