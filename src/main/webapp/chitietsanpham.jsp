@@ -8,6 +8,9 @@
     request.setAttribute("pageTitle" , "Chi tiết sản phẩm");
 %>
 
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/quick-add-modal.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/product-card.css">
+
 <%@include file="header.jsp"%>
 
 
@@ -239,22 +242,47 @@
 
     <section class="suggested-products">
         <h2>Sản phẩm phù hợp khác</h2>
-        <div class="suggested-list">
-            <c:forEach var="item" items="${ralatedProducts}">
-                <div class="suggested-item">
-                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${item.id}" class="link-cover">
-                        <img src="${item.thumbnail}" alt="${item.name}">
-                    </a>
-                    <h3 class="name"><a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${item.id}">${item.name}</a></h3>
-                    <fmt:setLocale value="vi_VN"/>
+
+        <div class="suggested-list product-list">
+            <c:forEach var="p" items="${ralatedProducts}">
+                <div class="product-card">
+                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}" class="link-cover"></a>
+
+                    <img src="${p.thumbnail}" alt="${p.name}">
+
+                    <h3>${p.name}</h3>
+
                     <p class="price">
-                        Giá: <span class="new-price">
-                        <fmt:formatNumber value="${item.sale_price}" type="number" groupingUsed="true"/>đ
-                    </span>
+                        Giá:
+                        <c:choose>
+                            <c:when test="${p.price ne p.sale_price}">
+                            <span class="new-price">
+                                <fmt:formatNumber value="${p.sale_price}" type="number"/>đ
+                            </span>
+                                <span class="old-price">
+                                <fmt:formatNumber value="${p.price}" type="number"/>đ
+                            </span>
+                            </c:when>
+
+                            <c:otherwise>
+                            <span class="new-price">
+                                <fmt:formatNumber value="${p.price}" type="number"/>đ
+                            </span>
+                            </c:otherwise>
+                        </c:choose>
                     </p>
-                    <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${item.id}" class="btn-add">
-                        Thêm vào giỏ
-                    </a>
+
+                    <div class="button">
+                        <a href="${pageContext.request.contextPath}/chi-tiet-san-pham?id=${p.id}&quantity=1"
+                           class="btn-detail">
+                            Xem chi tiết
+                        </a>
+
+                        <button class="btn-add"
+                                data-product-id="${p.id}">
+                            Thêm vào giỏ hàng
+                        </button>
+                    </div>
                 </div>
             </c:forEach>
 
@@ -262,7 +290,10 @@
                 <p>Không tìm thấy sản phẩm phù hợp khác.</p>
             </c:if>
         </div>
-        <a href="san-pham" class="btn-view-more">Xem thêm</a>
+
+        <a href="${pageContext.request.contextPath}/san-pham" class="btn-view-more">
+            Xem thêm
+        </a>
     </section>
 </main>
 
@@ -665,5 +696,6 @@
         }
     });
 </script>
+<%@ include file="quick-add-modal.jsp" %>
 
 <%@include file="footer.jsp"%>
