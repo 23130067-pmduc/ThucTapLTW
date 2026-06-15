@@ -55,7 +55,7 @@ public class QuickAddInfoController extends HttpServlet {
             }
 
 
-            List<ProductImage> listImage = productImageService.getImageByProduct(id);
+            List<ProductImage> listImage = productImageService.getVisibleImagesByProduct(id);
 
             String mainImage = null;
             if (listImage != null) {

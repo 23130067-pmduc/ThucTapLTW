@@ -12,11 +12,26 @@ public class ProductImageService {
         return productImageDao.getImageByProduct(id);
     }
 
+    public List<ProductImage> getVisibleImagesByProduct(int id) {
+        return productImageDao.getVisibleImagesByProduct(id);
+    }
+
     public ProductImage getImageById(int id) {
         return productImageDao.getImageById(id);
     }
 
+    public int countVisibleImages(int productId) {
+        return productImageDao.countImagesByStatus(productId, ProductImageDao.STATUS_VISIBLE);
+    }
+
+    public int countHiddenImages(int productId) {
+        return productImageDao.countImagesByStatus(productId, ProductImageDao.STATUS_HIDDEN);
+    }
+
     public void createImage(ProductImage image) {
+        if (image.getStatus() == null || image.getStatus().isBlank()) {
+            image.setStatus(ProductImageDao.STATUS_VISIBLE);
+        }
         productImageDao.insert(image);
     }
 
@@ -24,7 +39,7 @@ public class ProductImageService {
         productImageDao.update(image);
     }
 
-    public void deleteImage(int id) {
-        productImageDao.delete(id);
+    public void updateImageStatus(int id, String status) {
+        productImageDao.updateStatus(id, status);
     }
 }

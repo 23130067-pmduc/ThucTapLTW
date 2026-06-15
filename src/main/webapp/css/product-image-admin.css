@@ -309,101 +309,82 @@ body {
 .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.45);
     display: none;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
     z-index: 1000;
 }
 
-.modal-overlay.is-open {
+.modal-overlay.show {
     display: flex;
 }
 
-.modal-content {
+.modal {
+    width: 100%;
+    max-width: 380px;
+    padding: 20px 25px;
+    border-radius: 12px;
     background: #fff;
-    border-radius: 10px;
+    text-align: center;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.modal-small {
-    width: 400px;
-    max-width: calc(100vw - 32px);
-}
-
-.modal-header {
-    padding: 20px 25px;
-    border-bottom: 1px solid #eee;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    font-size: 18px;
+.modal h3 {
+    margin: 0 0 10px;
     color: #333;
+    font-size: 20px;
 }
 
-.modal-close {
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #999;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-close:hover {
-    color: #333;
-}
-
-.modal-body {
-    padding: 25px;
-}
-
-.modal-body p {
+.modal p {
+    margin: 0;
     color: #555;
     line-height: 1.6;
 }
 
-.modal-footer {
-    padding: 15px 25px;
-    border-top: 1px solid #eee;
+.modal-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 10px;
+    margin-top: 20px;
 }
 
-.btn-cancel,
-.btn-delete {
+.btn-danger,
+.btn-secondary,
+.btn-success {
     border: none;
-    padding: 8px 16px;
+    padding: 8px 14px;
     border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
 }
 
-.btn-cancel {
-    background: #e0e0e0;
-    color: #333;
-}
-
-.btn-cancel:hover {
-    background: #d5d5d5;
-}
-
-.btn-delete {
+.btn-danger {
     background: #f44336;
     color: #fff;
 }
 
-.btn-delete:hover {
+.btn-danger:hover {
     background: #e53935;
+}
+
+.btn-secondary {
+    background: #dddddd;
+    color: #111;
+}
+
+.btn-secondary:hover {
+    background: #cccccc;
+}
+
+.btn-success {
+    background: #4caf50;
+    color: #fff;
+}
+
+.btn-success:hover {
+    background: #43a047;
 }
 
 .alert {
@@ -422,3 +403,26 @@ body {
 .text-center {
     text-align: center;
 }
+
+.status.hidden {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.row-hidden {
+    background: #fffaf0;
+}
+
+.row-hidden .product-thumbnail {
+    opacity: 0.45;
+    filter: grayscale(70%);
+}
+
+.icon-btn.lock {
+    color: #f08c00;
+}
+
+.icon-btn.unlock {
+    color: #2f9e44;
+}
+

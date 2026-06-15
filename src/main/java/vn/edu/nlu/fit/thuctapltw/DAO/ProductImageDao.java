@@ -4,10 +4,13 @@ import vn.edu.nlu.fit.thuctapltw.model.ProductImage;
 
 import java.util.List;
 
-public class ProductImageDao extends BaseDao{
+public class ProductImageDao extends BaseDao {
+    public static final String STATUS_VISIBLE = "Hiển thị";
+    public static final String STATUS_HIDDEN = "Ẩn";
+
     public List<ProductImage> getImageByProduct(int id) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
-                SELECT id, product_id, image_url, is_main AS main
+                SELECT id, product_id, image_url, is_main AS main, status
                 FROM product_images
                 WHERE product_id = :id
                 ORDER BY is_main DESC, id DESC
@@ -17,9 +20,23 @@ public class ProductImageDao extends BaseDao{
                 .list());
     }
 
+    public List<ProductImage> getVisibleImagesByProduct(int id) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT id, product_id, image_url, is_main AS main, status
+                FROM product_images
+                WHERE product_id = :id
+                  AND status = :status
+                ORDER BY is_main DESC, id DESC
+                """)
+                .bind("id", id)
+                .bind("status", STATUS_VISIBLE)
+                .mapToBean(ProductImage.class)
+                .list());
+    }
+
     public ProductImage getImageById(int id) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
-                SELECT id, product_id, image_url, is_main AS main
+                SELECT id, product_id, image_url, is_main AS main, status
                 FROM product_images
                 WHERE id = :id
                 """)
@@ -29,14 +46,28 @@ public class ProductImageDao extends BaseDao{
                 .orElse(null));
     }
 
+    public int countImagesByStatus(int productId, String status) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM product_images
+                WHERE product_id = :productId
+                  AND status = :status
+                """)
+                .bind("productId", productId)
+                .bind("status", status)
+                .mapTo(int.class)
+                .one());
+    }
+
     public void insert(ProductImage image) {
         getJdbi().useHandle(handle -> handle.createUpdate("""
-                INSERT INTO product_images (product_id, image_url, is_main)
-                VALUES (:productId, :imageUrl, :main)
+                INSERT INTO product_images (product_id, image_url, is_main, status)
+                VALUES (:productId, :imageUrl, :main, :status)
                 """)
                 .bind("productId", image.getProductId())
                 .bind("imageUrl", image.getImageUrl())
                 .bind("main", image.getMain())
+                .bind("status", normalizeStatus(image.getStatus()))
                 .execute());
     }
 
@@ -52,11 +83,23 @@ public class ProductImageDao extends BaseDao{
                 .execute());
     }
 
-    public void delete(int id) {
+    public void updateStatus(int id, String status) {
         getJdbi().useHandle(handle -> handle.createUpdate("""
-                DELETE FROM product_images WHERE id = :id
+                UPDATE product_images
+                SET status = :status,
+                    is_main = CASE WHEN :status = :hiddenStatus THEN 0 ELSE is_main END
+                WHERE id = :id
                 """)
                 .bind("id", id)
+                .bind("status", status)
+                .bind("hiddenStatus", STATUS_HIDDEN)
                 .execute());
+    }
+
+    private String normalizeStatus(String status) {
+        if (STATUS_HIDDEN.equals(status)) {
+            return STATUS_HIDDEN;
+        }
+        return STATUS_VISIBLE;
     }
 }
