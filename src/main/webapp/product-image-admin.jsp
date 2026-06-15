@@ -137,9 +137,14 @@
             <c:if test="${param.error == 'not_found'}">
                 <div class="alert alert-danger">Không tìm thấy ảnh sản phẩm!</div>
             </c:if>
+            <c:if test="${param.error == 'invalid_status'}">
+                <div class="alert alert-danger">Trạng thái ảnh không hợp lệ!</div>
+            </c:if>
 
             <div class="cards">
                 <div class="card">Tổng Ảnh<br><span>${totalImages}</span></div>
+                <div class="card">Đang Hiển Thị<br><span>${totalVisibleImages}</span></div>
+                <div class="card">Đang Ẩn<br><span>${totalHiddenImages}</span></div>
             </div>
 
             <div class="images-toolbar">
@@ -154,8 +159,9 @@
                     <tr>
                         <th width="5%">STT</th>
                         <th width="8%">ID</th>
-                        <th width="40%">Hình Ảnh</th>
+                        <th width="34%">Hình Ảnh</th>
                         <th width="12%">Ảnh Chính</th>
+                        <th width="14%">Trạng Thái</th>
                         <th width="20%">Hành Động</th>
                     </tr>
                     </thead>
@@ -163,12 +169,12 @@
                     <c:choose>
                         <c:when test="${empty images}">
                             <tr>
-                                <td colspan="5" class="text-center">Chưa có ảnh nào</td>
+                                <td colspan="6" class="text-center">Chưa có ảnh nào</td>
                             </tr>
                         </c:when>
                         <c:otherwise>
                             <c:forEach var="img" items="${images}" varStatus="status">
-                                <tr>
+                                <tr class="${img.status == 'Ẩn' ? 'row-hidden' : ''}">
                                     <td>${status.index + 1}</td>
                                     <td>${img.id}</td>
                                     <td>
@@ -196,6 +202,16 @@
                                         </c:choose>
                                     </td>
                                     <td>
+                                        <c:choose>
+                                            <c:when test="${img.status == 'Ẩn'}">
+                                                <span class="status hidden"><i class="fa fa-eye-slash"></i> Ẩn</span>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <span class="status active"><i class="fa fa-eye"></i> Hiển thị</span>
+                                            </c:otherwise>
+                                        </c:choose>
+                                    </td>
+                                    <td>
                                         <div class="actions">
                                             <a href="${pageContext.request.contextPath}/product-image-admin?productId=${productId}&mode=view&id=${img.id}" class="icon-btn view" title="Xem">
                                                 <i class="fa fa-eye"></i>
@@ -203,9 +219,28 @@
                                             <a href="${pageContext.request.contextPath}/product-image-admin?productId=${productId}&mode=edit&id=${img.id}" class="icon-btn edit" title="Sửa">
                                                 <i class="fa fa-pen"></i>
                                             </a>
-                                            <button type="button" class="icon-btn delete js-delete-image" data-image-id="${img.id}" title="Xóa">
-                                                <i class="fa fa-trash"></i>
-                                            </button>
+                                            <c:choose>
+                                                <c:when test="${img.status == 'Ẩn'}">
+                                                    <button type="button"
+                                                            class="icon-btn unlock js-toggle-image-status"
+                                                            data-image-id="${img.id}"
+                                                            data-next-status="Hiển thị"
+                                                            data-action-label="hiển thị lại"
+                                                            title="Hiển thị lại">
+                                                        <i class="fa fa-lock-open"></i>
+                                                    </button>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <button type="button"
+                                                            class="icon-btn lock js-toggle-image-status"
+                                                            data-image-id="${img.id}"
+                                                            data-next-status="Ẩn"
+                                                            data-action-label="ẩn"
+                                                            title="Ẩn ảnh">
+                                                        <i class="fa fa-lock"></i>
+                                                    </button>
+                                                </c:otherwise>
+                                            </c:choose>
                                         </div>
                                     </td>
                                 </tr>
@@ -219,66 +254,90 @@
     </section>
 </div>
 
-<div id="delete-modal" class="modal-overlay" aria-hidden="true">
-    <div class="modal-content modal-small">
-        <div class="modal-header">
-            <h3>Xác Nhận Xóa</h3>
-            <button type="button" class="modal-close js-close-delete-modal">&times;</button>
-        </div>
-        <div class="modal-body">
-            <p id="delete-message">Bạn có chắc chắn muốn xóa ảnh này?</p>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn-cancel js-close-delete-modal">Hủy</button>
-            <button type="button" class="btn-delete" id="confirm-delete-btn">Xóa</button>
-        </div>
+<div id="statusModal" class="modal-overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="statusModalTitle">
+        <h3 id="statusModalTitle">Xác nhận</h3>
+        <p id="statusMessage"></p>
+
+        <form id="statusForm" action="${pageContext.request.contextPath}/product-image-admin" method="post">
+            <input type="hidden" name="action" value="updateStatus">
+            <input type="hidden" name="productId" value="${productId}">
+            <input type="hidden" name="id" id="statusImageId" value="">
+            <input type="hidden" name="status" id="nextImageStatus" value="">
+
+            <div class="modal-actions">
+                <button type="button" class="btn-secondary js-close-status-modal">Hủy</button>
+                <button type="submit" class="btn-danger" id="statusSubmitBtn">Xác nhận</button>
+            </div>
+        </form>
     </div>
 </div>
 
-<form id="delete-form" action="${pageContext.request.contextPath}/product-image-admin" method="post">
-    <input type="hidden" name="action" value="delete">
-    <input type="hidden" name="productId" value="${productId}">
-    <input type="hidden" name="id" id="delete-image-id" value="">
-</form>
-
 <script>
     (() => {
-        const modal = document.getElementById('delete-modal');
-        const deleteForm = document.getElementById('delete-form');
-        const deleteImageIdInput = document.getElementById('delete-image-id');
-        const confirmDeleteButton = document.getElementById('confirm-delete-btn');
-        const deleteButtons = document.querySelectorAll('.js-delete-image');
-        const closeButtons = document.querySelectorAll('.js-close-delete-modal');
+        const statusModal = document.getElementById('statusModal');
+        const statusMessage = document.getElementById('statusMessage');
+        const statusImageId = document.getElementById('statusImageId');
+        const nextImageStatus = document.getElementById('nextImageStatus');
+        const statusSubmitBtn = document.getElementById('statusSubmitBtn');
+        const statusModalTitle = document.getElementById('statusModalTitle');
 
-        function openDeleteModal(imageId) {
-            deleteImageIdInput.value = imageId;
-            modal.classList.add('is-open');
-            modal.setAttribute('aria-hidden', 'false');
+        const statusButtons = document.querySelectorAll('.js-toggle-image-status');
+        const closeButtons = document.querySelectorAll('.js-close-status-modal');
+
+        function openModal() {
+            statusModal.classList.add('show');
+            statusModal.setAttribute('aria-hidden', 'false');
         }
 
-        function closeDeleteModal() {
-            deleteImageIdInput.value = '';
-            modal.classList.remove('is-open');
-            modal.setAttribute('aria-hidden', 'true');
+        function closeModal() {
+            statusImageId.value = '';
+            nextImageStatus.value = '';
+            statusModal.classList.remove('show');
+            statusModal.setAttribute('aria-hidden', 'true');
         }
 
-        deleteButtons.forEach((button) => {
-            button.addEventListener('click', () => openDeleteModal(button.dataset.imageId));
+        function openStatusModal(button) {
+            const imageId = button.dataset.imageId;
+            const status = button.dataset.nextStatus;
+
+            statusImageId.value = imageId;
+            nextImageStatus.value = status;
+
+            statusSubmitBtn.classList.remove('btn-danger', 'btn-success');
+
+            if (status === 'Hiển thị') {
+                statusModalTitle.innerText = 'Xác nhận hiển thị ảnh';
+                statusMessage.innerHTML = 'Bạn có chắc muốn hiển thị lại ảnh này không?';
+                statusSubmitBtn.innerText = 'Hiển thị ảnh';
+                statusSubmitBtn.classList.add('btn-success');
+            } else {
+                statusModalTitle.innerText = 'Xác nhận ẩn ảnh';
+                statusMessage.innerHTML = 'Bạn có chắc muốn ẩn ảnh này không? Ảnh sẽ không hiển thị ở giao diện khách hàng.';
+                statusSubmitBtn.innerText = 'Ẩn ảnh';
+                statusSubmitBtn.classList.add('btn-danger');
+            }
+
+            openModal();
+        }
+
+        statusButtons.forEach((button) => {
+            button.addEventListener('click', () => openStatusModal(button));
         });
 
         closeButtons.forEach((button) => {
-            button.addEventListener('click', closeDeleteModal);
+            button.addEventListener('click', closeModal);
         });
 
-        modal.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                closeDeleteModal();
+        statusModal.addEventListener('click', (event) => {
+            if (event.target === statusModal) {
+                closeModal();
             }
         });
 
-        confirmDeleteButton.addEventListener('click', () => {
-            if (deleteImageIdInput.value) {
-                deleteForm.submit();
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeModal();
             }
         });
     })();

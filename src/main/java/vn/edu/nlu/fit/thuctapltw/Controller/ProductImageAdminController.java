@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import vn.edu.nlu.fit.thuctapltw.DAO.ProductImageDao;
 import vn.edu.nlu.fit.thuctapltw.Service.ProductImageService;
 import vn.edu.nlu.fit.thuctapltw.model.ProductImage;
 
@@ -29,7 +30,7 @@ public class ProductImageAdminController extends HttpServlet {
     private static final String MODE_VIEW = "view";
     private static final String ACTION_CREATE = "create";
     private static final String ACTION_UPDATE = "update";
-    private static final String ACTION_DELETE = "delete";
+    private static final String ACTION_UPDATE_STATUS = "updateStatus";
     private static final String IMAGE_FOLDER = "img";
 
     private ProductImageService productImageService;
@@ -80,7 +81,7 @@ public class ProductImageAdminController extends HttpServlet {
             switch (action) {
                 case ACTION_CREATE -> createImage(request, response, productId);
                 case ACTION_UPDATE -> updateImage(request, response, productId);
-                case ACTION_DELETE -> deleteImage(request, response, productId);
+                case ACTION_UPDATE_STATUS -> updateImageStatus(request, response, productId);
                 default -> response.sendRedirect(REDIRECT_LIST + productId + "&error=invalid_id");
             }
         } catch (Exception exception) {
@@ -95,6 +96,8 @@ public class ProductImageAdminController extends HttpServlet {
         request.setAttribute("images", images);
         request.setAttribute("productId", productId);
         request.setAttribute("totalImages", images.size());
+        request.setAttribute("totalVisibleImages", productImageService.countVisibleImages(productId));
+        request.setAttribute("totalHiddenImages", productImageService.countHiddenImages(productId));
         request.getRequestDispatcher(IMAGE_ADMIN_PAGE).forward(request, response);
     }
 
@@ -137,6 +140,7 @@ public class ProductImageAdminController extends HttpServlet {
         image.setProductId(productId);
         image.setImageUrl(imagePath);
         image.setMain(isMainSelected(request));
+        image.setStatus(ProductImageDao.STATUS_VISIBLE);
 
         productImageService.createImage(image);
         response.sendRedirect(REDIRECT_LIST + productId);
@@ -167,7 +171,7 @@ public class ProductImageAdminController extends HttpServlet {
         response.sendRedirect(REDIRECT_LIST + productId);
     }
 
-    private void deleteImage(HttpServletRequest request, HttpServletResponse response, int productId)
+    private void updateImageStatus(HttpServletRequest request, HttpServletResponse response, int productId)
             throws IOException {
         Integer imageId = parseInteger(request.getParameter("id"));
         if (imageId == null) {
@@ -181,7 +185,13 @@ public class ProductImageAdminController extends HttpServlet {
             return;
         }
 
-        productImageService.deleteImage(imageId);
+        String newStatus = trimToEmpty(request.getParameter("status"));
+        if (!ProductImageDao.STATUS_VISIBLE.equals(newStatus) && !ProductImageDao.STATUS_HIDDEN.equals(newStatus)) {
+            response.sendRedirect(REDIRECT_LIST + productId + "&error=invalid_status");
+            return;
+        }
+
+        productImageService.updateImageStatus(imageId, newStatus);
         response.sendRedirect(REDIRECT_LIST + productId);
     }
 

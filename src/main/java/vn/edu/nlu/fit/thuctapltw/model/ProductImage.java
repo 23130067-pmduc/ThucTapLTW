@@ -12,11 +12,21 @@ public class ProductImage {
     @ColumnName("is_main")
     private boolean main;
 
+    private String status;
+
     public ProductImage(int id, int productId, String imageUrl, boolean main) {
         this.id = id;
         this.productId = productId;
         this.imageUrl = imageUrl;
         this.main = main;
+    }
+
+    public ProductImage(int id, int productId, String imageUrl, boolean main, String status) {
+        this.id = id;
+        this.productId = productId;
+        this.imageUrl = imageUrl;
+        this.main = main;
+        this.status = status;
     }
 
     public ProductImage() {
@@ -52,5 +62,13 @@ public class ProductImage {
 
     public void setMain(boolean main) {
         this.main = main;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

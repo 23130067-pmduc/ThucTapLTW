@@ -70,7 +70,7 @@ public class ProductDetailController extends HttpServlet {
 
         int displayStar = (int) Math.round(avgRating);
 
-        List<ProductImage> listImage = productImageService.getImageByProduct(id);
+        List<ProductImage> listImage = productImageService.getVisibleImagesByProduct(id);
 
         List<Color> listColor = colorService.getColorByProductId(id);
 
