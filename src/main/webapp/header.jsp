@@ -5,6 +5,8 @@
 <html lang="vi">
 <head>
     <title>${pageTitle != null ? pageTitle : "SunnyBear"}</title>
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/img/favicon.png">
+    <link rel="shortcut icon" type="image/x-icon" href="${pageContext.request.contextPath}/favicon.ico">
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/header.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/footer.css">
@@ -30,9 +32,16 @@
                 <div class="notification-header">
                     <span>Thông báo</span>
                 </div>
+
                 <ul id="notification-list" class="notification-list">
                     <li class="notification-empty">Đang tải thông báo...</li>
                 </ul>
+
+                <div class="notification-footer">
+                    <button type="button" id="mark-all-notifications" class="notification-mark-all-btn">
+                        Đánh dấu tất cả đã đọc
+                    </button>
+                </div>
             </div>
         </div>
     </nav>
