@@ -122,26 +122,45 @@ public class ProductDao extends BaseDao {
     public List<Product> findBoyProducts(int limit) {
         return getJdbi().withHandle(handle ->
                 handle.createQuery("""
-            SELECT * FROM products
-            WHERE category_id IN (1,2,3)
-              AND status = 'Đang bán'
-            ORDER BY created_at DESC
-            LIMIT :limit
-        """)
+                SELECT p.*
+                FROM products p
+                LEFT JOIN (
+                    SELECT pv.product_id, SUM(oi.quantity) AS sold_quantity
+                    FROM order_items oi
+                    JOIN product_variants pv ON pv.id = oi.variant_id
+                    JOIN orders o ON o.id = oi.order_id
+                    WHERE o.order_status = 'COMPLETED'
+                    GROUP BY pv.product_id
+                ) AS sold ON sold.product_id = p.id
+                WHERE p.category_id IN (1,2,3)
+                  AND p.status = 'Đang bán'
+                ORDER BY COALESCE(sold.sold_quantity, 0) DESC, p.created_at DESC
+                LIMIT :limit
+            """)
                         .bind("limit", limit)
                         .mapToBean(Product.class)
                         .list()
         );
     }
+
     public List<Product> findGirlProducts(int limit) {
         return getJdbi().withHandle(handle ->
                 handle.createQuery("""
-            SELECT * FROM products
-            WHERE category_id IN (4,5,6,7)
-              AND status = 'Đang bán'
-            ORDER BY created_at DESC
-            LIMIT :limit
-        """)
+                SELECT p.*
+                FROM products p
+                LEFT JOIN (
+                    SELECT pv.product_id, SUM(oi.quantity) AS sold_quantity
+                    FROM order_items oi
+                    JOIN product_variants pv ON pv.id = oi.variant_id
+                    JOIN orders o ON o.id = oi.order_id
+                    WHERE o.order_status = 'COMPLETED'
+                    GROUP BY pv.product_id
+                ) AS sold ON sold.product_id = p.id
+                WHERE p.category_id IN (4,5,6,7)
+                  AND p.status = 'Đang bán'
+                ORDER BY COALESCE(sold.sold_quantity, 0) DESC, p.created_at DESC
+                LIMIT :limit
+            """)
                         .bind("limit", limit)
                         .mapToBean(Product.class)
                         .list()
@@ -150,12 +169,21 @@ public class ProductDao extends BaseDao {
     public List<Product> findAccessoryProducts(int limit) {
         return getJdbi().withHandle(handle ->
                 handle.createQuery("""
-            SELECT * FROM products
-            WHERE category_id IN (8,9,10)
-              AND status = 'Đang bán'
-            ORDER BY created_at DESC
-            LIMIT :limit
-        """)
+                SELECT p.*
+                FROM products p
+                LEFT JOIN (
+                    SELECT pv.product_id, SUM(oi.quantity) AS sold_quantity
+                    FROM order_items oi
+                    JOIN product_variants pv ON pv.id = oi.variant_id
+                    JOIN orders o ON o.id = oi.order_id
+                    WHERE o.order_status = 'COMPLETED'
+                    GROUP BY pv.product_id
+                ) AS sold ON sold.product_id = p.id
+                WHERE p.category_id IN (8,9,10)
+                  AND p.status = 'Đang bán'
+                ORDER BY COALESCE(sold.sold_quantity, 0) DESC, p.created_at DESC
+                LIMIT :limit
+            """)
                         .bind("limit", limit)
                         .mapToBean(Product.class)
                         .list()
