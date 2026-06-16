@@ -444,7 +444,7 @@ html, body {
 
 
 .suggested-products {
-    padding: 60px 80px;
+    padding: 60px 40px;
     background-color: #ffffff;
     border-top: 1px solid #C89F7B;
 }
@@ -460,7 +460,7 @@ html, body {
 
 .suggested-list {
     display: flex;
-    gap: 35px;
+    gap: 25px;
     flex-wrap: wrap;
     justify-content: center;
 }
