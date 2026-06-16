@@ -81,6 +81,32 @@ public class NotificationDao extends BaseDao {
         );
     }
 
+
+    public int markAllAsReadByUser(int userId) {
+        String sql = """
+            INSERT INTO user_notifications (user_id, notification_id, is_read, read_at)
+            SELECT :userId, n.id, 1, NOW()
+            FROM notifications n
+            LEFT JOIN user_notifications un
+                ON n.id = un.notification_id
+                AND un.user_id = :userId
+            WHERE n.is_active = 1
+              AND (
+                    n.target_type = 'ALL'
+                    OR (n.target_type = 'USER' AND un.user_id = :userId)
+              )
+            ON DUPLICATE KEY UPDATE
+                is_read = 1,
+                read_at = NOW()
+        """;
+
+        return getJdbi().withHandle(handle ->
+                handle.createUpdate(sql)
+                        .bind("userId", userId)
+                        .execute()
+        );
+    }
+
     public List<Notification> getAdminNotifications(String keyword) {
         String sql = """
             SELECT
