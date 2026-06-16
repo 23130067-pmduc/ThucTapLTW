@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     initSlider("#new-slider", "#new-dots", ".product-card");
-    initSlider("#boy-slider", "#boy-dots", ".product-mini");
-    initSlider("#girl-slider", "#girl-dots", ".product-mini");
-    initSlider("#acc-slider", "#acc-dots", ".product-mini");
+    initSlider("#boy-slider", "#boy-dots", ".product-card");
+    initSlider("#girl-slider", "#girl-dots", ".product-card");
+    initSlider("#acc-slider", "#acc-dots", ".product-card");
 });
