@@ -9,6 +9,8 @@ import java.util.Random;
 
 import vn.edu.nlu.fit.thuctapltw.Util.PasswordUtil;
 
+import javax.management.relation.Role;
+
 public class UserService {
 
     private final UserDao userDao = new UserDao();
@@ -193,5 +195,41 @@ public class UserService {
 
     public int getRoleIdByName(String roleName) {
         return userDao.getRoleByIdName(roleName);
+    }
+
+    public int countAllUsers() {
+        return userDao.countAllUsers();
+    }
+
+    public List<User> getUserByPage(int pageSize, int offset) {
+        return userDao.getUserByPage(pageSize, offset);
+    }
+
+    public int countUserByFilter(String keyword, String role, String status) {
+        return userDao.countUserByFilter(keyword, role, status);
+    }
+
+    public List<User> searchUserByFilter(String keyword, String role, String status, int pageSize, int offset) {
+        return userDao.searchUserByFilter(keyword, role, status, pageSize, offset);
+    }
+
+    public List<User> getAdminUsers() {
+        return userDao.getAdminUsers();
+    }
+
+    public int countAdminUsers() {
+        return userDao.countAdminUsers();
+    }
+
+    public boolean isAdminUser(int id) {
+        return userDao.isAdminUser(id);
+    }
+
+    public boolean blockAdminUser(int id) {
+        return userDao.blockAdminUser(id);
+    }
+
+    public List<Role> getAllRoleNames() {
+        return userDao.getAllRoleNames();
     }
 }

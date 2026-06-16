@@ -24,6 +24,7 @@ import java.io.IOException;
         "/notification-admin",
         "/contact-admin",
         "/admin-profile",
+        "/admin-settings",
         "/return-order-admin"
 })
 public class AuthFilter implements Filter {

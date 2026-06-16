@@ -105,6 +105,12 @@
       <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item active">
         <i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span>
       </a>
+
+      <c:if test="${userlogin.permissions.contains('PERMISSION_VIEW')}">
+        <a href="${pageContext.request.contextPath}/admin-settings" class="nav-item">
+          <i class="fa-solid fa-gear"></i><span>Cài đặt</span>
+        </a>
+      </c:if>
     </div>
   </aside>
 

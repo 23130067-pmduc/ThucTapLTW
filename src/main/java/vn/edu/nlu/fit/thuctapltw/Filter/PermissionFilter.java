@@ -25,6 +25,7 @@ import java.util.Map;
         "/news-admin",
         "/notification-admin",
         "/contact-admin",
+        "/admin-settings",
         "/return-order-admin"
 })
 public class PermissionFilter implements Filter {
@@ -46,6 +47,7 @@ public class PermissionFilter implements Filter {
         permissionMap.put("/news-admin", "NEWS_VIEW");
         permissionMap.put("/notification-admin", "NOTIFICATION_VIEW");
         permissionMap.put("/contact-admin", "CONTACT_VIEW");
+        permissionMap.put("/admin-settings", "PERMISSION_VIEW");
         permissionMap.put("/return-order-admin", "RETURN_RECEIPT_VIEW");
     }
 
