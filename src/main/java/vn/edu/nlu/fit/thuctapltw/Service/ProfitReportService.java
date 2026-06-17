@@ -22,4 +22,8 @@ public class ProfitReportService {
     public List<ProfitProductReport> getProductReports(LocalDate fromDate, LocalDate toDate) {
         return profitReportDao.getProductReports(fromDate, toDate);
     }
+
+    public List<ProfitProductReport> getProductReportsForExcel(LocalDate fromDate, LocalDate toDate) {
+        return profitReportDao.getProductReportsForExcel(fromDate, toDate);
+    }
 }

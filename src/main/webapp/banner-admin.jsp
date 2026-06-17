@@ -25,9 +25,16 @@
 
                 <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
                     <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
-                        <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
+                        <i class="fa-solid fa-gauge"></i><span>Tổng quan</span>
                     </a>
                 </c:if>
+
+                <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
+                    <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
+                        <i class="fa-solid fa-chart-line"></i><span>Thống kê</span>
+                    </a>
+                </c:if>
+
 
                 <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
                     <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
@@ -49,13 +56,6 @@
                         <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
                     </a>
                 </c:if>
-
-                <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
-                        <i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span>
-                    </a>
-                </c:if>
-
                 <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
                     <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
                         <i class="fa-solid fa-list"></i><span>Danh mục</span>

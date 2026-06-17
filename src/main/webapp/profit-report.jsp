@@ -7,7 +7,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thống kê lợi nhuận</title>
+    <title>Thống kê bán hàng</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/profit-report.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
@@ -21,9 +21,16 @@
         <div class="nav" id="menu">
             <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
                 <a href="${pageContext.request.contextPath}/dashboard" class="nav-item">
-                    <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
+                    <i class="fa-solid fa-gauge"></i><span>Tổng quan</span>
                 </a>
             </c:if>
+
+            <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
+                <a href="${pageContext.request.contextPath}/profit-report" class="nav-item active">
+                    <i class="fa-solid fa-chart-line"></i><span>Thống kê</span>
+                </a>
+            </c:if>
+
 
             <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
                 <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
@@ -45,13 +52,6 @@
                     <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
                 </a>
             </c:if>
-
-            <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
-                <a href="${pageContext.request.contextPath}/profit-report" class="nav-item active">
-                    <i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span>
-                </a>
-            </c:if>
-
             <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
                 <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
                     <i class="fa-solid fa-list"></i><span>Danh mục</span>
@@ -121,8 +121,8 @@
     <section class="content profit-content">
         <header class="topbar">
             <div>
-                <h1>Thống kê lợi nhuận</h1>
-                <p class="page-subtitle">Doanh thu lấy từ đơn hoàn thành, giá vốn lấy từ phiếu xuất kho FIFO.</p>
+                <h1>Thống kê bán hàng</h1>
+                <p class="page-subtitle">Theo dõi sản phẩm bán được, doanh thu, giá vốn và lợi nhuận theo khoảng thời gian.</p>
             </div>
             <div class="actions">
                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
@@ -141,14 +141,16 @@
             </div>
 
             <button type="submit" class="btn-filter"><i class="fa-solid fa-filter"></i> Lọc</button>
-            <a href="${pageContext.request.contextPath}/profit-report" class="btn-reset-profit">30 ngày gần nhất</a>
+            <a href="${pageContext.request.contextPath}/profit-report-export-excel?fromDate=${fromDate}&toDate=${toDate}" class="btn-export-profit" role="button">
+                <i class="fa-solid fa-file-excel"></i> Xuất Excel
+            </a>
         </form>
 
         <div class="profit-cards">
             <div class="profit-card">
-                <div class="card-label">Doanh thu sản phẩm</div>
+                <div class="card-label">Doanh thu</div>
                 <div class="card-value"><fmt:formatNumber value="${summary.grossRevenue}"/>đ</div>
-                <div class="card-note">Tổng tiền hàng trước giảm giá</div>
+                <div class="card-note">Tổng tiền hàng từ đơn hoàn thành</div>
             </div>
 
             <div class="profit-card discount-card">
@@ -176,15 +178,15 @@
             </div>
 
             <div class="profit-card quantity-card">
-                <div class="card-label">Đơn hoàn thành / SL xuất</div>
+                <div class="card-label">Đơn hoàn thành / SL bán</div>
                 <div class="card-value">${summary.completedOrders} / ${summary.exportedQuantity}</div>
-                <div class="card-note">Dùng để đối chiếu đơn và kho</div>
+                <div class="card-note">Đối chiếu giữa đơn hàng và số lượng xuất kho</div>
             </div>
         </div>
 
         <section class="profit-panel">
             <div class="panel-header">
-                <h2>Thống kê theo ngày</h2>
+                <h2>Doanh thu - lợi nhuận theo ngày</h2>
             </div>
             <div class="profit-table-wrapper">
                 <table class="profit-table">
@@ -192,7 +194,7 @@
                     <tr>
                         <th>Ngày</th>
                         <th>Đơn hoàn thành</th>
-                        <th>SL xuất</th>
+                        <th>SL xuất kho</th>
                         <th>Doanh thu thuần</th>
                         <th>Giá vốn</th>
                         <th>Lợi nhuận gộp</th>
@@ -223,8 +225,8 @@
 
         <section class="profit-panel">
             <div class="panel-header">
-                <h2>Top sản phẩm theo lợi nhuận</h2>
-                <p>Doanh thu theo đơn hoàn thành, giá vốn theo phiếu xuất kho FIFO.</p>
+                <h2>Sản phẩm bán được</h2>
+                <p>Danh sách sản phẩm đã bán, doanh thu và lợi nhuận theo bộ lọc ngày.</p>
             </div>
             <div class="profit-table-wrapper">
                 <table class="profit-table product-profit-table">
@@ -233,7 +235,7 @@
                         <th>ID</th>
                         <th>Sản phẩm</th>
                         <th>SL bán</th>
-                        <th>SL xuất</th>
+                        <th>SL xuất kho</th>
                         <th>Doanh thu</th>
                         <th>Giá vốn</th>
                         <th>Lợi nhuận</th>
