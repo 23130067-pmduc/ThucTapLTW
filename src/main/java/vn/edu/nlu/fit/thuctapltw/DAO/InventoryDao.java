@@ -317,6 +317,21 @@ public class InventoryDao extends BaseDao {
                 .list());
     }
 
+    public boolean isActiveVariantForImport(int variantId) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM product_variants pv
+                JOIN products p ON pv.product_id = p.id
+                WHERE pv.id = :variantId
+                  AND p.status <> 'Đã xoá'
+                  AND (pv.status IS NULL OR pv.status = 'Đang bán')
+                """)
+                .bind("variantId", variantId)
+                .mapTo(int.class)
+                .one() > 0);
+    }
+
+
 
     private String buildInventoryOrderBy(String sortField, String sortDir) {
         String direction = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";

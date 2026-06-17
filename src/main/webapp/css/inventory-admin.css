@@ -835,3 +835,75 @@
         width: 100%;
     }
 }
+
+/* ===== Issue #156: Import inventory from Google Sheet ===== */
+.google-sheet-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.google-sheet-grid .google-sheet-panel {
+    margin: 0;
+}
+
+.import-sheet-panel {
+    border-color: #ffe8cc;
+    background: #fffaf3;
+}
+
+.google-sheet-title.import-title {
+    color: #f08c00;
+}
+
+.btn-sheet-import {
+    min-height: 42px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #f08c00;
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-sheet-import:hover:not(:disabled) {
+    background: #e67700;
+    color: #fff !important;
+    transform: translateY(-2px);
+}
+
+.btn-sheet-import:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.btn-sheet-open.import-open {
+    background: #7950f2;
+}
+
+.btn-sheet-open.import-open:hover {
+    background: #6741d9;
+}
+
+@media (min-width: 1250px) {
+    .google-sheet-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: stretch;
+    }
+
+    .google-sheet-grid .google-sheet-panel {
+        height: 100%;
+    }
+}

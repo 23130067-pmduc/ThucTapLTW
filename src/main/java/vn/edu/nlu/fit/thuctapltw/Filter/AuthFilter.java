@@ -14,6 +14,7 @@ import java.io.IOException;
         "/product-admin",
         "/inventory-admin",
         "/inventory-google-sheet",
+        "/inventory-google-sheet-import",
         "/profit-report",
         "/category-admin",
         "/order-admin",

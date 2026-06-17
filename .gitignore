@@ -45,3 +45,6 @@ build/
 build/
 
 src/main/resources/cloudinary.properties
+# Google service account credentials
+*service-account*.json
+sunnybear-*.json
