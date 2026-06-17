@@ -838,6 +838,38 @@ body, .admin {
     font-size: 18px;
 }
 
+.revenue-filter-group {
+    display: flex;
+    align-items: stretch;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.selected-revenue-summary {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-width: 190px;
+    padding: 9px 14px;
+    border: 1px solid #e8efd9;
+    border-radius: 10px;
+    background: #fbfdf7;
+}
+
+.selected-revenue-summary span {
+    color: #5f7249;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.selected-revenue-summary strong {
+    color: #2f4f1e;
+    font-size: 18px;
+    line-height: 1.2;
+}
+
 .revenue-period-btns {
     display: flex;
     align-items: flex-end;
