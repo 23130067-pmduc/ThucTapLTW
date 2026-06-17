@@ -24,37 +24,32 @@ public class InventoryDao extends BaseDao {
                        pv.price,
                        pv.sale_price,
                        p.status AS product_status,
-                       (
-                           SELECT ib.unit_cost
-                           FROM inventory_batches ib
-                           WHERE ib.product_variant_id = pv.id
-                           ORDER BY ib.created_at DESC, ib.id DESC
-                           LIMIT 1
-                       ) AS latest_unit_cost,
-                       (
-                           SELECT ib.batch_code
-                           FROM inventory_batches ib
-                           WHERE ib.product_variant_id = pv.id
-                           ORDER BY ib.created_at DESC, ib.id DESC
-                           LIMIT 1
-                       ) AS latest_batch_code,
-                       (
-                           SELECT DATE_FORMAT(ib.created_at, '%d/%m/%Y')
-                           FROM inventory_batches ib
-                           WHERE ib.product_variant_id = pv.id
-                           ORDER BY ib.created_at DESC, ib.id DESC
-                           LIMIT 1
-                       ) AS latest_import_date_text,
-                       COALESCE((
-                           SELECT SUM(ib.remaining_quantity)
-                           FROM inventory_batches ib
-                           WHERE ib.product_variant_id = pv.id
-                       ), 0) AS remaining_batch_quantity
+                       latest.unit_cost AS latest_unit_cost,
+                       latest.batch_code AS latest_batch_code,
+                       latest.latest_import_date_text,
+                       COALESCE(batch_sum.remaining_batch_quantity, 0) AS remaining_batch_quantity
                 FROM product_variants pv
                 JOIN products p ON pv.product_id = p.id
                 LEFT JOIN category_product c ON p.category_id = c.id
                 LEFT JOIN colors co ON pv.color_id = co.id
                 LEFT JOIN sizes s ON pv.size_id = s.id
+                LEFT JOIN (
+                    SELECT ib.product_variant_id,
+                           ib.unit_cost,
+                           ib.batch_code,
+                           DATE_FORMAT(ib.created_at, '%d/%m/%Y') AS latest_import_date_text
+                    FROM inventory_batches ib
+                    JOIN (
+                        SELECT product_variant_id, MAX(id) AS latest_id
+                        FROM inventory_batches
+                        GROUP BY product_variant_id
+                    ) latest_id ON latest_id.latest_id = ib.id
+                ) latest ON latest.product_variant_id = pv.id
+                LEFT JOIN (
+                    SELECT product_variant_id, SUM(remaining_quantity) AS remaining_batch_quantity
+                    FROM inventory_batches
+                    GROUP BY product_variant_id
+                ) batch_sum ON batch_sum.product_variant_id = pv.id
                 WHERE p.status <> 'Đã xoá'
                   AND (
                         :keyword = ''
@@ -86,6 +81,8 @@ public class InventoryDao extends BaseDao {
                 .mapToBean(InventoryItem.class)
                 .list());
     }
+
+    
 
     public int countInventoryByFilter(String keyword, String stockStatus) {
         String normalizedKeyword = keyword == null ? "" : keyword.trim();
@@ -239,17 +236,7 @@ public class InventoryDao extends BaseDao {
                 SELECT pv.id AS variant_id,
                        p.id AS product_id,
                        p.name AS product_name,
-                       COALESCE(
-                           NULLIF(p.thumbnail, ''),
-                           (
-                               SELECT pi.image_url
-                               FROM product_images pi
-                               WHERE pi.product_id = p.id
-                               ORDER BY pi.is_main DESC, pi.id ASC
-                               LIMIT 1
-                           ),
-                           'img/gau.png'
-                       ) AS thumbnail,
+                       COALESCE(NULLIF(p.thumbnail, ''), main_img.image_url, 'img/gau.png') AS thumbnail,
                        c.name AS category_name,
                        co.name AS color_name,
                        s.code AS size_name,
@@ -257,66 +244,72 @@ public class InventoryDao extends BaseDao {
                        pv.price,
                        pv.sale_price,
                        p.status AS product_status,
-                       (
-                           SELECT ib.unit_cost
-                           FROM inventory_batches ib
-                           WHERE ib.product_variant_id = pv.id
-                           ORDER BY ib.created_at DESC, ib.id DESC
-                           LIMIT 1
-                       ) AS latest_unit_cost,
-                       (
-                           SELECT ib.batch_code
-                           FROM inventory_batches ib
-                           WHERE ib.product_variant_id = pv.id
-                           ORDER BY ib.created_at DESC, ib.id DESC
-                           LIMIT 1
-                       ) AS latest_batch_code,
-                       (
-                           SELECT DATE_FORMAT(ib.created_at, '%d/%m/%Y')
-                           FROM inventory_batches ib
-                           WHERE ib.product_variant_id = pv.id
-                           ORDER BY ib.created_at DESC, ib.id DESC
-                           LIMIT 1
-                       ) AS latest_import_date_text,
-                       COALESCE((
-                           SELECT SUM(ib.remaining_quantity)
-                           FROM inventory_batches ib
-                           WHERE ib.product_variant_id = pv.id
-                       ), 0) AS remaining_batch_quantity,
-                       COALESCE((
-                           SELECT SUM(oi.quantity)
-                           FROM order_items oi
-                           JOIN orders o ON o.id = oi.order_id
-                           WHERE oi.variant_id = pv.id
-                             AND o.order_status = 'COMPLETED'
-                       ), 0) AS sold_quantity,
-                       COALESCE((
-                           SELECT SUM(itd.quantity)
-                           FROM inventory_transactions it
-                           JOIN inventory_transaction_details itd ON it.id = itd.transaction_id
-                           WHERE it.type = 'IMPORT'
-                             AND it.status = 'COMPLETED'
-                             AND itd.product_variant_id = pv.id
-                       ), 0) AS imported_quantity,
-                       COALESCE((
-                           SELECT SUM(itd.quantity)
-                           FROM inventory_transactions it
-                           JOIN inventory_transaction_details itd ON it.id = itd.transaction_id
-                           WHERE it.type = 'EXPORT'
-                             AND it.status = 'COMPLETED'
-                             AND itd.product_variant_id = pv.id
-                       ), 0) AS exported_quantity
+                       latest.unit_cost AS latest_unit_cost,
+                       latest.batch_code AS latest_batch_code,
+                       latest.latest_import_date_text,
+                       COALESCE(batch_sum.remaining_batch_quantity, 0) AS remaining_batch_quantity,
+                       COALESCE(sold.sold_quantity, 0) AS sold_quantity,
+                       COALESCE(imported.imported_quantity, 0) AS imported_quantity,
+                       COALESCE(exported.exported_quantity, 0) AS exported_quantity
                 FROM product_variants pv
                 JOIN products p ON pv.product_id = p.id
                 LEFT JOIN category_product c ON p.category_id = c.id
                 LEFT JOIN colors co ON pv.color_id = co.id
                 LEFT JOIN sizes s ON pv.size_id = s.id
+                LEFT JOIN (
+                    SELECT pi.product_id, MIN(pi.image_url) AS image_url
+                    FROM product_images pi
+                    WHERE pi.is_main = 1
+                    GROUP BY pi.product_id
+                ) main_img ON main_img.product_id = p.id
+                LEFT JOIN (
+                    SELECT ib.product_variant_id,
+                           ib.unit_cost,
+                           ib.batch_code,
+                           DATE_FORMAT(ib.created_at, '%d/%m/%Y') AS latest_import_date_text
+                    FROM inventory_batches ib
+                    JOIN (
+                        SELECT product_variant_id, MAX(id) AS latest_id
+                        FROM inventory_batches
+                        GROUP BY product_variant_id
+                    ) latest_id ON latest_id.latest_id = ib.id
+                ) latest ON latest.product_variant_id = pv.id
+                LEFT JOIN (
+                    SELECT product_variant_id, SUM(remaining_quantity) AS remaining_batch_quantity
+                    FROM inventory_batches
+                    GROUP BY product_variant_id
+                ) batch_sum ON batch_sum.product_variant_id = pv.id
+                LEFT JOIN (
+                    SELECT oi.variant_id AS product_variant_id, SUM(oi.quantity) AS sold_quantity
+                    FROM order_items oi
+                    JOIN orders o ON o.id = oi.order_id
+                    WHERE o.order_status = 'COMPLETED'
+                    GROUP BY oi.variant_id
+                ) sold ON sold.product_variant_id = pv.id
+                LEFT JOIN (
+                    SELECT itd.product_variant_id, SUM(itd.quantity) AS imported_quantity
+                    FROM inventory_transactions it
+                    JOIN inventory_transaction_details itd ON it.id = itd.transaction_id
+                    WHERE it.type = 'IMPORT'
+                      AND it.status = 'COMPLETED'
+                    GROUP BY itd.product_variant_id
+                ) imported ON imported.product_variant_id = pv.id
+                LEFT JOIN (
+                    SELECT itd.product_variant_id, SUM(itd.quantity) AS exported_quantity
+                    FROM inventory_transactions it
+                    JOIN inventory_transaction_details itd ON it.id = itd.transaction_id
+                    WHERE it.type = 'EXPORT'
+                      AND it.status = 'COMPLETED'
+                    GROUP BY itd.product_variant_id
+                ) exported ON exported.product_variant_id = pv.id
                 WHERE p.status <> 'Đã xoá'
                 ORDER BY pv.stock ASC, p.name ASC, co.name ASC, s.sort_order ASC, pv.id ASC
                 """)
                 .mapToBean(InventoryItem.class)
                 .list());
     }
+
+    
 
     public boolean isActiveVariantForImport(int variantId) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
