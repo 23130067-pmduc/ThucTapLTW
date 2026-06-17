@@ -5,6 +5,8 @@ import vn.edu.nlu.fit.thuctapltw.model.ProfitProductReport;
 import vn.edu.nlu.fit.thuctapltw.model.ProfitSummary;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -113,56 +115,75 @@ public class ProfitReportDao extends BaseDao {
     }
 
     public List<ProfitProductReport> getProductReports(LocalDate fromDate, LocalDate toDate) {
-        return getJdbi().withHandle(handle -> handle.createQuery("""
-                SELECT p.id AS product_id,
-                       p.name AS product_name,
-                       COALESCE(s.sold_quantity, 0) AS sold_quantity,
-                       COALESCE(e.exported_quantity, 0) AS exported_quantity,
-                       COALESCE(s.revenue, 0) AS revenue,
-                       COALESCE(e.cost_of_goods, 0) AS cost_of_goods,
-                       COALESCE(s.revenue, 0) - COALESCE(e.cost_of_goods, 0) AS profit
-                FROM products p
-                LEFT JOIN (
-                    SELECT pv.product_id,
-                           COALESCE(SUM(oi.quantity), 0) AS sold_quantity,
-                           COALESCE(SUM(oi.total), 0) AS revenue
-                    FROM orders o
-                    JOIN order_items oi ON o.id = oi.order_id
-                    JOIN product_variants pv ON oi.variant_id = pv.id
-                    WHERE o.order_status = 'COMPLETED'
-                      AND DATE(o.created_at) BETWEEN :fromDate AND :toDate
-                    GROUP BY pv.product_id
-                ) s ON p.id = s.product_id
-                LEFT JOIN (
-                    SELECT pv.product_id,
-                           COALESCE(SUM(itd.quantity), 0) AS exported_quantity,
-                           COALESCE(SUM(itd.quantity * itd.unit_cost), 0) AS cost_of_goods
-                    FROM inventory_transactions it
-                    JOIN inventory_transaction_details itd ON it.id = itd.transaction_id
-                    JOIN product_variants pv ON itd.product_variant_id = pv.id
-                    WHERE it.type = 'EXPORT'
-                      AND it.status = 'COMPLETED'
-                      AND DATE(it.updated_at) BETWEEN :fromDate AND :toDate
-                    GROUP BY pv.product_id
-                ) e ON p.id = e.product_id
-                WHERE COALESCE(s.sold_quantity, 0) > 0 OR COALESCE(e.exported_quantity, 0) > 0
-                ORDER BY profit DESC, revenue DESC
-                LIMIT 20
-                """)
-                .bind("fromDate", fromDate)
-                .bind("toDate", toDate)
-                .map((rs, ctx) -> {
-                    ProfitProductReport row = new ProfitProductReport();
-                    row.setProductId(rs.getInt("product_id"));
-                    row.setProductName(rs.getString("product_name"));
-                    row.setSoldQuantity(rs.getInt("sold_quantity"));
-                    row.setExportedQuantity(rs.getInt("exported_quantity"));
-                    row.setRevenue(rs.getBigDecimal("revenue"));
-                    row.setCostOfGoods(rs.getBigDecimal("cost_of_goods"));
-                    row.setProfit(rs.getBigDecimal("profit"));
-                    return row;
-                })
-                .list());
+        return getProductReports(fromDate, toDate, 20);
+    }
+
+    public List<ProfitProductReport> getProductReportsForExcel(LocalDate fromDate, LocalDate toDate) {
+        return getProductReports(fromDate, toDate, 0);
+    }
+
+    private List<ProfitProductReport> getProductReports(LocalDate fromDate, LocalDate toDate, int limit) {
+        String limitSql = limit > 0 ? "LIMIT :limit" : "";
+        return getJdbi().withHandle(handle -> {
+            var query = handle.createQuery("""
+                    SELECT p.id AS product_id,
+                           p.name AS product_name,
+                           COALESCE(c.name, 'Chưa phân loại') AS category_name,
+                           COALESCE(s.sold_quantity, 0) AS sold_quantity,
+                           COALESCE(e.exported_quantity, 0) AS exported_quantity,
+                           COALESCE(s.revenue, 0) AS revenue,
+                           COALESCE(e.cost_of_goods, 0) AS cost_of_goods,
+                           COALESCE(s.revenue, 0) - COALESCE(e.cost_of_goods, 0) AS profit
+                    FROM products p
+                    LEFT JOIN category_product c ON p.category_id = c.id
+                    LEFT JOIN (
+                        SELECT pv.product_id,
+                               COALESCE(SUM(oi.quantity), 0) AS sold_quantity,
+                               COALESCE(SUM(oi.total), 0) AS revenue
+                        FROM orders o
+                        JOIN order_items oi ON o.id = oi.order_id
+                        JOIN product_variants pv ON oi.variant_id = pv.id
+                        WHERE o.order_status = 'COMPLETED'
+                          AND DATE(o.created_at) BETWEEN :fromDate AND :toDate
+                        GROUP BY pv.product_id
+                    ) s ON p.id = s.product_id
+                    LEFT JOIN (
+                        SELECT pv.product_id,
+                               COALESCE(SUM(itd.quantity), 0) AS exported_quantity,
+                               COALESCE(SUM(itd.quantity * itd.unit_cost), 0) AS cost_of_goods
+                        FROM inventory_transactions it
+                        JOIN inventory_transaction_details itd ON it.id = itd.transaction_id
+                        JOIN product_variants pv ON itd.product_variant_id = pv.id
+                        WHERE it.type = 'EXPORT'
+                          AND it.status = 'COMPLETED'
+                          AND DATE(it.updated_at) BETWEEN :fromDate AND :toDate
+                        GROUP BY pv.product_id
+                    ) e ON p.id = e.product_id
+                    WHERE COALESCE(s.sold_quantity, 0) > 0 OR COALESCE(e.exported_quantity, 0) > 0
+                    ORDER BY profit DESC, revenue DESC
+                    """ + limitSql)
+                    .bind("fromDate", fromDate)
+                    .bind("toDate", toDate);
+
+            if (limit > 0) {
+                query.bind("limit", limit);
+            }
+
+            return query.map((rs, ctx) -> mapProductReport(rs)).list();
+        });
+    }
+
+    private ProfitProductReport mapProductReport(ResultSet rs) throws SQLException {
+        ProfitProductReport row = new ProfitProductReport();
+        row.setProductId(rs.getInt("product_id"));
+        row.setProductName(rs.getString("product_name"));
+        row.setCategoryName(rs.getString("category_name"));
+        row.setSoldQuantity(rs.getInt("sold_quantity"));
+        row.setExportedQuantity(rs.getInt("exported_quantity"));
+        row.setRevenue(rs.getBigDecimal("revenue"));
+        row.setCostOfGoods(rs.getBigDecimal("cost_of_goods"));
+        row.setProfit(rs.getBigDecimal("profit"));
+        return row;
     }
 
     private int toInt(Object value) {

@@ -47,7 +47,7 @@
 }
 
 .btn-filter,
-.btn-reset-profit {
+.btn-export-profit {
     height: 40px;
     border: none;
     border-radius: 10px;
@@ -66,9 +66,13 @@
     color: #fff;
 }
 
-.btn-reset-profit {
-    background: #eef4e3;
-    color: #4d6b22;
+.btn-export-profit {
+    background: #16803c;
+    color: #fff;
+}
+
+.btn-export-profit:hover {
+    background: #116b31;
 }
 
 .profit-cards {
@@ -204,7 +208,59 @@
     .filter-group,
     .filter-group input,
     .btn-filter,
-    .btn-reset-profit {
+    .btn-export-profit {
         width: 100%;
     }
+}
+
+
+/* Fix nút Xuất Excel trên trang thống kê: tránh bị render như link xanh gạch chân */
+.profit-filter a.btn-export-profit,
+.profit-filter a.btn-export-excel,
+.profit-filter .btn-export-profit,
+.profit-filter .btn-export-excel {
+    height: 40px !important;
+    min-height: 40px;
+    border: none !important;
+    border-radius: 10px !important;
+    padding: 0 18px !important;
+    background: #16803c !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+}
+
+.profit-filter a.btn-export-profit:hover,
+.profit-filter a.btn-export-excel:hover,
+.profit-filter .btn-export-profit:hover,
+.profit-filter .btn-export-excel:hover {
+    background: #116b31 !important;
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.profit-filter a.btn-export-profit:visited,
+.profit-filter a.btn-export-excel:visited,
+.profit-filter a.btn-export-profit:active,
+.profit-filter a.btn-export-excel:active {
+    color: #ffffff !important;
+    text-decoration: none !important;
+}
+
+.profit-filter a.btn-export-profit i,
+.profit-filter a.btn-export-excel i,
+.profit-filter .btn-export-profit i,
+.profit-filter .btn-export-excel i {
+    color: #ffffff !important;
+    font-size: 15px;
+    line-height: 1;
 }
