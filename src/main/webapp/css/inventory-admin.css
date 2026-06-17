@@ -648,3 +648,30 @@
 .inventory-table td {
     padding: 12px 14px;
 }
+
+
+/* ===== Tách chức năng khỏi trang tồn kho: toolbar chỉ còn tìm kiếm/lọc/làm mới ===== */
+.inventory-toolbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 20px 0;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.inventory-search-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.inventory-search-input {
+    width: 350px;
+    max-width: 350px;
+}
+
+.inventory-filter-select {
+    width: 180px;
+}
