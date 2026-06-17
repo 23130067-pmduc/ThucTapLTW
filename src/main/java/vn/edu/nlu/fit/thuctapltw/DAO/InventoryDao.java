@@ -333,6 +333,24 @@ public class InventoryDao extends BaseDao {
 
 
 
+    public boolean isActiveSupplierCode(String supplierCode) {
+        if (supplierCode == null || supplierCode.trim().isBlank()) {
+            return false;
+        }
+
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM suppliers
+                WHERE UPPER(code) = UPPER(:supplierCode)
+                  AND status = 'ACTIVE'
+                """)
+                .bind("supplierCode", supplierCode.trim())
+                .mapTo(int.class)
+                .one() > 0);
+    }
+
+
+
     private String buildInventoryOrderBy(String sortField, String sortDir) {
         String direction = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";
 
