@@ -54,6 +54,16 @@
 
             <div class="row">
                 <div class="col">
+                    <label>Mô tả</label>
+                    <textarea name="description"
+                              rows="5"
+                              class="form-textarea"
+                    ${mode == 'view' ? 'readonly' : ''}>${product.description}</textarea>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
                     <label>Danh mục</label>
                     <select name="category_id" required>
                         <option value="">-- Chọn danh mục --</option>
@@ -81,33 +91,54 @@
 
             <div class="row">
                 <div class="col">
-                    <label>Hình ảnh sản phẩm</label>
-                    <input type="file" name="imageFile" accept="image/*" 
+                    <label>Ảnh chính</label>
+                    <input type="file"
+                           name="imageFile"
+                           accept="image/*"
                            onchange="previewProductImage(event)"
-                           ${mode == 'view' ? 'disabled' : ''}>
-                    <small style="color: #666; display: block; margin-top: 5px;">
-                        Chọn file ảnh (JPG, PNG, GIF - tối đa 10MB)
+                    ${mode == 'view' ? 'disabled' : ''}>
+
+                    <small class="form-hint">
+                        Chọn 1 ảnh chính cho sản phẩm
                     </small>
-                </div>
-            </div>
 
-
-            <div class="row">
-                <div class="col">
-                    <div id="product-image-preview-container" style="margin-top: 10px;">
+                    <div id="product-image-preview-container" class="image-preview-container">
                         <c:if test="${not empty product.thumbnail}">
-                            <label>Xem trước ảnh</label>
-                            <img id="product-image-preview" src="${product.thumbnail}" 
+                            <label>Xem trước ảnh chính</label>
+                            <img id="product-image-preview"
+                                 src="${product.thumbnail}"
                                  alt="Product image"
-                                 style="max-width: 300px; max-height: 300px; border-radius: 8px; border: 1px solid #ddd; display: block; margin-top: 10px;">
+                                 class="product-image-preview show">
                         </c:if>
+
                         <c:if test="${empty product.thumbnail}">
-                            <img id="product-image-preview" src="" alt="Preview" 
-                                 style="display: none; max-width: 300px; max-height: 300px; border-radius: 8px; border: 1px solid #ddd; margin-top: 10px;">
+                            <img id="product-image-preview"
+                                 src=""
+                                 alt="Preview"
+                                 class="product-image-preview">
                         </c:if>
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col">
+                    <label>Ảnh phụ</label>
+                    <input type="file"
+                           name="subImageFiles"
+                           accept="image/*"
+                           multiple
+                           onchange="previewSubImages(event)"
+                    ${mode == 'view' ? 'disabled' : ''}>
+
+                    <small class="form-hint">
+                        Có thể chọn nhiều ảnh phụ cùng lúc
+                    </small>
+
+                    <div id="sub-images-preview" class="sub-images-preview"></div>
+                </div>
+            </div>
+
         </div>
 
 
@@ -116,7 +147,7 @@
         <div class="form-footer">
             <c:if test="${mode != 'view'}">
                 <button type="submit" name="action"
-                        value="${mode == 'add' ? 'add' : 'update'}"
+                        value="${mode == 'add' ? 'create' : 'update'}"
                         class="btn-primary">
                     Lưu
                 </button>
@@ -146,19 +177,43 @@
 </c:if>
 
 <script>
-function previewProductImage(event) {
-    const file = event.target.files[0];
-    const preview = document.getElementById('product-image-preview');
-    
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            preview.src = e.target.result;
-            preview.style.display = 'block';
+    function previewProductImage(event) {
+        const file = event.target.files[0];
+        const preview = document.getElementById('product-image-preview');
+
+        if (file) {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.add('show');
+            };
+
+            reader.readAsDataURL(file);
         }
-        reader.readAsDataURL(file);
     }
-}
+
+    function previewSubImages(event) {
+        const files = event.target.files;
+        const previewContainer = document.getElementById('sub-images-preview');
+
+        previewContainer.innerHTML = '';
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.alt = 'Ảnh phụ';
+                img.className = 'sub-image-preview-item';
+
+                previewContainer.appendChild(img);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    }
 </script>
 
 </body>

@@ -220,7 +220,7 @@ body, .admin {
 }
 
 .status {
-    padding: 4px 10px;
+    padding: 5px 10px;
     border-radius: 20px;
     font-size: 13px;
     font-weight: 600;
@@ -529,4 +529,41 @@ body, .admin {
 
 .btn-search:hover {
     background: #37b24d;
+}
+
+.role-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 115px;
+    padding: 5px 10px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.role-admin {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.role-product {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.role-order {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.role-marketing {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+
+.role-customer {
+    background: #e5e7eb;
+    color: #374151;
 }

@@ -203,10 +203,11 @@ public class CategoryAdminController extends HttpServlet {
             return;
         }
 
-        if ("delete".equals(action)){
+        if ("changeStatus".equals(action)) {
             int id = Integer.parseInt(request.getParameter("id"));
+            int status = Integer.parseInt(request.getParameter("status"));
 
-            categoryService.deleteCategory(id);
+            categoryService.updateStatus(id, status);
 
             response.sendRedirect("category-admin");
             return;
