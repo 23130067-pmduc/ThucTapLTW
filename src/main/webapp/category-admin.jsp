@@ -215,12 +215,25 @@
 
 
                   <c:if test="${userlogin.permissions.contains('CATEGORY_DELETE')}">
-                    <button type="button"
-                            class="icon-btn delete"
-                            title="Xóa danh mục"
-                            onclick="openDeleteModal(${c.id}, '${c.name}')">
-                      <i class="fa fa-trash"></i>
-                    </button>
+                    <c:choose>
+                      <c:when test="${c.status == 1}">
+                        <button type="button"
+                                class="icon-btn delete"
+                                title="Khóa danh mục"
+                                onclick="openStatusModal(${c.id}, '${c.name}', 0, 'khóa')">
+                          <i class="fa-solid fa-lock"></i>
+                        </button>
+                      </c:when>
+
+                      <c:otherwise>
+                        <button type="button"
+                                class="icon-btn unlock"
+                                title="Mở khóa danh mục"
+                                onclick="openStatusModal(${c.id}, '${c.name}', 1, 'mở khóa')">
+                          <i class="fa-solid fa-lock-open"></i>
+                        </button>
+                      </c:otherwise>
+                    </c:choose>
                   </c:if>
                 </td>
 
@@ -260,18 +273,19 @@
     </main>
   </section>
 
-  <div id="deleteModal" class="modal-overlay">
+  <div id="statusModal" class="modal-overlay">
     <div class="modal">
-      <h3>Xác nhận xóa</h3>
-      <p id="deleteMessage">Bạn có chắc muốn khóa danh mục này không?</p>
+      <h3 id="statusModalTitle">Xác nhận</h3>
+      <p id="statusMessage"></p>
 
-      <form id="deleteForm" method="post" action="category-admin">
-        <input type="hidden" name="action" value="delete">
-        <input type="hidden" name="id" id="deleteCategoryId">
+      <form id="statusForm" method="post" action="category-admin">
+        <input type="hidden" name="action" value="changeStatus">
+        <input type="hidden" name="id" id="statusCategoryId">
+        <input type="hidden" name="status" id="statusCategoryValue">
 
         <div class="modal-actions">
-          <button type="button" class="btn-secondary" onclick="closeDeleteModal()">Hủy</button>
-          <button type="submit" class="btn-danger">Khóa</button>
+          <button type="button" class="btn-secondary" onclick="closeStatusModal()">Hủy</button>
+          <button type="submit" class="btn-danger" id="statusSubmitBtn">Xác nhận</button>
         </div>
       </form>
     </div>
@@ -280,19 +294,23 @@
 
 </body>
 <script>
-  function openDeleteModal(id, title) {
-    document.getElementById("deleteCategoryId").value = id;
-    document.getElementById("deleteMessage").innerHTML =
-            'Bạn có chắc muốn khóa danh mục "<b>' + title + '</b>" không?';
-    document.getElementById("deleteModal").style.display = "flex";
+  function openStatusModal(id, name, status, actionText) {
+    document.getElementById("statusCategoryId").value = id;
+    document.getElementById("statusCategoryValue").value = status;
+
+    document.getElementById("statusModalTitle").innerText =
+            actionText === "khóa" ? "Xác nhận khóa" : "Xác nhận mở khóa";
+
+    document.getElementById("statusMessage").innerHTML =
+            'Bạn có chắc muốn ' + actionText + ' danh mục "<b>' + name + '</b>" không?';
+    document.getElementById("statusSubmitBtn").innerText =
+            actionText === "khóa" ? "Khóa" : "Mở khóa";
+
+    document.getElementById("statusModal").style.display = "flex";
   }
 
-  function closeDeleteModal() {
-    document.getElementById("deleteModal").style.display = "none";
-  }
-
-  function closeModal() {
-    document.getElementById("confirmModal").style.display = "none";
+  function closeStatusModal() {
+    document.getElementById("statusModal").style.display = "none";
   }
 </script>
 <script src="javaScript/searchCategory.js"></script>
