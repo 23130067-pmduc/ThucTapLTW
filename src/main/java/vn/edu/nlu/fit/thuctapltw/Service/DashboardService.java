@@ -5,6 +5,7 @@ import vn.edu.nlu.fit.thuctapltw.DAO.InventoryDao;
 import vn.edu.nlu.fit.thuctapltw.model.Order;
 import vn.edu.nlu.fit.thuctapltw.model.TopSellingProduct;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -52,11 +53,7 @@ public class DashboardService {
         return inventoryDao.countLowStock();
     }
 
-    public Map<String, Double> getRevenueByDay(int days) {
-        return dao.getRevenueByDay(days);
-    }
-
-    public Map<String, Double> getRevenueByMonth(int months) {
-        return dao.getRevenueByMonth(months);
+    public Map<String, Double> getRevenueByDateRange(LocalDate fromDate, LocalDate toDate) {
+        return dao.getRevenueByDateRange(fromDate, toDate);
     }
 }

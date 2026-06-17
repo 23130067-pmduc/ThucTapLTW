@@ -282,11 +282,13 @@
               <i class="fa-solid fa-chart-line" style="color:#A9C87D;"></i>
               <span>Biểu đồ doanh thu</span>
             </div>
-            <div class="revenue-period-btns">
-              <button class="period-btn active" id="btn7day"  onclick="switchPeriod('7day' ,this)">7 ngày</button>
-              <button class="period-btn"        id="btn30day" onclick="switchPeriod('30day',this)">30 ngày</button>
-              <button class="period-btn"        id="btn12mo"  onclick="switchPeriod('12mo' ,this)">12 tháng</button>
-            </div>
+            <form class="revenue-period-btns" method="get" action="${pageContext.request.contextPath}/dashboard">
+              <span class="date-range-label">Từ</span>
+              <input class="date-picker" type="date" name="fromDate" value="${fromDate}">
+              <span class="date-range-label">Đến</span>
+              <input class="date-picker" type="date" name="toDate" value="${toDate}">
+              <button class="period-btn active" type="submit">Lọc</button>
+            </form>
           </div>
           <div class="revenue-chart-body">
             <canvas id="revenueChart" height="90"></canvas>
@@ -384,9 +386,8 @@
 <script src="${pageContext.request.contextPath}/javaScript/dashboard.js"></script>
 <script>
   initRevenueChart({
-    '7day' : { labels: ${chartLabels7day},    values: ${chartValues7day} },
-    '30day': { labels: ${chartLabels30day},   values: ${chartValues30day} },
-    '12mo' : { labels: ${chartLabels12month}, values: ${chartValues12month} }
+    labels: ${chartLabelsDate},
+    values: ${chartValuesDate}
   });
 </script>
 
