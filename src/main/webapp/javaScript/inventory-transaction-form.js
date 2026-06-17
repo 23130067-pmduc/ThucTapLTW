@@ -4,6 +4,7 @@
     const quantityInput = document.getElementById('quantityInput');
     const unitCostInput = document.getElementById('unitCostInput');
     const addItemBtn = document.getElementById('addItemBtn');
+    const supplierSelect = document.getElementById('supplierSelect');
     const selectedItemsBody = document.getElementById('selectedItemsBody');
     const emptyRow = document.getElementById('emptyRow');
     const transactionForm = document.getElementById('transactionForm');
@@ -205,6 +206,12 @@
         }
 
         if (transactionType === 'IMPORT') {
+            if (supplierSelect && !supplierSelect.value) {
+                event.preventDefault();
+                showNotify('Vui lòng chọn nhà cung cấp trước khi lưu phiếu nhập.');
+                return;
+            }
+
             const invalidCostRow = Array.from(selectedItemsBody.querySelectorAll('.selected-item-row')).find(row => {
                 const costInput = row.querySelector('input[name="unitCosts"]');
                 return !costInput || Number(costInput.value || 0) <= 0;

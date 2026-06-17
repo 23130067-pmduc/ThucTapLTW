@@ -25,6 +25,10 @@ public class SupplierService {
         return supplierDao.getById(id);
     }
 
+    public List<Supplier> getActiveSuppliersForSelect() {
+        return supplierDao.getActiveSuppliersForSelect();
+    }
+
     public int countActive() {
         return supplierDao.countByStatus("ACTIVE");
     }

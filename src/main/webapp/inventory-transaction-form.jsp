@@ -160,6 +160,10 @@
             </div>
         </c:if>
 
+        <c:if test="${not empty supplierError}">
+            <div class="alert-error">${supplierError}</div>
+        </c:if>
+
         <form action="${pageContext.request.contextPath}/inventory-transaction-form" method="post" id="transactionForm">
             <input type="hidden" name="type" value="${type}">
 
@@ -172,7 +176,18 @@
 
                     <div class="form-group supplier-group ${type == 'EXPORT' ? 'is-hidden' : ''}">
                         <label>Nhà cung cấp</label>
-                        <input type="text" name="supplierName" placeholder="Nhập tên nhà cung cấp" value="${supplierName}">
+                        <select name="supplierName" id="supplierSelect" class="supplier-select">
+                            <option value="">-- Chọn nhà cung cấp --</option>
+                            <c:forEach items="${activeSuppliers}" var="supplier">
+                                <c:set var="supplierValue" value="${supplier.code} - ${supplier.name}" />
+                                <option value="${supplierValue}" ${supplierName == supplierValue ? 'selected' : ''}>
+                                    ${supplier.code} - ${supplier.name}
+                                </option>
+                            </c:forEach>
+                        </select>
+                        <c:if test="${type == 'IMPORT' && empty activeSuppliers}">
+                            <small class="form-hint error-hint">Chưa có nhà cung cấp đang hoạt động. Vui lòng thêm hoặc mở khóa nhà cung cấp trước khi lập phiếu nhập.</small>
+                        </c:if>
                     </div>
 
                     <div class="form-group full-width">

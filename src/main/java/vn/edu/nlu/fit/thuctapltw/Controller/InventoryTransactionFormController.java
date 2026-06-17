@@ -8,7 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import vn.edu.nlu.fit.thuctapltw.Service.InventoryService;
 import vn.edu.nlu.fit.thuctapltw.Service.InventoryTransactionService;
+import vn.edu.nlu.fit.thuctapltw.Service.SupplierService;
 import vn.edu.nlu.fit.thuctapltw.model.InventoryItem;
+import vn.edu.nlu.fit.thuctapltw.model.Supplier;
 import vn.edu.nlu.fit.thuctapltw.model.User;
 
 import java.io.IOException;
@@ -21,11 +23,13 @@ import java.util.Map;
 public class InventoryTransactionFormController extends HttpServlet {
     private InventoryService inventoryService;
     private InventoryTransactionService inventoryTransactionService;
+    private SupplierService supplierService;
 
     @Override
     public void init() {
         inventoryService = new InventoryService();
         inventoryTransactionService = new InventoryTransactionService();
+        supplierService = new SupplierService();
     }
 
     @Override
@@ -33,11 +37,7 @@ public class InventoryTransactionFormController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
 
         String type = normalizeType(request.getParameter("type"));
-        List<InventoryItem> inventoryItems = inventoryService.getInventoryItemsForTransaction();
-
-        request.setAttribute("type", type);
-        request.setAttribute("typeText", "IMPORT".equals(type) ? "Nhập kho" : "Xuất kho");
-        request.setAttribute("inventoryItems", inventoryItems);
+        prepareFormData(request, type);
         request.getRequestDispatcher("/inventory-transaction-form.jsp").forward(request, response);
     }
 
@@ -51,6 +51,15 @@ public class InventoryTransactionFormController extends HttpServlet {
         String[] variantIdParams = request.getParameterValues("variantIds");
         String[] quantityParams = request.getParameterValues("quantities");
         String[] unitCostParams = request.getParameterValues("unitCosts");
+
+        if ("IMPORT".equals(type) && !isValidActiveSupplierValue(supplierName)) {
+            prepareFormData(request, type);
+            request.setAttribute("supplierName", supplierName);
+            request.setAttribute("note", note);
+            request.setAttribute("supplierError", "Vui lòng chọn nhà cung cấp đang hoạt động trong danh sách.");
+            request.getRequestDispatcher("/inventory-transaction-form.jsp").forward(request, response);
+            return;
+        }
 
         List<Integer> variantIds = new ArrayList<>();
         List<Integer> quantities = new ArrayList<>();
@@ -82,9 +91,7 @@ public class InventoryTransactionFormController extends HttpServlet {
         if ("IMPORT".equals(type)) {
             Map<Integer, String> costErrors = inventoryTransactionService.validateImportCost(variantIds, unitCosts);
             if (!costErrors.isEmpty()) {
-                request.setAttribute("type", type);
-                request.setAttribute("typeText", "Nhập kho");
-                request.setAttribute("inventoryItems", inventoryService.getInventoryItemsForTransaction());
+                prepareFormData(request, type);
                 request.setAttribute("costErrors", costErrors.values());
                 request.setAttribute("supplierName", supplierName);
                 request.setAttribute("note", note);
@@ -96,9 +103,7 @@ public class InventoryTransactionFormController extends HttpServlet {
         if ("EXPORT".equals(type)) {
             Map<Integer, String> stockErrors = inventoryTransactionService.validateExportStock(variantIds, quantities);
             if (!stockErrors.isEmpty()) {
-                request.setAttribute("type", type);
-                request.setAttribute("typeText", "Xuất kho");
-                request.setAttribute("inventoryItems", inventoryService.getInventoryItemsForTransaction());
+                prepareFormData(request, type);
                 request.setAttribute("stockErrors", stockErrors.values());
                 request.setAttribute("supplierName", supplierName);
                 request.setAttribute("note", note);
@@ -111,6 +116,50 @@ public class InventoryTransactionFormController extends HttpServlet {
         int transactionId = inventoryTransactionService.createTransaction(type, supplierName, note, createdBy, variantIds, quantities, unitCosts);
 
         response.sendRedirect(request.getContextPath() + "/inventory-history-detail?id=" + transactionId + "&created=true");
+    }
+
+    private void prepareFormData(HttpServletRequest request, String type) {
+        List<InventoryItem> inventoryItems = inventoryService.getInventoryItemsForTransaction();
+        List<Supplier> activeSuppliers = "IMPORT".equals(type)
+                ? supplierService.getActiveSuppliersForSelect()
+                : List.of();
+
+        request.setAttribute("type", type);
+        request.setAttribute("typeText", "IMPORT".equals(type) ? "Nhập kho" : "Xuất kho");
+        request.setAttribute("inventoryItems", inventoryItems);
+        request.setAttribute("activeSuppliers", activeSuppliers);
+    }
+
+    private boolean isValidActiveSupplierValue(String supplierValue) {
+        String normalizedValue = getValue(supplierValue);
+        if (normalizedValue.isEmpty()) {
+            return false;
+        }
+
+        List<Supplier> activeSuppliers = supplierService.getActiveSuppliersForSelect();
+        for (Supplier supplier : activeSuppliers) {
+            if (normalizedValue.equals(buildSupplierDisplayName(supplier))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String buildSupplierDisplayName(Supplier supplier) {
+        if (supplier == null) {
+            return "";
+        }
+
+        String code = getValue(supplier.getCode());
+        String name = getValue(supplier.getName());
+
+        if (code.isEmpty()) {
+            return name;
+        }
+        if (name.isEmpty()) {
+            return code;
+        }
+        return code + " - " + name;
     }
 
     private String normalizeType(String type) {

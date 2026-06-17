@@ -77,6 +77,7 @@
 
 .form-group input,
 .form-group textarea,
+.supplier-select,
 .variant-select,
 .quantity-input,
 .variant-search-input {
@@ -90,6 +91,7 @@
 
 .form-group input:focus,
 .form-group textarea:focus,
+.supplier-select:focus,
 .variant-select:focus,
 .quantity-input:focus,
 .variant-search-input:focus {
@@ -100,6 +102,22 @@
 .form-group input[readonly] {
     background: #f8f9fa;
     color: #555;
+}
+
+.supplier-select {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-hint {
+    font-size: 12px;
+    color: #777;
+    line-height: 1.4;
+}
+
+.error-hint {
+    color: #c92a2a;
+    font-weight: 600;
 }
 
 .section-title {
