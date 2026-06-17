@@ -422,5 +422,60 @@ public class UserDao extends BaseDao {
                         .bind("id", id)
                         .execute());
     }
+
+    public void insertPendingAdminUser(User user, String otp, LocalDateTime expiredAt) {
+        getJdbi().withHandle(handle ->
+                handle.createUpdate("""
+                INSERT INTO users
+                (username, email, password, role_id, status, is_active,
+                 full_name, gender, phone, otp_code, otp_expired_at, created_at)
+                VALUES
+                (:username, :email, :password,
+                 COALESCE((SELECT id FROM roles WHERE LOWER(name) = LOWER(:role) LIMIT 1), 2),
+                 'PENDING', 0,
+                 :fullName, :gender, :phone, :otp, :expiredAt, NOW())
+            """)
+                        .bind("username", user.getUsername())
+                        .bind("email", user.getEmail())
+                        .bind("password", user.getPassword())
+                        .bind("role", user.getRole())
+                        .bind("fullName", user.getFullName())
+                        .bind("gender", user.getGender())
+                        .bind("phone", user.getPhone())
+                        .bind("otp", otp)
+                        .bind("expiredAt", expiredAt)
+                        .execute()
+        );
+    }
+
+    public void updatePendingAdminUser(User user, String otp, LocalDateTime expiredAt) {
+        getJdbi().withHandle(handle ->
+                handle.createUpdate("""
+                UPDATE users
+                SET username = :username,
+                    password = :password,
+                    role_id = COALESCE((SELECT id FROM roles WHERE LOWER(name) = LOWER(:role) LIMIT 1), role_id),
+                    status = 'PENDING',
+                    is_active = 0,
+                    full_name = :fullName,
+                    gender = :gender,
+                    phone = :phone,
+                    otp_code = :otp,
+                    otp_expired_at = :expiredAt
+                WHERE email = :email
+                  AND is_active = 0
+            """)
+                        .bind("username", user.getUsername())
+                        .bind("password", user.getPassword())
+                        .bind("role", user.getRole())
+                        .bind("fullName", user.getFullName())
+                        .bind("gender", user.getGender())
+                        .bind("phone", user.getPhone())
+                        .bind("otp", otp)
+                        .bind("expiredAt", expiredAt)
+                        .bind("email", user.getEmail())
+                        .execute()
+        );
+    }
 }
 
