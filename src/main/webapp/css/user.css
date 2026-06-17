@@ -893,10 +893,14 @@ body, .admin {
     font-weight: 600;
 }
 
+.date-picker-wrap {
+    position: relative;
+}
+
 .date-picker {
     min-width: 148px;
     height: 36px;
-    padding: 0 12px;
+    padding: 0 42px 0 12px;
     border-radius: 8px;
     border: 1.5px solid #d9e8c6;
     background: #fff;
@@ -909,6 +913,25 @@ body, .admin {
 .date-picker:focus {
     border-color: #A9C87D;
     box-shadow: 0 0 0 3px rgba(169, 200, 125, 0.18);
+}
+
+.native-date-picker {
+    position: absolute;
+    top: 1px;
+    right: 1px;
+    width: 36px;
+    height: 34px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: transparent;
+    cursor: pointer;
+    outline: none;
+}
+
+.native-date-picker::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 1;
 }
 
 .period-btn {

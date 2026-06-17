@@ -5,7 +5,7 @@
          pageEncoding="UTF-8" %>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi-VN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -293,11 +293,29 @@
               <form class="revenue-period-btns" method="get" action="${pageContext.request.contextPath}/dashboard">
                 <div class="date-filter-field">
                   <label for="dashboardFromDate">Từ ngày</label>
-                  <input class="date-picker" id="dashboardFromDate" type="date" name="fromDate" value="${fromDate}">
+                  <input type="hidden" id="dashboardFromDateValue" name="fromDate" value="${fromDate}">
+                  <div class="date-picker-wrap">
+                    <input class="date-picker js-date-display" id="dashboardFromDate" type="text"
+                           value="${fn:substring(fromDate, 8, 10)}/${fn:substring(fromDate, 5, 7)}/${fn:substring(fromDate, 0, 4)}"
+                           placeholder="dd/MM/yyyy" inputmode="numeric" autocomplete="off"
+                           data-target="dashboardFromDateValue" data-picker="dashboardFromDatePicker">
+                    <input class="native-date-picker js-native-date" id="dashboardFromDatePicker" type="date"
+                           value="${fromDate}" data-display="dashboardFromDate" data-target="dashboardFromDateValue"
+                           aria-label="Chọn từ ngày">
+                  </div>
                 </div>
                 <div class="date-filter-field">
                   <label for="dashboardToDate">Đến ngày</label>
-                  <input class="date-picker" id="dashboardToDate" type="date" name="toDate" value="${toDate}">
+                  <input type="hidden" id="dashboardToDateValue" name="toDate" value="${toDate}">
+                  <div class="date-picker-wrap">
+                    <input class="date-picker js-date-display" id="dashboardToDate" type="text"
+                           value="${fn:substring(toDate, 8, 10)}/${fn:substring(toDate, 5, 7)}/${fn:substring(toDate, 0, 4)}"
+                           placeholder="dd/MM/yyyy" inputmode="numeric" autocomplete="off"
+                           data-target="dashboardToDateValue" data-picker="dashboardToDatePicker">
+                    <input class="native-date-picker js-native-date" id="dashboardToDatePicker" type="date"
+                           value="${toDate}" data-display="dashboardToDate" data-target="dashboardToDateValue"
+                           aria-label="Chọn đến ngày">
+                  </div>
                 </div>
                 <button class="period-btn active" type="submit">
                   <i class="fa-solid fa-filter"></i>

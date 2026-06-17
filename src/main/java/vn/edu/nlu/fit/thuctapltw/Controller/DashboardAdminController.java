@@ -4,11 +4,11 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import vn.edu.nlu.fit.thuctapltw.Service.DashboardService;
+import vn.edu.nlu.fit.thuctapltw.Util.DateUtil;
 import vn.edu.nlu.fit.thuctapltw.Util.MapJsonUtil;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 import java.util.Map;
 
 @WebServlet(name = "DashboardAdminController", value = "/dashboard")
@@ -38,8 +38,8 @@ public class DashboardAdminController extends HttpServlet {
         request.setAttribute("newContacts", service.countNewContacts());
         request.setAttribute("lowStockProducts", service.countLowStockProducts());
 
-        LocalDate fromDate = parseSelectedDate(request.getParameter("fromDate"), LocalDate.now().withDayOfMonth(1));
-        LocalDate toDate = parseSelectedDate(request.getParameter("toDate"), LocalDate.now());
+        LocalDate fromDate = DateUtil.parseDateOrDefault(request.getParameter("fromDate"), LocalDate.now().withDayOfMonth(1));
+        LocalDate toDate = DateUtil.parseDateOrDefault(request.getParameter("toDate"), LocalDate.now());
         if (fromDate.isAfter(toDate)) {
             LocalDate temp = fromDate;
             fromDate = toDate;
@@ -55,18 +55,6 @@ public class DashboardAdminController extends HttpServlet {
         request.setAttribute("chartValuesDate", MapJsonUtil.toJsonValues(revenueByDate));
 
         request.getRequestDispatcher("/Dashboard.jsp").forward(request, response);
-    }
-
-    private LocalDate parseSelectedDate(String date, LocalDate defaultDate) {
-        if (date == null || date.isBlank()) {
-            return defaultDate;
-        }
-
-        try {
-            return LocalDate.parse(date);
-        } catch (DateTimeParseException e) {
-            return defaultDate;
-        }
     }
 
     @Override
