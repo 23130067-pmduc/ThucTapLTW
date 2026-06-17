@@ -25,6 +25,46 @@ public class SupplierAdminController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setCharacterEncoding("UTF-8");
 
+        String mode = normalize(request.getParameter("mode"));
+        if ("add".equalsIgnoreCase(mode)) {
+            Supplier supplier = new Supplier();
+            supplier.setStatus("ACTIVE");
+
+            request.setAttribute("mode", "add");
+            request.setAttribute("supplier", supplier);
+            request.getRequestDispatcher("supplier-form.jsp").forward(request, response);
+            return;
+        }
+
+        showSupplierList(request, response);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setCharacterEncoding("UTF-8");
+
+        String action = normalize(request.getParameter("action"));
+
+        if ("create".equalsIgnoreCase(action)) {
+            Supplier supplier = buildSupplierFromRequest(request);
+
+            try {
+                supplierService.create(supplier);
+                response.sendRedirect(request.getContextPath() + "/supplier-admin?success=create");
+            } catch (IllegalArgumentException e) {
+                request.setAttribute("mode", "add");
+                request.setAttribute("supplier", supplier);
+                request.setAttribute("error", e.getMessage());
+                request.getRequestDispatcher("supplier-form.jsp").forward(request, response);
+            }
+            return;
+        }
+
+        response.sendRedirect(request.getContextPath() + "/supplier-admin");
+    }
+
+    private void showSupplierList(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int pageSize = 10;
         int currentPage = parseInt(request.getParameter("page"), 1);
         if (currentPage < 1) {
@@ -57,6 +97,18 @@ public class SupplierAdminController extends HttpServlet {
         request.setAttribute("pageSize", pageSize);
 
         request.getRequestDispatcher("supplier-admin.jsp").forward(request, response);
+    }
+
+    private Supplier buildSupplierFromRequest(HttpServletRequest request) {
+        Supplier supplier = new Supplier();
+        supplier.setCode(request.getParameter("code"));
+        supplier.setName(request.getParameter("name"));
+        supplier.setPhone(request.getParameter("phone"));
+        supplier.setEmail(request.getParameter("email"));
+        supplier.setAddress(request.getParameter("address"));
+        supplier.setNote(request.getParameter("note"));
+        supplier.setStatus(request.getParameter("status"));
+        return supplier;
     }
 
     private int parseInt(String value, int defaultValue) {

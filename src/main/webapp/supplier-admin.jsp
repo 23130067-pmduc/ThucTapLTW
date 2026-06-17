@@ -132,12 +132,18 @@
             <div class="supplier-card danger-card">Đã khóa <span>${totalLocked}</span></div>
         </div>
 
+        <c:if test="${param.success == 'create'}">
+            <div class="supplier-alert success">
+                <i class="fa-solid fa-circle-check"></i> Thêm nhà cung cấp thành công.
+            </div>
+        </c:if>
+
         <section class="supplier-panel">
             <div class="supplier-panel-header">
                 <h2>Danh sách nhà cung cấp</h2>
-                <button type="button" class="btn-add is-disabled" title="Sẽ làm ở issue thêm nhà cung cấp">
+                <a href="${pageContext.request.contextPath}/supplier-admin?mode=add" class="btn-add">
                     <i class="fa-solid fa-plus"></i> Thêm nhà cung cấp
-                </button>
+                </a>
             </div>
 
             <form action="${pageContext.request.contextPath}/supplier-admin" method="get" class="supplier-toolbar">
