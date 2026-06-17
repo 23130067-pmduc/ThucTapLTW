@@ -35,8 +35,11 @@
                 </c:if>
 
                 <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
+                    <a href="${pageContext.request.contextPath}/supplier-admin" class="nav-item">
+                        <i class="fa-solid fa-truck"></i><span>Nhà cung cấp</span>
+                    </a>
                     <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item active">
-                        <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
+                        <i class="fa-solid fa-boxes-stacked"></i><span>Tồn kho</span>
                     </a>
                 </c:if>
 

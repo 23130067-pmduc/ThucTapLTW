@@ -8,7 +8,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý kho hàng</title>
+    <title>Quản lý tồn kho</title>
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/inventory-admin.css">
@@ -37,8 +37,11 @@
                     </c:if>
 
                     <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/supplier-admin" class="nav-item">
+                            <i class="fa-solid fa-truck"></i><span>Nhà cung cấp</span>
+                        </a>
                         <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item active">
-                            <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
+                            <i class="fa-solid fa-boxes-stacked"></i><span>Tồn kho</span>
                         </a>
                     </c:if>
 
@@ -126,7 +129,7 @@
 
     <section class="content inventory-content">
         <header class="topbar">
-            <h1>Quản lý kho hàng</h1>
+            <h1>Quản lý tồn kho</h1>
             <div class="topbar-actions">
                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
             </div>
@@ -162,30 +165,6 @@
 
                 <a href="${pageContext.request.contextPath}/inventory-admin" class="btn-reset">Làm mới</a>
             </form>
-
-            <div class="inventory-toolbar-actions">
-                <c:if test="${userlogin.permissions.contains('IMPORT_RECEIPT_CREATE')}">
-                    <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=IMPORT"
-                       class="btn-import">
-                        <i class="fa-solid fa-circle-plus"></i> Nhập kho
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('EXPORT_RECEIPT_CREATE')}">
-                    <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=EXPORT"
-                       class="btn-export">
-                        <i class="fa-solid fa-circle-minus"></i> Xuất kho
-                    </a>
-                </c:if>
-
-                <a href="${pageContext.request.contextPath}/inventory-batch-admin" class="btn-batch">
-                    <i class="fa-solid fa-layer-group"></i> Lô nhập hàng
-                </a>
-
-                <a href="${pageContext.request.contextPath}/inventory-history-admin" class="btn-history">
-                    <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhập xuất
-                </a>
-            </div>
         </div>
 
         <div class="inventory-result-info">
