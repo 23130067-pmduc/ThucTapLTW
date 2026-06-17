@@ -17,110 +17,109 @@
 <body class="inventory-page">
 <div class="user">
     <aside class="sidebar">
-        <img src="img/gau.png" alt="Logo">
+        <img src="${pageContext.request.contextPath}/img/gau.png" alt="Logo">
         <p>ADMIN</p>
 
-        <div class="nav" id="menu">
-            <div class="nav" id="menu">
+        <div class="nav">
+            <div class="nav">
+                <div class="nav" id="menu">
 
-                <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
-                        <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
+                    <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
+                            <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
+                            <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item active">
+                            <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
+                            <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
+                            <i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
+                            <i class="fa-solid fa-list"></i><span>Danh mục</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('ORDER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">
+                            <i class="fa-solid fa-receipt"></i><span>Đơn hàng</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">
+                            <i class="fa-solid fa-users"></i><span>Người dùng</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('PERMISSION_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/permission-admin" class="nav-item">
+                            <i class="fa-solid fa-user-shield"></i><span>Phân quyền</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
+                            <i class="fa-solid fa-image"></i><span>Banner</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('VOUCHER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item">
+                            <i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
+                            <i class="fa-solid fa-tags"></i>
+                            <span>Khuyến mãi</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
+                            <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('NOTIFICATION_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
+                            <i class="fa-solid fa-bell"></i><span>Thông báo</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('CONTACT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
+                            <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
+                        </a>
+                    </c:if>
+
+                    <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">
+                        <i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span>
                     </a>
-                </c:if>
 
-                <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
-                        <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/supplier-admin" class="nav-item">
-                        <i class="fa-solid fa-truck"></i><span>Nhà cung cấp</span>
-                    </a>
-                    <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item active">
-                        <i class="fa-solid fa-boxes-stacked"></i><span>Tồn kho</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
-                        <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
-                        <i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
-                        <i class="fa-solid fa-list"></i><span>Danh mục</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('ORDER_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">
-                        <i class="fa-solid fa-receipt"></i><span>Đơn hàng</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">
-                        <i class="fa-solid fa-users"></i><span>Người dùng</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('PERMISSION_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/permission-admin" class="nav-item">
-                        <i class="fa-solid fa-user-shield"></i><span>Phân quyền</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
-                        <i class="fa-solid fa-image"></i><span>Banner</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('VOUCHER_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item">
-                        <i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
-                        <i class="fa-solid fa-tags"></i>
-                        <span>Khuyến mãi</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
-                        <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('NOTIFICATION_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
-                        <i class="fa-solid fa-bell"></i><span>Thông báo</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('CONTACT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
-                        <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
-                    </a>
-                </c:if>
-
-                <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">
-                    <i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span>
-                </a>
-
+                </div>
             </div>
         </div>
     </aside>
@@ -146,9 +145,62 @@
             </div>
         </c:if>
 
+        <c:if test="${not empty sheetWarning}">
+            <div class="sheet-alert sheet-alert-warning">
+                <i class="fa-solid fa-circle-exclamation"></i> ${sheetWarning}
+            </div>
+        </c:if>
+
         <c:if test="${not empty sheetError}">
             <div class="sheet-alert sheet-alert-error">
                 <i class="fa-solid fa-triangle-exclamation"></i> ${sheetError}
+            </div>
+        </c:if>
+
+        <c:if test="${importResult}">
+            <div class="import-result-panel ${importErrorRows > 0 ? 'has-error' : 'all-success'}">
+                <div class="import-result-header">
+                    <div>
+                        <h3> Kết quả nhập kho từ Google Sheet</h3>
+                        <p>Chi tiết từng dòng đã được ghi vào tab <strong>KetQuaNhap</strong>.</p>
+                    </div>
+
+                    <c:if test="${not empty googleImportSheetUrl}">
+                        <a href="${googleImportSheetUrl}" target="_blank" class="btn-open-result-sheet">
+                            <i class="fa-solid fa-table-list"></i> Mở kết quả nhập
+                        </a>
+                    </c:if>
+                </div>
+
+                <div class="import-result-stats">
+                    <div class="import-result-stat total">
+                        <span>Tổng dòng đọc</span>
+                        <strong>${importTotalRows}</strong>
+                    </div>
+                    <div class="import-result-stat success">
+                        <span>Thành công</span>
+                        <strong>${importSuccessRows}</strong>
+                    </div>
+                    <div class="import-result-stat error">
+                        <span>Dòng lỗi</span>
+                        <strong>${importErrorRows}</strong>
+                    </div>
+                    <div class="import-result-stat written">
+                        <span>Dòng ghi kết quả</span>
+                        <strong>${importResultRows}</strong>
+                    </div>
+                </div>
+
+                <div class="import-result-note">
+                    <c:choose>
+                        <c:when test="${importErrorRows > 0}">
+                            Có dòng bị lỗi nên hệ thống không nhập các dòng đó. Mở tab <strong>KetQuaNhap</strong> để xem lý do và sửa lại dữ liệu trong tab <strong>NhapKho</strong>.
+                        </c:when>
+                        <c:otherwise>
+                            Toàn bộ dòng hợp lệ đã được nhập kho và ghi lịch sử nhập xuất.
+                        </c:otherwise>
+                    </c:choose>
+                </div>
             </div>
         </c:if>
 
@@ -158,9 +210,6 @@
                     <div class="google-sheet-title">
                         <i class="fa-brands fa-google-drive"></i>
                         Báo cáo tồn kho Google Sheet
-                    </div>
-                    <div class="google-sheet-desc">
-                        Cập nhật dữ liệu tồn kho hiện tại từ database lên tab <strong>TonKho</strong>.
                     </div>
                 </div>
 
@@ -185,9 +234,6 @@
                     <div class="google-sheet-title import-title">
                         <i class="fa-solid fa-file-import"></i>
                         Nhập kho từ Google Sheet
-                    </div>
-                    <div class="google-sheet-desc">
-                        Đọc tab <strong>NhapKho</strong>, nhập kho hàng loạt và ghi kết quả vào tab <strong>KetQuaNhap</strong>.
                     </div>
                 </div>
 

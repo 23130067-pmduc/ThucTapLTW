@@ -322,9 +322,24 @@ public class InventoryGoogleSheetService {
 
     private void writeImportResult(String spreadsheetId, String resultSheetName, String accessToken,
                                    List<ImportRowResult> results) throws IOException {
+        int successCount = 0;
+        int errorCount = 0;
+        int infoCount = 0;
+
+        for (ImportRowResult result : results) {
+            if ("Thành công".equals(result.status())) {
+                successCount++;
+            } else if ("Lỗi".equals(result.status())) {
+                errorCount++;
+            } else {
+                infoCount++;
+            }
+        }
+
         List<List<Object>> rows = new ArrayList<>();
         rows.add(List.of("KẾT QUẢ NHẬP KHO TỪ GOOGLE SHEET"));
         rows.add(List.of("Lần xử lý:", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
+        rows.add(List.of("Tổng dòng kết quả:", results.size(), "Thành công:", successCount, "Lỗi:", errorCount, "Thông tin:", infoCount));
         rows.add(List.of());
         rows.add(List.of(
                 "STT",

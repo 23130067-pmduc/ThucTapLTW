@@ -32,8 +32,14 @@ public class InventoryGoogleSheetImportController extends HttpServlet {
                     googleSheetService.importInventoryFromSheet(getServletContext(), createdBy);
 
             String message = result.getMessage();
+            String messageParam = result.getErrorRows() > 0 ? "sheetWarning" : "sheetSuccess";
             response.sendRedirect(request.getContextPath()
-                    + "/inventory-admin?sheetSuccess=" + encode(message));
+                    + "/inventory-admin?importResult=1"
+                    + "&" + messageParam + "=" + encode(message)
+                    + "&importTotalRows=" + result.getTotalRows()
+                    + "&importSuccessRows=" + result.getSuccessRows()
+                    + "&importErrorRows=" + result.getErrorRows()
+                    + "&importResultRows=" + result.getResultRows());
         } catch (Exception e) {
             String message = e.getMessage() == null || e.getMessage().isBlank()
                     ? "Không thể đồng bộ nhập kho từ Google Sheet."

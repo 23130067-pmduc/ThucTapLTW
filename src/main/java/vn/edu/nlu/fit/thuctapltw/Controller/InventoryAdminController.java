@@ -73,12 +73,30 @@ public class InventoryAdminController extends HttpServlet {
         request.setAttribute("outOfStockCount", inventoryService.countOutOfStock());
         request.setAttribute("totalStock", inventoryService.sumStock());
         request.setAttribute("sheetSuccess", getValue(request.getParameter("sheetSuccess")));
+        request.setAttribute("sheetWarning", getValue(request.getParameter("sheetWarning")));
         request.setAttribute("sheetError", getValue(request.getParameter("sheetError")));
+        request.setAttribute("importResult", "1".equals(getValue(request.getParameter("importResult"))));
+        request.setAttribute("importTotalRows", parseNonNegativeInt(request.getParameter("importTotalRows")));
+        request.setAttribute("importSuccessRows", parseNonNegativeInt(request.getParameter("importSuccessRows")));
+        request.setAttribute("importErrorRows", parseNonNegativeInt(request.getParameter("importErrorRows")));
+        request.setAttribute("importResultRows", parseNonNegativeInt(request.getParameter("importResultRows")));
         request.setAttribute("googleSheetConfigured", googleSheetService.isConfigured(getServletContext()));
         request.setAttribute("googleSheetUrl", googleSheetService.getSheetUrl(getServletContext()));
         request.setAttribute("googleImportSheetUrl", googleSheetService.getImportSheetUrl(getServletContext()));
 
         request.getRequestDispatcher("/inventory-admin.jsp").forward(request, response);
+    }
+
+    private int parseNonNegativeInt(String value) {
+        if (value == null || value.trim().isBlank()) {
+            return 0;
+        }
+
+        try {
+            return Math.max(Integer.parseInt(value.trim()), 0);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 
     private int parsePage(String pageParam) {
