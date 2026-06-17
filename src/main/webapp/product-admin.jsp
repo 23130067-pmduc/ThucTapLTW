@@ -122,7 +122,6 @@
         </a>
 
       </div>
-    </div>
   </aside>
 
   <section class="content product-admin-content">
