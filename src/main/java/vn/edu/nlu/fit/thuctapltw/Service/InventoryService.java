@@ -43,4 +43,8 @@ public class InventoryService {
     public boolean isActiveVariantForImport(int variantId) {
         return inventoryDao.isActiveVariantForImport(variantId);
     }
+
+    public boolean isActiveSupplierCode(String supplierCode) {
+        return inventoryDao.isActiveSupplierCode(supplierCode);
+    }
 }

@@ -309,6 +309,14 @@ public class InventoryGoogleSheetService {
         if (row.unitCost() == null || row.unitCost().compareTo(BigDecimal.ZERO) <= 0) {
             return "Giá nhập phải lớn hơn 0.";
         }
+
+        String supplierCode = normalizeSupplierCode(row.supplierCode());
+        if (supplierCode == null) {
+            return "Mã nhà cung cấp không được để trống.";
+        }
+        if (!inventoryService.isActiveSupplierCode(supplierCode)) {
+            return "Không tìm thấy nhà cung cấp đang hoạt động với mã " + supplierCode + ".";
+        }
         return null;
     }
 
@@ -353,8 +361,9 @@ public class InventoryGoogleSheetService {
     private String buildSupplierName(List<ImportRow> rows) {
         Set<String> supplierCodes = new LinkedHashSet<>();
         for (ImportRow row : rows) {
-            if (row.supplierCode() != null && !row.supplierCode().isBlank()) {
-                supplierCodes.add(row.supplierCode().trim());
+            String supplierCode = normalizeSupplierCode(row.supplierCode());
+            if (supplierCode != null) {
+                supplierCodes.add(supplierCode);
             }
         }
 
@@ -418,6 +427,13 @@ public class InventoryGoogleSheetService {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    private String normalizeSupplierCode(String supplierCode) {
+        if (supplierCode == null || supplierCode.trim().isBlank()) {
+            return null;
+        }
+        return supplierCode.trim().toUpperCase();
     }
 
     private String cell(List<Object> row, int index) {
