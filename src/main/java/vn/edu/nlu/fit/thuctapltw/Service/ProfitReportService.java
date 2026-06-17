@@ -19,11 +19,35 @@ public class ProfitReportService {
         return profitReportDao.getDailyReports(fromDate, toDate);
     }
 
+    public List<ProfitProductReport> getProductOptions() {
+        return profitReportDao.getProductOptions();
+    }
+
     public List<ProfitProductReport> getProductReports(LocalDate fromDate, LocalDate toDate) {
         return profitReportDao.getProductReports(fromDate, toDate);
     }
 
+    public List<ProfitProductReport> getProductReports(LocalDate fromDate, LocalDate toDate, int productId) {
+        return profitReportDao.getProductReports(fromDate, toDate, productId);
+    }
+
     public List<ProfitProductReport> getProductReportsForExcel(LocalDate fromDate, LocalDate toDate) {
         return profitReportDao.getProductReportsForExcel(fromDate, toDate);
+    }
+
+    public List<ProfitProductReport> getSoldProductReports(LocalDate fromDate, LocalDate toDate) {
+        return profitReportDao.getSoldProductReports(fromDate, toDate);
+    }
+
+    public List<ProfitProductReport> getSoldProductReportsForExcel(LocalDate fromDate, LocalDate toDate) {
+        return profitReportDao.getSoldProductReportsForExcel(fromDate, toDate);
+    }
+
+    public List<ProfitProductReport> getUnsoldProductReports(LocalDate fromDate, LocalDate toDate) {
+        return profitReportDao.getUnsoldProductReports(fromDate, toDate);
+    }
+
+    public List<ProfitProductReport> getUnsoldProductReportsForExcel(LocalDate fromDate, LocalDate toDate) {
+        return profitReportDao.getUnsoldProductReportsForExcel(fromDate, toDate);
     }
 }
