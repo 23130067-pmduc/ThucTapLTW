@@ -71,7 +71,7 @@ public class VNPayUtil {
             first = false;
         }
 
-        String secureHash = hmacSHA512(VNPayConfig.VNPAY_HASH_SECRET, hashData.toString());
+        String secureHash = createSecureHash(VNPayConfig.VNPAY_HASH_SECRET, hashData.toString());
 
         queryStr.append("&vnp_SecureHash=").append(secureHash);
 
@@ -153,7 +153,7 @@ public class VNPayUtil {
         return ip;
     }
 
-    public static String hmacSHA512(String key, String data) {
+    public static String createSecureHash(String key, String data) {
         try {
             Mac mac = Mac.getInstance("HmacSHA512");
 
@@ -206,7 +206,7 @@ public class VNPayUtil {
             first = false;
         }
 
-        String computedHash = hmacSHA512(VNPayConfig.VNPAY_HASH_SECRET, hashData.toString());
+        String computedHash = createSecureHash(VNPayConfig.VNPAY_HASH_SECRET, hashData.toString());
         return computedHash.equalsIgnoreCase(vnpSecureHash);
     }
 
