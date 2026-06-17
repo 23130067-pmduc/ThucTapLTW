@@ -146,7 +146,7 @@ public class InventoryGoogleSheetService {
         int successRows = validRows.size();
         int errorRows = totalDataRows - successRows;
         String message = "Đồng bộ nhập kho từ Google Sheet xong: "
-                + successRows + " dòng thành công, " + errorRows + " dòng lỗi.";
+                + successRows + " dòng thành công, " + errorRows + " dòng cần kiểm tra.";
 
         return new ImportSyncResult(totalDataRows, successRows, errorRows, resultRows.size(), message);
     }
@@ -185,7 +185,32 @@ public class InventoryGoogleSheetService {
         if (configuredUrl != null) {
             return configuredUrl;
         }
-        return getSheetUrl(context);
+
+        try {
+            GoogleSheetConfig config = loadConfig(context);
+            GoogleSheetImportConfig importConfig = loadImportConfig(context);
+            return getSheetUrlForTab(context, config.spreadsheetId(), importConfig.importSheetName());
+        } catch (Exception e) {
+            return getSheetUrl(context);
+        }
+    }
+
+    public String getImportResultSheetUrl(ServletContext context) {
+        String configuredUrl = firstNotBlank(
+                getContextParam(context, "googleInventoryImportResultSheetUrl"),
+                System.getenv("GOOGLE_INVENTORY_IMPORT_RESULT_SHEET_URL")
+        );
+        if (configuredUrl != null) {
+            return configuredUrl;
+        }
+
+        try {
+            GoogleSheetConfig config = loadConfig(context);
+            GoogleSheetImportConfig importConfig = loadImportConfig(context);
+            return getSheetUrlForTab(context, config.spreadsheetId(), importConfig.resultSheetName());
+        } catch (Exception e) {
+            return getSheetUrl(context);
+        }
     }
 
     private List<List<Object>> buildSheetValues(List<InventoryItem> items) {
@@ -394,12 +419,11 @@ public class InventoryGoogleSheetService {
     }
 
     private String validateBasicImportRow(ImportRow row) {
-        if (!row.rawVariantId().isBlank() && row.variantId() == null) {
-            return "Mã biến thể không hợp lệ. Nếu cần tạo sản phẩm mới, hãy để trống mã biến thể.";
+        String idError = validateProductAndVariantCodes(row);
+        if (idError != null) {
+            return idError;
         }
-        if (!row.rawProductId().isBlank() && row.productId() == null) {
-            return "Mã sản phẩm không hợp lệ.";
-        }
+
         if (row.quantity() == null || row.quantity() <= 0) {
             return "Số lượng nhập phải lớn hơn 0.";
         }
@@ -425,6 +449,34 @@ public class InventoryGoogleSheetService {
             if (row.sizeName().isBlank()) {
                 return "Size không được để trống khi mã biến thể trống.";
             }
+        }
+        return null;
+    }
+
+    private String validateProductAndVariantCodes(ImportRow row) {
+        boolean hasVariantCode = !row.rawVariantId().isBlank();
+        boolean hasProductCode = !row.rawProductId().isBlank();
+
+        boolean variantInvalid = false;
+        boolean productInvalid = false;
+
+        if (hasVariantCode) {
+            variantInvalid = row.variantId() == null || row.variantId() <= 0
+                    || !inventoryService.isActiveVariantForImport(row.variantId());
+        }
+        if (hasProductCode) {
+            productInvalid = row.productId() == null || row.productId() <= 0
+                    || !inventoryService.isActiveProductForImport(row.productId());
+        }
+
+        if (variantInvalid && productInvalid) {
+            return "Mã biến thể và mã sản phẩm không hợp lệ. Nếu là sản phẩm mới, hãy để trống 2 ô Mã biến thể và Mã sản phẩm.";
+        }
+        if (variantInvalid) {
+            return "Mã biến thể không hợp lệ hoặc không tồn tại trong hệ thống. Nếu là sản phẩm mới, hãy để trống ô Mã biến thể.";
+        }
+        if (productInvalid) {
+            return "Mã sản phẩm không hợp lệ hoặc không tồn tại trong hệ thống. Nếu là sản phẩm mới, hãy để trống ô Mã sản phẩm.";
         }
         return null;
     }
@@ -463,7 +515,7 @@ public class InventoryGoogleSheetService {
         for (ImportRowResult result : results) {
             if ("Thành công".equals(result.status())) {
                 successCount++;
-            } else if ("Lỗi".equals(result.status())) {
+            } else if ("Cần kiểm tra".equals(result.status())) {
                 errorCount++;
             } else {
                 infoCount++;
@@ -473,7 +525,7 @@ public class InventoryGoogleSheetService {
         List<List<Object>> rows = new ArrayList<>();
         rows.add(List.of("KẾT QUẢ NHẬP KHO TỪ GOOGLE SHEET"));
         rows.add(List.of("Lần xử lý:", LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"))));
-        rows.add(List.of("Tổng dòng kết quả:", results.size(), "Thành công:", successCount, "Lỗi:", errorCount, "Thông tin:", infoCount));
+        rows.add(List.of("Tổng dòng kết quả:", results.size(), "Thành công:", successCount, "Cần kiểm tra:", errorCount, "Thông tin:", infoCount));
         rows.add(List.of());
         rows.add(List.of(
                 "STT",
@@ -495,20 +547,27 @@ public class InventoryGoogleSheetService {
         DecimalFormat moneyFormat = new DecimalFormat("#,##0.##");
         for (ImportRowResult result : results) {
             ImportRow row = result.row();
+            String productIdResult = "";
+            String variantIdResult = "";
+            if (row != null) {
+                productIdResult = firstNotBlank(row.rawProductId(), row.resolvedProductId() == null ? "" : String.valueOf(row.resolvedProductId()));
+                variantIdResult = firstNotBlank(row.rawVariantId(), row.resolvedVariantId() == null ? "" : String.valueOf(row.resolvedVariantId()));
+            }
+
             rows.add(List.of(
                     index++,
                     row == null ? "" : row.sheetRowNumber(),
                     row == null ? "" : safe(row.action()),
-                    row == null ? "" : firstNotBlank(row.rawProductId(), row.resolvedProductId() == null ? "" : String.valueOf(row.resolvedProductId())),
-                    row == null ? "" : firstNotBlank(row.rawVariantId(), row.resolvedVariantId() == null ? "" : String.valueOf(row.resolvedVariantId())),
-                    row == null ? "" : row.productName(),
-                    row == null ? "" : row.colorName(),
-                    row == null ? "" : row.sizeName(),
-                    row == null ? "" : row.rawQuantity(),
-                    row == null || row.unitCost() == null ? (row == null ? "" : row.rawUnitCost()) : moneyFormat.format(row.unitCost()),
-                    row == null ? "" : row.supplierCode(),
-                    result.status(),
-                    result.message()
+                    safe(productIdResult),
+                    safe(variantIdResult),
+                    row == null ? "" : safe(row.productName()),
+                    row == null ? "" : safe(row.colorName()),
+                    row == null ? "" : safe(row.sizeName()),
+                    row == null ? "" : safe(row.rawQuantity()),
+                    row == null || row.unitCost() == null ? (row == null ? "" : safe(row.rawUnitCost())) : moneyFormat.format(row.unitCost()),
+                    row == null ? "" : safe(row.supplierCode()),
+                    safe(result.status()),
+                    safe(result.message())
             ));
         }
 
@@ -655,6 +714,35 @@ public class InventoryGoogleSheetService {
         }
 
         return names;
+    }
+
+    private String getSheetUrlForTab(ServletContext context, String spreadsheetId, String sheetName) throws IOException {
+        String accessToken = getAccessToken(context);
+        Integer sheetId = getSheetIdByName(spreadsheetId, sheetName, accessToken);
+
+        if (sheetId == null) {
+            return "https://docs.google.com/spreadsheets/d/" + spreadsheetId + "/edit";
+        }
+        return "https://docs.google.com/spreadsheets/d/" + spreadsheetId + "/edit?gid=" + sheetId + "#gid=" + sheetId;
+    }
+
+    private Integer getSheetIdByName(String spreadsheetId, String sheetName, String accessToken) throws IOException {
+        String url = "https://sheets.googleapis.com/v4/spreadsheets/" + spreadsheetId
+                + "?fields=sheets(properties(sheetId,title))";
+        String responseBody = executeGetRequest(url, accessToken);
+        SpreadsheetResponse response = gson.fromJson(responseBody, SpreadsheetResponse.class);
+
+        if (response != null && response.sheets != null) {
+            for (SheetEntry sheet : response.sheets) {
+                if (sheet != null
+                        && sheet.properties != null
+                        && sheet.properties.title != null
+                        && sheet.properties.title.equals(sheetName)) {
+                    return sheet.properties.sheetId;
+                }
+            }
+        }
+        return null;
     }
 
     private List<List<Object>> readValues(String spreadsheetId, String range, String accessToken) throws IOException {
@@ -941,7 +1029,7 @@ public class InventoryGoogleSheetService {
         }
 
         static ImportRowResult error(ImportRow row, String message) {
-            return new ImportRowResult(row, "Lỗi", message);
+            return new ImportRowResult(row, "Cần kiểm tra", message);
         }
 
         static ImportRowResult info(String message) {
@@ -972,6 +1060,7 @@ public class InventoryGoogleSheetService {
     }
 
     private static class SheetProperties {
+        Integer sheetId;
         String title;
     }
 }
