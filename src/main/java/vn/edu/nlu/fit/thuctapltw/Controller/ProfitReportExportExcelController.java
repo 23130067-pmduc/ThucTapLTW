@@ -38,7 +38,6 @@ public class ProfitReportExportExcelController extends HttpServlet {
 
         LocalDate today = LocalDate.now();
         LocalDate defaultFromDate = today.minusDays(29);
-
         LocalDate fromDate = parseDate(request.getParameter("fromDate"), defaultFromDate);
         LocalDate toDate = parseDate(request.getParameter("toDate"), today);
 
@@ -51,8 +50,10 @@ public class ProfitReportExportExcelController extends HttpServlet {
         ProfitSummary summary = profitReportService.getSummary(fromDate, toDate);
         List<ProfitDailyReport> dailyReports = profitReportService.getDailyReports(fromDate, toDate);
         List<ProfitProductReport> productReports = profitReportService.getProductReportsForExcel(fromDate, toDate);
+        List<ProfitProductReport> soldReports = profitReportService.getSoldProductReportsForExcel(fromDate, toDate);
+        List<ProfitProductReport> unsoldReports = profitReportService.getUnsoldProductReportsForExcel(fromDate, toDate);
 
-        String fileName = "thong_ke_san_pham_ban_duoc_" + fromDate + "_" + toDate + ".xlsx";
+        String fileName = "thong_ke_ban_hang_sunnybear_" + fromDate + "_" + toDate + ".xlsx";
         String encodedFileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8).replace("+", "%20");
 
         response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -62,8 +63,10 @@ public class ProfitReportExportExcelController extends HttpServlet {
         try (Workbook workbook = new XSSFWorkbook()) {
             ExcelStyles styles = createStyles(workbook);
             createSummarySheet(workbook, styles, summary, fromDate, toDate);
-            createProductSheet(workbook, styles, productReports, fromDate, toDate);
             createDailySheet(workbook, styles, dailyReports, fromDate, toDate);
+            createProductProfitSheet(workbook, styles, productReports, fromDate, toDate);
+            createSoldProductSheet(workbook, styles, soldReports, fromDate, toDate);
+            createUnsoldProductSheet(workbook, styles, unsoldReports, fromDate, toDate);
             workbook.write(response.getOutputStream());
         }
     }
@@ -74,7 +77,7 @@ public class ProfitReportExportExcelController extends HttpServlet {
 
         Row titleRow = sheet.createRow(rowIndex++);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("BÁO CÁO THỐNG KÊ SẢN PHẨM BÁN ĐƯỢC");
+        titleCell.setCellValue("BÁO CÁO THỐNG KÊ BÁN HÀNG SUNNYBEAR");
         titleCell.setCellStyle(styles.titleStyle());
         sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 3));
 
@@ -88,114 +91,156 @@ public class ProfitReportExportExcelController extends HttpServlet {
 
         rowIndex++;
         rowIndex = writeSummaryRow(sheet, rowIndex, "Đơn hoàn thành", summary.getCompletedOrders(), styles);
+        rowIndex = writeSummaryRow(sheet, rowIndex, "Số lượng sản phẩm bán", summary.getSoldQuantity(), styles);
+        rowIndex = writeSummaryRow(sheet, rowIndex, "Số lượng nhập kho", summary.getImportedQuantity(), styles);
         rowIndex = writeSummaryRow(sheet, rowIndex, "Số lượng xuất kho", summary.getExportedQuantity(), styles);
-        rowIndex = writeSummaryMoneyRow(sheet, rowIndex, "Doanh thu sản phẩm", summary.getGrossRevenue(), styles);
-        rowIndex = writeSummaryMoneyRow(sheet, rowIndex, "Giảm giá", summary.getDiscount(), styles);
-        rowIndex = writeSummaryMoneyRow(sheet, rowIndex, "Doanh thu thuần", summary.getNetRevenue(), styles);
-        rowIndex = writeSummaryMoneyRow(sheet, rowIndex, "Giá vốn", summary.getCostOfGoods(), styles);
-        writeSummaryMoneyRow(sheet, rowIndex, "Lợi nhuận gộp", summary.getGrossProfit(), styles);
+        rowIndex = writeSummaryMoneyRow(sheet, rowIndex, "Tổng doanh thu", summary.getGrossRevenue(), styles);
+        rowIndex = writeSummaryMoneyRow(sheet, rowIndex, "Tổng chi phí nhập hàng", summary.getImportCost(), styles);
+        rowIndex = writeSummaryMoneyRow(sheet, rowIndex, "Giá vốn hàng bán", summary.getCostOfGoods(), styles);
+        rowIndex = writeSummaryMoneyRow(sheet, rowIndex, "Lợi nhuận", summary.getGrossProfit(), summary.isNegativeProfit() ? styles.negativeMoneyStyle() : styles.moneyStyle(), styles);
+        writeSummaryDecimalRow(sheet, rowIndex, "Tỉ suất lợi nhuận (%)", BigDecimal.valueOf(summary.getProfitMargin()), styles);
 
-        sheet.setColumnWidth(0, 28 * 256);
-        sheet.setColumnWidth(1, 24 * 256);
-        sheet.setColumnWidth(2, 18 * 256);
-        sheet.setColumnWidth(3, 18 * 256);
+        setColumnWidths(sheet, new int[]{30, 28, 18, 18});
     }
 
-    private void createProductSheet(Workbook workbook, ExcelStyles styles, List<ProfitProductReport> productReports, LocalDate fromDate, LocalDate toDate) {
-        Sheet sheet = workbook.createSheet("SanPhamBanDuoc");
-        int rowIndex = 0;
-
-        Row titleRow = sheet.createRow(rowIndex++);
-        Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("THỐNG KÊ SẢN PHẨM BÁN ĐƯỢC");
-        titleCell.setCellStyle(styles.titleStyle());
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 10));
-
-        Row rangeRow = sheet.createRow(rowIndex++);
-        writeCell(rangeRow, 0, "Từ ngày", styles.labelStyle());
-        writeCell(rangeRow, 1, formatDate(fromDate), styles.normalStyle());
-        writeCell(rangeRow, 2, "Đến ngày", styles.labelStyle());
-        writeCell(rangeRow, 3, formatDate(toDate), styles.normalStyle());
-
-        rowIndex++;
+    private void createDailySheet(Workbook workbook, ExcelStyles styles, List<ProfitDailyReport> reports, LocalDate fromDate, LocalDate toDate) {
+        Sheet sheet = workbook.createSheet("DoanhThuTheoNgay");
+        int rowIndex = writeSheetTitle(sheet, styles, "DOANH THU - CHI PHÍ - LỢI NHUẬN THEO NGÀY", fromDate, toDate, 7);
         Row header = sheet.createRow(rowIndex++);
-        String[] headers = {
-                "STT", "Mã sản phẩm", "Tên sản phẩm", "Danh mục", "Số lượng đã bán",
-                "Số lượng xuất kho", "Doanh thu", "Giá vốn", "Lợi nhuận", "Tỷ suất lợi nhuận (%)", "Ghi chú"
-        };
-        for (int i = 0; i < headers.length; i++) {
-            writeCell(header, i, headers[i], styles.headerStyle());
-        }
+        String[] headers = {"Ngày", "Đơn hoàn thành", "SL nhập", "SL xuất", "Doanh thu", "Chi phí nhập", "Giá vốn", "Lợi nhuận"};
+        writeHeader(header, headers, styles);
 
-        if (productReports == null || productReports.isEmpty()) {
-            Row emptyRow = sheet.createRow(rowIndex);
-            writeCell(emptyRow, 0, "Chưa có sản phẩm bán được trong khoảng thời gian này.", styles.normalStyle());
-            sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, headers.length - 1));
+        if (reports == null || reports.isEmpty()) {
+            writeEmpty(sheet, rowIndex, headers.length, "Chưa có dữ liệu trong khoảng thời gian này.", styles);
+        } else {
+            for (ProfitDailyReport report : reports) {
+                Row row = sheet.createRow(rowIndex++);
+                writeCell(row, 0, safe(report.getReportDate()), styles.normalStyle());
+                writeCell(row, 1, report.getCompletedOrders(), styles.numberStyle());
+                writeCell(row, 2, report.getImportedQuantity(), styles.numberStyle());
+                writeCell(row, 3, report.getExportedQuantity(), styles.numberStyle());
+                writeMoneyCell(row, 4, report.getRevenue(), styles.moneyStyle());
+                writeMoneyCell(row, 5, report.getImportCost(), styles.moneyStyle());
+                writeMoneyCell(row, 6, report.getCostOfGoods(), styles.moneyStyle());
+                writeMoneyCell(row, 7, report.getProfit(), report.isNegativeProfit() ? styles.negativeMoneyStyle() : styles.moneyStyle());
+            }
+        }
+        setColumnWidths(sheet, new int[]{18, 18, 14, 14, 20, 20, 20, 20});
+        sheet.createFreezePane(0, 4);
+    }
+
+    private void createProductProfitSheet(Workbook workbook, ExcelStyles styles, List<ProfitProductReport> reports, LocalDate fromDate, LocalDate toDate) {
+        Sheet sheet = workbook.createSheet("LoiNhuanTheoSanPham");
+        int rowIndex = writeSheetTitle(sheet, styles, "THỐNG KÊ LỢI NHUẬN THEO TỪNG SẢN PHẨM", fromDate, toDate, 10);
+        Row header = sheet.createRow(rowIndex++);
+        String[] headers = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Danh mục", "SL nhập", "Chi phí nhập", "SL bán", "Doanh thu", "Giá vốn", "Lợi nhuận", "Tỉ suất LN (%)"};
+        writeHeader(header, headers, styles);
+
+        if (reports == null || reports.isEmpty()) {
+            writeEmpty(sheet, rowIndex, headers.length, "Chưa có sản phẩm phát sinh trong khoảng thời gian này.", styles);
         } else {
             int stt = 1;
-            for (ProfitProductReport report : productReports) {
+            for (ProfitProductReport report : reports) {
                 Row row = sheet.createRow(rowIndex++);
                 writeCell(row, 0, stt++, styles.numberStyle());
                 writeCell(row, 1, report.getProductId(), styles.numberStyle());
                 writeCell(row, 2, safe(report.getProductName()), styles.normalStyle());
                 writeCell(row, 3, safe(report.getCategoryName()), styles.normalStyle());
-                writeCell(row, 4, report.getSoldQuantity(), styles.numberStyle());
-                writeCell(row, 5, report.getExportedQuantity(), styles.numberStyle());
-                writeMoneyCell(row, 6, report.getRevenue(), styles.moneyStyle());
-                writeMoneyCell(row, 7, report.getCostOfGoods(), styles.moneyStyle());
-                writeMoneyCell(row, 8, report.getProfit(), report.isNegativeProfit() ? styles.negativeMoneyStyle() : styles.moneyStyle());
-                writeDecimalCell(row, 9, report.getProfitMargin(), styles.percentNumberStyle());
-                writeCell(row, 10, "", styles.normalStyle());
+                writeCell(row, 4, report.getImportedQuantity(), styles.numberStyle());
+                writeMoneyCell(row, 5, report.getImportCost(), styles.moneyStyle());
+                writeCell(row, 6, report.getSoldQuantity(), styles.numberStyle());
+                writeMoneyCell(row, 7, report.getRevenue(), styles.moneyStyle());
+                writeMoneyCell(row, 8, report.getCostOfGoods(), styles.moneyStyle());
+                writeMoneyCell(row, 9, report.getProfit(), report.isNegativeProfit() ? styles.negativeMoneyStyle() : styles.moneyStyle());
+                writeDecimalCell(row, 10, report.getProfitMargin(), styles.percentNumberStyle());
             }
         }
-
-        int[] widths = {8, 14, 42, 24, 18, 18, 18, 18, 18, 22, 30};
-        setColumnWidths(sheet, widths);
+        setColumnWidths(sheet, new int[]{8, 14, 42, 22, 12, 18, 12, 18, 18, 18, 18});
         sheet.createFreezePane(0, 4);
     }
 
-    private void createDailySheet(Workbook workbook, ExcelStyles styles, List<ProfitDailyReport> dailyReports, LocalDate fromDate, LocalDate toDate) {
-        Sheet sheet = workbook.createSheet("ThongKeTheoNgay");
-        int rowIndex = 0;
+    private void createSoldProductSheet(Workbook workbook, ExcelStyles styles, List<ProfitProductReport> reports, LocalDate fromDate, LocalDate toDate) {
+        Sheet sheet = workbook.createSheet("SanPhamBanDuoc");
+        int rowIndex = writeSheetTitle(sheet, styles, "THỐNG KÊ SẢN PHẨM BÁN ĐƯỢC", fromDate, toDate, 7);
+        Row header = sheet.createRow(rowIndex++);
+        String[] headers = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Danh mục", "Giá bán", "Ngày bán gần nhất", "Số lượng bán", "Doanh thu"};
+        writeHeader(header, headers, styles);
 
+        if (reports == null || reports.isEmpty()) {
+            writeEmpty(sheet, rowIndex, headers.length, "Chưa có sản phẩm bán được trong khoảng thời gian này.", styles);
+        } else {
+            int stt = 1;
+            for (ProfitProductReport report : reports) {
+                Row row = sheet.createRow(rowIndex++);
+                writeCell(row, 0, stt++, styles.numberStyle());
+                writeCell(row, 1, report.getProductId(), styles.numberStyle());
+                writeCell(row, 2, safe(report.getProductName()), styles.normalStyle());
+                writeCell(row, 3, safe(report.getCategoryName()), styles.normalStyle());
+                writeMoneyCell(row, 4, report.getPrice(), styles.moneyStyle());
+                writeCell(row, 5, safe(report.getLastSoldDate()), styles.normalStyle());
+                writeCell(row, 6, report.getSoldQuantity(), styles.numberStyle());
+                writeMoneyCell(row, 7, report.getRevenue(), styles.moneyStyle());
+            }
+        }
+        setColumnWidths(sheet, new int[]{8, 14, 42, 22, 18, 20, 16, 20});
+        sheet.createFreezePane(0, 4);
+    }
+
+    private void createUnsoldProductSheet(Workbook workbook, ExcelStyles styles, List<ProfitProductReport> reports, LocalDate fromDate, LocalDate toDate) {
+        Sheet sheet = workbook.createSheet("SanPhamKhongBanDuoc");
+        int rowIndex = writeSheetTitle(sheet, styles, "THỐNG KÊ SẢN PHẨM KHÔNG BÁN ĐƯỢC", fromDate, toDate, 8);
+        Row header = sheet.createRow(rowIndex++);
+        String[] headers = {"STT", "Mã sản phẩm", "Tên sản phẩm", "Danh mục", "Giá bán", "Tồn hiện tại", "Ngày tạo", "Lần bán gần nhất", "Đã bán"};
+        writeHeader(header, headers, styles);
+
+        if (reports == null || reports.isEmpty()) {
+            writeEmpty(sheet, rowIndex, headers.length, "Tất cả sản phẩm đều có phát sinh bán trong khoảng thời gian này.", styles);
+        } else {
+            int stt = 1;
+            for (ProfitProductReport report : reports) {
+                Row row = sheet.createRow(rowIndex++);
+                writeCell(row, 0, stt++, styles.numberStyle());
+                writeCell(row, 1, report.getProductId(), styles.numberStyle());
+                writeCell(row, 2, safe(report.getProductName()), styles.normalStyle());
+                writeCell(row, 3, safe(report.getCategoryName()), styles.normalStyle());
+                writeMoneyCell(row, 4, report.getPrice(), styles.moneyStyle());
+                writeCell(row, 5, report.getCurrentStock(), styles.numberStyle());
+                writeCell(row, 6, safe(report.getCreatedDate()), styles.normalStyle());
+                writeCell(row, 7, report.getLastSoldDate() == null ? "Chưa từng bán" : report.getLastSoldDate(), styles.normalStyle());
+                writeCell(row, 8, 0, styles.numberStyle());
+            }
+        }
+        setColumnWidths(sheet, new int[]{8, 14, 42, 22, 18, 16, 18, 20, 12});
+        sheet.createFreezePane(0, 4);
+    }
+
+    private int writeSheetTitle(Sheet sheet, ExcelStyles styles, String title, LocalDate fromDate, LocalDate toDate, int lastColumn) {
+        int rowIndex = 0;
         Row titleRow = sheet.createRow(rowIndex++);
         Cell titleCell = titleRow.createCell(0);
-        titleCell.setCellValue("THỐNG KÊ DOANH THU - LỢI NHUẬN THEO NGÀY");
+        titleCell.setCellValue(title);
         titleCell.setCellStyle(styles.titleStyle());
-        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, 5));
+        sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, lastColumn));
 
         Row rangeRow = sheet.createRow(rowIndex++);
         writeCell(rangeRow, 0, "Từ ngày", styles.labelStyle());
         writeCell(rangeRow, 1, formatDate(fromDate), styles.normalStyle());
         writeCell(rangeRow, 2, "Đến ngày", styles.labelStyle());
         writeCell(rangeRow, 3, formatDate(toDate), styles.normalStyle());
-
         rowIndex++;
-        Row header = sheet.createRow(rowIndex++);
-        String[] headers = {"Ngày", "Đơn hoàn thành", "SL xuất", "Doanh thu thuần", "Giá vốn", "Lợi nhuận gộp"};
+        return rowIndex;
+    }
+
+    private void writeHeader(Row header, String[] headers, ExcelStyles styles) {
         for (int i = 0; i < headers.length; i++) {
             writeCell(header, i, headers[i], styles.headerStyle());
         }
+    }
 
-        if (dailyReports == null || dailyReports.isEmpty()) {
-            Row emptyRow = sheet.createRow(rowIndex);
-            writeCell(emptyRow, 0, "Chưa có dữ liệu trong khoảng thời gian này.", styles.normalStyle());
-            sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, headers.length - 1));
-        } else {
-            for (ProfitDailyReport report : dailyReports) {
-                Row row = sheet.createRow(rowIndex++);
-                writeCell(row, 0, safe(report.getReportDate()), styles.normalStyle());
-                writeCell(row, 1, report.getCompletedOrders(), styles.numberStyle());
-                writeCell(row, 2, report.getExportedQuantity(), styles.numberStyle());
-                writeMoneyCell(row, 3, report.getRevenue(), styles.moneyStyle());
-                writeMoneyCell(row, 4, report.getCostOfGoods(), styles.moneyStyle());
-                writeMoneyCell(row, 5, report.getProfit(), report.isNegativeProfit() ? styles.negativeMoneyStyle() : styles.moneyStyle());
-            }
-        }
-
-        int[] widths = {18, 18, 14, 20, 20, 20};
-        setColumnWidths(sheet, widths);
-        sheet.createFreezePane(0, 4);
+    private void writeEmpty(Sheet sheet, int rowIndex, int columns, String message, ExcelStyles styles) {
+        Row emptyRow = sheet.createRow(rowIndex);
+        writeCell(emptyRow, 0, message, styles.normalStyle());
+        sheet.addMergedRegion(new CellRangeAddress(rowIndex, rowIndex, 0, columns - 1));
     }
 
     private int writeSummaryRow(Sheet sheet, int rowIndex, String label, int value, ExcelStyles styles) {
@@ -206,9 +251,20 @@ public class ProfitReportExportExcelController extends HttpServlet {
     }
 
     private int writeSummaryMoneyRow(Sheet sheet, int rowIndex, String label, BigDecimal value, ExcelStyles styles) {
+        return writeSummaryMoneyRow(sheet, rowIndex, label, value, styles.moneyStyle(), styles);
+    }
+
+    private int writeSummaryMoneyRow(Sheet sheet, int rowIndex, String label, BigDecimal value, CellStyle valueStyle, ExcelStyles styles) {
         Row row = sheet.createRow(rowIndex++);
         writeCell(row, 0, label, styles.labelStyle());
-        writeMoneyCell(row, 1, value, styles.moneyStyle());
+        writeMoneyCell(row, 1, value, valueStyle);
+        return rowIndex;
+    }
+
+    private int writeSummaryDecimalRow(Sheet sheet, int rowIndex, String label, BigDecimal value, ExcelStyles styles) {
+        Row row = sheet.createRow(rowIndex++);
+        writeCell(row, 0, label, styles.labelStyle());
+        writeDecimalCell(row, 1, value, styles.percentNumberStyle());
         return rowIndex;
     }
 
