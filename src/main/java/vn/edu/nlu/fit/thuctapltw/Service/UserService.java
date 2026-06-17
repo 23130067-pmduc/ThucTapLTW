@@ -220,4 +220,68 @@ public class UserService {
     public void changeStatus(int id, String status) {
         userDao.changeStatus(id, status);
     }
+
+    public void createUserSendOtp(User user) {
+        String username = user.getUsername() == null ? "" : user.getUsername().trim();
+        String email = user.getEmail() == null ? "" : user.getEmail().trim();
+
+        if (username.isEmpty() || email.isEmpty()) {
+            throw new RuntimeException("Vui lòng nhập đầy đủ username và email");
+        }
+
+        User existing = userDao.finduser(email);
+
+        if (existing != null && existing.getIsActive() == 1) {
+            throw new RuntimeException("Email đã được đăng ký");
+        }
+
+        if (existing == null && userDao.existsByUsername(username)) {
+            throw new RuntimeException("Tên đăng nhập đã tồn tại");
+        }
+
+        String pass = "Newpass123*";
+        String hashed = PasswordUtil.hash(pass);
+        user.setPassword(hashed);
+        user.setUsername(username);
+        user.setEmail(email);
+
+        String otp = String.format("%06d", new Random().nextInt(1_000_000));
+        LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(5);
+
+        if (existing == null) {
+            userDao.insertPendingAdminUser(user, otp, expiredAt);
+        } else {
+            userDao.updatePendingAdminUser(user, otp, expiredAt);
+        }
+
+        EmailService.sendEmail(
+                email,
+                "OTP xác nhận tài khoản",
+                "<h3>Mã OTP xác nhận tài khoản của bạn: <b>" + otp + "</b></h3>" +
+                        "<p>Mật khẩu mặc định sau khi xác nhận là: <b>Newpass123*</b></p>"
+        );
+    }
+
+    public void resendOtpVerifyEmail(String email) {
+        User user = userDao.finduser(email);
+
+        if (user == null) {
+            throw new RuntimeException("Email không tồn tại");
+        }
+
+        if (user.getIsActive() == 1) {
+            throw new RuntimeException("Tài khoản đã được kích hoạt");
+        }
+
+        String otp = String.format("%06d", new Random().nextInt(1_000_000));
+        LocalDateTime expiredAt = LocalDateTime.now().plusMinutes(5);
+
+        userDao.updateOtp(email, otp, expiredAt);
+
+        EmailService.sendEmail(
+                email,
+                "OTP xác nhận tài khoản",
+                "<h3>Mã OTP xác nhận tài khoản của bạn: <b>" + otp + "</b></h3>"
+        );
+    }
 }

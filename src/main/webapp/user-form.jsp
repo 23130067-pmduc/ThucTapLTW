@@ -25,6 +25,12 @@
     </h2>
   </div>
 
+  <c:if test="${not empty error}">
+    <div class="alert-error">
+        ${error}
+    </div>
+  </c:if>
+
 
   <form method="post" action="user-admin">
     <div class="card">

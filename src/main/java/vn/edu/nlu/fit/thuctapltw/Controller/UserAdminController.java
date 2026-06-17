@@ -240,10 +240,25 @@ public class UserAdminController extends HttpServlet {
 
 
 
-            userService.createUser(user);
+            try {
+                userService.createUserSendOtp(user);
 
-            response.sendRedirect("user-admin");
-            return;
+                response.sendRedirect(
+                        request.getContextPath() + "/otp?email=" + user.getEmail() + "&type=admin-create"
+                );
+                return;
+
+            } catch (RuntimeException e) {
+                List<Role> roles = roleService.getAllRoles();
+
+                request.setAttribute("error", e.getMessage());
+                request.setAttribute("mode", "add");
+                request.setAttribute("roles", roles);
+                request.setAttribute("user", user);
+
+                request.getRequestDispatcher("/user-form.jsp").forward(request, response);
+                return;
+            }
         }
 
         if ("update".equals(action)){
