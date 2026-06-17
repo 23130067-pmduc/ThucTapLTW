@@ -46,6 +46,15 @@ public class InventoryItem {
     @ColumnName("remaining_batch_quantity")
     private int remainingBatchQuantity;
 
+    @ColumnName("sold_quantity")
+    private int soldQuantity;
+
+    @ColumnName("imported_quantity")
+    private int importedQuantity;
+
+    @ColumnName("exported_quantity")
+    private int exportedQuantity;
+
     public InventoryItem() {
     }
 
@@ -168,5 +177,29 @@ public class InventoryItem {
 
     public void setProductStatus(String productStatus) {
         this.productStatus = productStatus;
+    }
+
+    public int getSoldQuantity() {
+        return soldQuantity;
+    }
+
+    public void setSoldQuantity(int soldQuantity) {
+        this.soldQuantity = soldQuantity;
+    }
+
+    public int getImportedQuantity() {
+        return importedQuantity;
+    }
+
+    public void setImportedQuantity(int importedQuantity) {
+        this.importedQuantity = importedQuantity;
+    }
+
+    public int getExportedQuantity() {
+        return exportedQuantity;
+    }
+
+    public void setExportedQuantity(int exportedQuantity) {
+        this.exportedQuantity = exportedQuantity;
     }
 }

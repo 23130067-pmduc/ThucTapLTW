@@ -649,29 +649,189 @@
     padding: 12px 14px;
 }
 
+/* ===== Issue #168: Google Sheet inventory report ===== */
+.sheet-alert {
+    margin: 0 0 16px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    line-height: 1.5;
+}
 
-/* ===== Tách chức năng khỏi trang tồn kho: toolbar chỉ còn tìm kiếm/lọc/làm mới ===== */
+.sheet-alert-success {
+    color: #2b8a3e;
+    background: #ebfbee;
+    border: 1px solid #b2f2bb;
+}
+
+.sheet-alert-error {
+    color: #c92a2a;
+    background: #fff5f5;
+    border: 1px solid #ffc9c9;
+}
+
+.sheet-update-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.btn-sheet-update,
+.btn-sheet-open {
+    min-height: 42px;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.btn-sheet-update {
+    background: #2b8a3e;
+    cursor: pointer;
+}
+
+.btn-sheet-update:hover:not(:disabled) {
+    background: #237032;
+    transform: translateY(-2px);
+}
+
+.btn-sheet-update:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.btn-sheet-open {
+    background: #1c7ed6;
+}
+
+.btn-sheet-open:hover {
+    background: #1971c2;
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-2px);
+}
+
+/* ===== Issue #168 UI fix: separate Google Sheet actions from inventory toolbar ===== */
+.google-sheet-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 0 18px;
+    padding: 16px 18px;
+    background: #ffffff;
+    border: 1px solid #eef1f4;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.google-sheet-left {
+    min-width: 0;
+}
+
+.google-sheet-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #2f9e44;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.google-sheet-title i {
+    font-size: 18px;
+}
+
+.google-sheet-desc {
+    margin-top: 5px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.google-sheet-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.sheet-update-form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.btn-sheet-update,
+.btn-sheet-open {
+    min-height: 42px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.btn-sheet-update {
+    background: #2f9e44;
+}
+
+.btn-sheet-update:hover:not(:disabled) {
+    background: #2b8a3e;
+    color: #fff !important;
+    transform: translateY(-2px);
+}
+
+.btn-sheet-update:disabled {
+    background: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.btn-sheet-open {
+    background: #1c7ed6;
+}
+
+.btn-sheet-open:hover {
+    background: #1971c2;
+    color: #fff !important;
+    transform: translateY(-2px);
+}
+
 .inventory-toolbar {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    margin: 20px 0;
-    gap: 12px;
-    flex-wrap: wrap;
+    align-items: start;
 }
 
-.inventory-search-form {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
-}
+@media (max-width: 1100px) {
+    .google-sheet-panel {
+        align-items: flex-start;
+        flex-direction: column;
+    }
 
-.inventory-search-input {
-    width: 350px;
-    max-width: 350px;
-}
-
-.inventory-filter-select {
-    width: 180px;
+    .google-sheet-actions {
+        justify-content: flex-start;
+        width: 100%;
+    }
 }

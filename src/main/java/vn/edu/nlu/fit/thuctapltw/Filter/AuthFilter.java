@@ -13,7 +13,7 @@ import java.io.IOException;
         "/dashboard",
         "/product-admin",
         "/inventory-admin",
-        "/supplier-admin",
+        "/inventory-google-sheet",
         "/profit-report",
         "/category-admin",
         "/order-admin",

@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import vn.edu.nlu.fit.thuctapltw.Service.InventoryGoogleSheetService;
 import vn.edu.nlu.fit.thuctapltw.Service.InventoryService;
 import vn.edu.nlu.fit.thuctapltw.model.InventoryItem;
 
@@ -14,10 +15,12 @@ import java.util.List;
 @WebServlet(name = "InventoryAdminController", value = "/inventory-admin")
 public class InventoryAdminController extends HttpServlet {
     private InventoryService inventoryService;
+    private InventoryGoogleSheetService googleSheetService;
 
     @Override
     public void init() {
         inventoryService = new InventoryService();
+        googleSheetService = new InventoryGoogleSheetService();
     }
 
     @Override
@@ -69,6 +72,10 @@ public class InventoryAdminController extends HttpServlet {
         request.setAttribute("lowStockCount", inventoryService.countLowStock());
         request.setAttribute("outOfStockCount", inventoryService.countOutOfStock());
         request.setAttribute("totalStock", inventoryService.sumStock());
+        request.setAttribute("sheetSuccess", getValue(request.getParameter("sheetSuccess")));
+        request.setAttribute("sheetError", getValue(request.getParameter("sheetError")));
+        request.setAttribute("googleSheetConfigured", googleSheetService.isConfigured(getServletContext()));
+        request.setAttribute("googleSheetUrl", googleSheetService.getSheetUrl(getServletContext()));
 
         request.getRequestDispatcher("/inventory-admin.jsp").forward(request, response);
     }

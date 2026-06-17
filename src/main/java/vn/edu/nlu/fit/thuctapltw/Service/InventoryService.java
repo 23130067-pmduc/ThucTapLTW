@@ -35,4 +35,8 @@ public class InventoryService {
     public List<InventoryItem> getInventoryItemsForTransaction() {
         return inventoryDao.getInventoryItemsForTransaction();
     }
+
+    public List<InventoryItem> getInventoryItemsForGoogleSheet() {
+        return inventoryDao.getInventoryItemsForGoogleSheet();
+    }
 }

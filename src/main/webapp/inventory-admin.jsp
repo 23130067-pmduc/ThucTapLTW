@@ -8,10 +8,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản lý tồn kho</title>
+    <title>Quản lý kho hàng</title>
 
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/inventory-admin.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/inventory-admin.css?v=168-ui-fix-2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
 </head>
 <body class="inventory-page">
@@ -37,11 +37,8 @@
                     </c:if>
 
                     <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
-                        <a href="${pageContext.request.contextPath}/supplier-admin" class="nav-item">
-                            <i class="fa-solid fa-truck"></i><span>Nhà cung cấp</span>
-                        </a>
                         <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item active">
-                            <i class="fa-solid fa-boxes-stacked"></i><span>Tồn kho</span>
+                            <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
                         </a>
                     </c:if>
 
@@ -129,7 +126,7 @@
 
     <section class="content inventory-content">
         <header class="topbar">
-            <h1>Quản lý tồn kho</h1>
+            <h1>Quản lý kho hàng</h1>
             <div class="topbar-actions">
                 <a href="${pageContext.request.contextPath}/logout" class="logout-btn">Đăng xuất</a>
             </div>
@@ -140,6 +137,42 @@
             <div class="inventory-card">Tổng tồn kho <span>${totalStock}</span></div>
             <div class="inventory-card warning-card">Sắp hết hàng <span>${lowStockCount}</span></div>
             <div class="inventory-card danger-card">Hết hàng <span>${outOfStockCount}</span></div>
+        </div>
+
+        <c:if test="${not empty sheetSuccess}">
+            <div class="sheet-alert sheet-alert-success">
+                <i class="fa-solid fa-circle-check"></i> ${sheetSuccess}
+            </div>
+        </c:if>
+
+        <c:if test="${not empty sheetError}">
+            <div class="sheet-alert sheet-alert-error">
+                <i class="fa-solid fa-triangle-exclamation"></i> ${sheetError}
+            </div>
+        </c:if>
+
+        <div class="google-sheet-panel">
+            <div class="google-sheet-left">
+                <div class="google-sheet-title">
+                    <i class="fa-brands fa-google-drive"></i>
+                    Báo cáo tồn kho Google Sheet
+                </div>
+            </div>
+
+            <div class="google-sheet-actions">
+                <form action="${pageContext.request.contextPath}/inventory-google-sheet" method="post" class="sheet-update-form">
+                    <button type="submit" class="btn-sheet-update" ${googleSheetConfigured ? '' : 'disabled'}
+                            title="${googleSheetConfigured ? 'Cập nhật báo cáo tồn kho lên Google Sheet' : 'Chưa cấu hình Google Sheet'}">
+                        <i class="fa-solid fa-rotate"></i> Cập nhật Google Sheet
+                    </button>
+                </form>
+
+                <c:if test="${not empty googleSheetUrl}">
+                    <a href="${googleSheetUrl}" target="_blank" class="btn-sheet-open">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Google Sheet
+                    </a>
+                </c:if>
+            </div>
         </div>
 
         <div class="inventory-toolbar">
@@ -155,7 +188,6 @@
                     <option value="AVAILABLE" ${stockStatus == 'AVAILABLE' ? 'selected' : ''}>Còn nhiều hàng</option>
                 </select>
 
-
                 <input type="hidden" name="sortField" value="${sortField}">
                 <input type="hidden" name="sortDir" value="${sortDir}">
 
@@ -165,6 +197,30 @@
 
                 <a href="${pageContext.request.contextPath}/inventory-admin" class="btn-reset">Làm mới</a>
             </form>
+
+            <div class="inventory-toolbar-actions">
+                <c:if test="${userlogin.permissions.contains('IMPORT_RECEIPT_CREATE')}">
+                    <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=IMPORT"
+                       class="btn-import">
+                        <i class="fa-solid fa-circle-plus"></i> Nhập kho
+                    </a>
+                </c:if>
+
+                <c:if test="${userlogin.permissions.contains('EXPORT_RECEIPT_CREATE')}">
+                    <a href="${pageContext.request.contextPath}/inventory-transaction-form?type=EXPORT"
+                       class="btn-export">
+                        <i class="fa-solid fa-circle-minus"></i> Xuất kho
+                    </a>
+                </c:if>
+
+                <a href="${pageContext.request.contextPath}/inventory-batch-admin" class="btn-batch">
+                    <i class="fa-solid fa-layer-group"></i> Lô nhập hàng
+                </a>
+
+                <a href="${pageContext.request.contextPath}/inventory-history-admin" class="btn-history">
+                    <i class="fa-solid fa-clock-rotate-left"></i> Lịch sử nhập xuất
+                </a>
+            </div>
         </div>
 
         <div class="inventory-result-info">
