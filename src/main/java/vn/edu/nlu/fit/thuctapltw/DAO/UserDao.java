@@ -412,5 +412,15 @@ public class UserDao extends BaseDao {
                 .mapTo(Role.class)
                 .list());
     }
+
+    public void changeStatus(int id, String status) {
+        getJdbi().useHandle(handle -> handle.createUpdate("""
+                        UPDATE users
+                        SET status = :status
+                        WHERE id = :id""")
+                        .bind("status", status)
+                        .bind("id", id)
+                        .execute());
+    }
 }
 

@@ -216,4 +216,8 @@ public class UserService {
     public List<Role> getAllRoleNames() {
         return userDao.getAllRoleNames();
     }
+
+    public void changeStatus(int id, String status) {
+        userDao.changeStatus(id, status);
+    }
 }

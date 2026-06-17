@@ -203,11 +203,25 @@
                 <td>${u.email}</td>
                 <td>
                   <c:choose>
-                    <c:when test="${u.roleName == 'ADMIN'}">Quản trị viên</c:when>
-                    <c:when test="${u.roleName == 'STAFF_PRODUCT'}">Nhân viên quản lý sản phẩm</c:when>
-                    <c:when test="${u.roleName == 'STAFF_ORDER'}">Nhân viên quản lý đơn hàng</c:when>
-                    <c:when test="${u.roleName == 'STAFF_MARKETING'}">Nhân viên marketing</c:when>
-                    <c:otherwise>Khách hàng</c:otherwise>
+                    <c:when test="${u.roleName == 'ADMIN'}">
+                      <span class="role-badge role-admin">Quản trị viên</span>
+                    </c:when>
+
+                    <c:when test="${u.roleName == 'STAFF_PRODUCT'}">
+                      <span class="role-badge role-product">Nhân viên quản lý sản phẩm</span>
+                    </c:when>
+
+                    <c:when test="${u.roleName == 'STAFF_ORDER'}">
+                      <span class="role-badge role-order">Nhân viên quản lý đơn hàng</span>
+                    </c:when>
+
+                    <c:when test="${u.roleName == 'STAFF_MARKETING'}">
+                      <span class="role-badge role-marketing">Nhân viên marketing</span>
+                    </c:when>
+
+                    <c:otherwise>
+                      <span class="role-badge role-customer">Khách hàng</span>
+                    </c:otherwise>
                   </c:choose>
                 </td>
 
@@ -235,13 +249,26 @@
                     </a>
                   </c:if>
 
-                  <c:if test="${userlogin.permissions.contains('USER_LOCK') && u.status == 'ACTIVE'}">
-                    <button type="button"
-                            class="icon-btn delete"
-                            title="Khóa người dùng"
-                            onclick="openConfirmModal(${u.id})">
-                      <i class="fa fa-trash"></i>
-                    </button>
+                  <c:if test="${userlogin.permissions.contains('USER_LOCK')}">
+                    <c:choose>
+                      <c:when test="${u.status == 'ACTIVE'}">
+                        <button type="button"
+                                class="icon-btn delete"
+                                title="Khóa người dùng"
+                                onclick="openStatusModal(${u.id}, 'BLOCKED', 'khóa')">
+                          <i class="fa-solid fa-lock"></i>
+                        </button>
+                      </c:when>
+
+                      <c:otherwise>
+                        <button type="button"
+                                class="icon-btn unlock"
+                                title="Mở khóa người dùng"
+                                onclick="openStatusModal(${u.id}, 'ACTIVE', 'mở khóa')">
+                          <i class="fa-solid fa-lock-open"></i>
+                        </button>
+                      </c:otherwise>
+                    </c:choose>
                   </c:if>
 
                 </td>
@@ -293,18 +320,19 @@
     </main>
   </section>
 
-  <div id="confirmModal" class="modal-overlay">
+  <div id="statusModal" class="modal-overlay">
     <div class="modal">
-      <h3>Xác nhận</h3>
-      <p>Bạn có chắc muốn <b>khóa người dùng</b> này không?</p>
+      <h3 id="statusModalTitle">Xác nhận</h3>
+      <p id="statusMessage"></p>
 
-      <form id="confirmForm" method="post" action="user-admin">
-        <input type="hidden" name="action" value="block">
-        <input type="hidden" name="id" id="confirmUserId">
+      <form id="statusForm" method="post" action="user-admin">
+        <input type="hidden" name="action" value="changeStatus">
+        <input type="hidden" name="id" id="statusUserId">
+        <input type="hidden" name="status" id="statusUserValue">
 
         <div class="modal-actions">
-          <button type="button" class="btn-secondary" onclick="closeModal()">Hủy</button>
-          <button type="submit" class="btn-danger">Khóa</button>
+          <button type="button" class="btn-secondary" onclick="closeStatusModal()">Hủy</button>
+          <button type="submit" class="btn-danger" id="statusSubmitBtn">Xác nhận</button>
         </div>
       </form>
     </div>
@@ -315,13 +343,24 @@
 
 </body>
 <script>
-  function openConfirmModal(userId) {
-    document.getElementById("confirmUserId").value = userId;
-    document.getElementById("confirmModal").style.display = "flex";
+  function openStatusModal(userId, status, actionText) {
+    document.getElementById("statusUserId").value = userId;
+    document.getElementById("statusUserValue").value = status;
+
+    document.getElementById("statusModalTitle").innerText =
+            actionText === "khóa" ? "Xác nhận khóa" : "Xác nhận mở khóa";
+
+    document.getElementById("statusMessage").innerHTML =
+            "Bạn có chắc muốn <b>" + actionText + " người dùng</b> này không?";
+
+    document.getElementById("statusSubmitBtn").innerText =
+            actionText === "khóa" ? "Khóa" : "Mở khóa";
+
+    document.getElementById("statusModal").style.display = "flex";
   }
 
-  function closeModal() {
-    document.getElementById("confirmModal").style.display = "none";
+  function closeStatusModal() {
+    document.getElementById("statusModal").style.display = "none";
   }
 </script>
 <script>
