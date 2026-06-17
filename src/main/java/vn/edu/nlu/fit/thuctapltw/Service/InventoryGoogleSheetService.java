@@ -186,14 +186,10 @@ public class InventoryGoogleSheetService {
             return configuredUrl;
         }
 
-        try {
-            GoogleSheetConfig config = loadConfig(context);
-            GoogleSheetImportConfig importConfig = loadImportConfig(context);
-            return getSheetUrlForTab(context, config.spreadsheetId(), importConfig.importSheetName());
-        } catch (Exception e) {
-            return getSheetUrl(context);
-        }
+        return getSheetUrl(context);
     }
+
+    
 
     public String getImportResultSheetUrl(ServletContext context) {
         String configuredUrl = firstNotBlank(
@@ -204,14 +200,10 @@ public class InventoryGoogleSheetService {
             return configuredUrl;
         }
 
-        try {
-            GoogleSheetConfig config = loadConfig(context);
-            GoogleSheetImportConfig importConfig = loadImportConfig(context);
-            return getSheetUrlForTab(context, config.spreadsheetId(), importConfig.resultSheetName());
-        } catch (Exception e) {
-            return getSheetUrl(context);
-        }
+        return getSheetUrl(context);
     }
+
+    
 
     private List<List<Object>> buildSheetValues(List<InventoryItem> items) {
         List<List<Object>> rows = new ArrayList<>();
