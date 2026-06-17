@@ -285,20 +285,26 @@
               <i class="fa-solid fa-chart-line" style="color:#A9C87D;"></i>
               <span>Biểu đồ doanh thu</span>
             </div>
-            <form class="revenue-period-btns" method="get" action="${pageContext.request.contextPath}/dashboard">
-              <div class="date-filter-field">
-                <label for="dashboardFromDate">Từ ngày</label>
-                <input class="date-picker" id="dashboardFromDate" type="date" name="fromDate" value="${fromDate}">
+            <div class="revenue-filter-group">
+              <div class="selected-revenue-summary">
+                <span>Tổng doanh thu đã chọn</span>
+                <strong><fmt:formatNumber value="${selectedPeriodRevenue}"/>đ</strong>
               </div>
-              <div class="date-filter-field">
-                <label for="dashboardToDate">Đến ngày</label>
-                <input class="date-picker" id="dashboardToDate" type="date" name="toDate" value="${toDate}">
-              </div>
-              <button class="period-btn active" type="submit">
-                <i class="fa-solid fa-filter"></i>
-                <span>Lọc</span>
-              </button>
-            </form>
+              <form class="revenue-period-btns" method="get" action="${pageContext.request.contextPath}/dashboard">
+                <div class="date-filter-field">
+                  <label for="dashboardFromDate">Từ ngày</label>
+                  <input class="date-picker" id="dashboardFromDate" type="date" name="fromDate" value="${fromDate}">
+                </div>
+                <div class="date-filter-field">
+                  <label for="dashboardToDate">Đến ngày</label>
+                  <input class="date-picker" id="dashboardToDate" type="date" name="toDate" value="${toDate}">
+                </div>
+                <button class="period-btn active" type="submit">
+                  <i class="fa-solid fa-filter"></i>
+                  <span>Lọc</span>
+                </button>
+              </form>
+            </div>
           </div>
           <div class="revenue-chart-body">
             <canvas id="revenueChart" height="90"></canvas>

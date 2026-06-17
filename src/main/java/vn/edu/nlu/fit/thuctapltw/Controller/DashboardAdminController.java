@@ -46,9 +46,11 @@ public class DashboardAdminController extends HttpServlet {
             toDate = temp;
         }
         Map<String, Double> revenueByDate = service.getRevenueByDateRange(fromDate, toDate);
+        double selectedPeriodRevenue = revenueByDate.values().stream().mapToDouble(Double::doubleValue).sum();
 
         request.setAttribute("fromDate", fromDate.toString());
         request.setAttribute("toDate", toDate.toString());
+        request.setAttribute("selectedPeriodRevenue", selectedPeriodRevenue);
         request.setAttribute("chartLabelsDate", MapJsonUtil.toJsonLabels(revenueByDate));
         request.setAttribute("chartValuesDate", MapJsonUtil.toJsonValues(revenueByDate));
 
