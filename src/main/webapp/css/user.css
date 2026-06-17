@@ -818,11 +818,11 @@ body, .admin {
 
 .revenue-chart-header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 20px;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 16px;
 }
 
 .revenue-chart-title {
@@ -840,20 +840,32 @@ body, .admin {
 
 .revenue-period-btns {
     display: flex;
-    align-items: center;
-    gap: 6px;
+    align-items: flex-end;
+    gap: 10px;
     flex-wrap: wrap;
+    padding: 10px;
+    border: 1px solid #e8efd9;
+    border-radius: 12px;
+    background: #fbfdf7;
 }
 
-.date-range-label {
-    color: #666;
-    font-size: 13px;
+.date-filter-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.date-filter-field label {
+    color: #5f7249;
+    font-size: 12px;
     font-weight: 600;
 }
 
 .date-picker {
-    padding: 6px 12px;
-    border-radius: 20px;
+    min-width: 148px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 8px;
     border: 1.5px solid #d9e8c6;
     background: #fff;
     color: #333;
@@ -868,8 +880,13 @@ body, .admin {
 }
 
 .period-btn {
-    padding: 6px 16px;
-    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
     border: 1.5px solid #d9e8c6;
     background: #f8fff4;
     color: #6b8f4a;
@@ -891,6 +908,10 @@ body, .admin {
     color: #fff;
     box-shadow: 0 3px 10px rgba(169, 200, 125, 0.4);
     transform: none;
+}
+
+.period-btn i {
+    font-size: 12px;
 }
 
 .revenue-chart-body {

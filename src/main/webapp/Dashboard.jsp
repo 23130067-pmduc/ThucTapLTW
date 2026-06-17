@@ -283,11 +283,18 @@
               <span>Biểu đồ doanh thu</span>
             </div>
             <form class="revenue-period-btns" method="get" action="${pageContext.request.contextPath}/dashboard">
-              <span class="date-range-label">Từ</span>
-              <input class="date-picker" type="date" name="fromDate" value="${fromDate}">
-              <span class="date-range-label">Đến</span>
-              <input class="date-picker" type="date" name="toDate" value="${toDate}">
-              <button class="period-btn active" type="submit">Lọc</button>
+              <div class="date-filter-field">
+                <label for="dashboardFromDate">Từ ngày</label>
+                <input class="date-picker" id="dashboardFromDate" type="date" name="fromDate" value="${fromDate}">
+              </div>
+              <div class="date-filter-field">
+                <label for="dashboardToDate">Đến ngày</label>
+                <input class="date-picker" id="dashboardToDate" type="date" name="toDate" value="${toDate}">
+              </div>
+              <button class="period-btn active" type="submit">
+                <i class="fa-solid fa-filter"></i>
+                <span>Lọc</span>
+              </button>
             </form>
           </div>
           <div class="revenue-chart-body">
