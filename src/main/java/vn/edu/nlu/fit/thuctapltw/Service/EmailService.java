@@ -42,6 +42,7 @@ public class EmailService {
 
         } catch (MessagingException e) {
             e.printStackTrace();
+            throw new RuntimeException("Không thể gửi email OTP. Vui lòng kiểm tra cấu hình email.");
         }
     }
 }
