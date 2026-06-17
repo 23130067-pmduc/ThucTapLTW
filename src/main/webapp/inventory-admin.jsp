@@ -17,107 +17,109 @@
 <body class="inventory-page">
 <div class="user">
     <aside class="sidebar">
-        <img src="img/gau.png" alt="Logo">
+        <img src="${pageContext.request.contextPath}/img/gau.png" alt="Logo">
         <p>ADMIN</p>
 
-        <div class="nav" id="menu">
-            <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
-                        <i class="fa-solid fa-gauge"></i><span>Tổng quan</span>
-                    </a>
-                </c:if>
-            <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
-                <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
-                    <i class="fa-solid fa-chart-line"></i><span>Thống kê</span>
-                </a>
-            </c:if>
+        <div class="nav">
+            <div class="nav">
+                <div class="nav" id="menu">
 
+                    <c:if test="${userlogin.permissions.contains('DASHBOARD_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/dashboard" class="nav-item ">
+                            <i class="fa-solid fa-gauge"></i><span>Thống kê</span>
+                        </a>
+                    </c:if>
 
-                <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
-                        <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
-                    </a>
-                </c:if>
+                    <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/product-admin" class="nav-item">
+                            <i class="fa-solid fa-shirt"></i><span>Sản phẩm</span>
+                        </a>
+                    </c:if>
 
-                <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/supplier-admin" class="nav-item">
-                        <i class="fa-solid fa-truck"></i><span>Nhà cung cấp</span>
-                    </a>
-                    <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item active">
-                        <i class="fa-solid fa-boxes-stacked"></i><span>Tồn kho</span>
-                    </a>
-                </c:if>
+                    <c:if test="${userlogin.permissions.contains('WAREHOUSE_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/inventory-admin" class="nav-item active">
+                            <i class="fa-solid fa-boxes-stacked"></i><span>Kho hàng</span>
+                        </a>
+                    </c:if>
 
-                <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
-                        <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
-                    </a>
-                </c:if>
-<c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
-                        <i class="fa-solid fa-list"></i><span>Danh mục</span>
-                    </a>
-                </c:if>
+                    <c:if test="${userlogin.permissions.contains('RETURN_RECEIPT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/return-order-admin" class="nav-item">
+                            <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
+                        </a>
+                    </c:if>
 
-                <c:if test="${userlogin.permissions.contains('ORDER_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">
-                        <i class="fa-solid fa-receipt"></i><span>Đơn hàng</span>
+                    <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
+                            <i class="fa-solid fa-chart-line"></i><span>Lợi nhuận</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
+                            <i class="fa-solid fa-list"></i><span>Danh mục</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('ORDER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/order-admin" class="nav-item">
+                            <i class="fa-solid fa-receipt"></i><span>Đơn hàng</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">
+                            <i class="fa-solid fa-users"></i><span>Người dùng</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('PERMISSION_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/permission-admin" class="nav-item">
+                            <i class="fa-solid fa-user-shield"></i><span>Phân quyền</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
+                            <i class="fa-solid fa-image"></i><span>Banner</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('VOUCHER_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item">
+                            <i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
+                            <i class="fa-solid fa-tags"></i>
+                            <span>Khuyến mãi</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
+                            <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('NOTIFICATION_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
+                            <i class="fa-solid fa-bell"></i><span>Thông báo</span>
+                        </a>
+                    </c:if>
+
+                    <c:if test="${userlogin.permissions.contains('CONTACT_VIEW')}">
+                        <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
+                            <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
+                        </a>
+                    </c:if>
+
+                    <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">
+                        <i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span>
                     </a>
-                </c:if>
 
-                <c:if test="${userlogin.permissions.contains('USER_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/user-admin" class="nav-item">
-                        <i class="fa-solid fa-users"></i><span>Người dùng</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('PERMISSION_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/permission-admin" class="nav-item">
-                        <i class="fa-solid fa-user-shield"></i><span>Phân quyền</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('BANNER_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/banner-admin" class="nav-item">
-                        <i class="fa-solid fa-image"></i><span>Banner</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('VOUCHER_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/voucher-admin" class="nav-item">
-                        <i class="fa-solid fa-ticket"></i><span>Mã giảm giá</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('PROMOTION_EVENT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/promotion-event-admin" class="nav-item">
-                        <i class="fa-solid fa-tags"></i>
-                        <span>Khuyến mãi</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('NEWS_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/news-admin" class="nav-item">
-                        <i class="fa-solid fa-newspaper"></i><span>Tin tức</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('NOTIFICATION_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/notification-admin" class="nav-item">
-                        <i class="fa-solid fa-bell"></i><span>Thông báo</span>
-                    </a>
-                </c:if>
-
-                <c:if test="${userlogin.permissions.contains('CONTACT_VIEW')}">
-                    <a href="${pageContext.request.contextPath}/contact-admin" class="nav-item">
-                        <i class="fa-solid fa-envelope"></i><span>Liên hệ</span>
-                    </a>
-                </c:if>
-
-                <a href="${pageContext.request.contextPath}/admin-profile" class="nav-item">
-                    <i class="fa-solid fa-user-gear"></i><span>Hồ sơ</span>
-                </a>
-
+                </div>
             </div>
         </div>
     </aside>
@@ -218,12 +220,6 @@
                             <i class="fa-solid fa-rotate"></i> Cập nhật Google Sheet
                         </button>
                     </form>
-
-                    <c:if test="${not empty googleSheetUrl}">
-                        <a href="${googleSheetUrl}" target="_blank" class="btn-sheet-open">
-                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Mở Google Sheet
-                        </a>
-                    </c:if>
                 </div>
             </div>
 
@@ -243,6 +239,12 @@
                             <i class="fa-solid fa-cloud-arrow-down"></i> Đồng bộ nhập kho
                         </button>
                     </form>
+
+                    <c:if test="${not empty googleImportSheetUrl}">
+                        <a href="${googleImportSheetUrl}" target="_blank" class="btn-sheet-open import-open">
+                            <i class="fa-solid fa-table"></i> Mở Sheet nhập kho
+                        </a>
+                    </c:if>
                 </div>
             </div>
         </div>

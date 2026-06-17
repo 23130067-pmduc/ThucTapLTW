@@ -2,6 +2,7 @@ package vn.edu.nlu.fit.thuctapltw.DAO;
 
 import vn.edu.nlu.fit.thuctapltw.model.InventoryItem;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class InventoryDao extends BaseDao {
@@ -350,6 +351,332 @@ public class InventoryDao extends BaseDao {
     }
 
 
+
+
+    public SheetVariantResolution resolveVariantForSheetImport(Integer productId,
+                                                               String productName,
+                                                               String categoryName,
+                                                               String colorName,
+                                                               String sizeName,
+                                                               BigDecimal sellingPrice,
+                                                               String thumbnail,
+                                                               String description) {
+        return getJdbi().inTransaction(handle -> {
+            Integer resolvedProductId = null;
+            BigDecimal productPrice = BigDecimal.ZERO;
+            boolean createdProduct = false;
+
+            if (productId != null && productId > 0) {
+                var product = handle.createQuery("""
+                        SELECT id, price
+                        FROM products
+                        WHERE id = :productId
+                          AND status <> 'Đã xoá'
+                        LIMIT 1
+                        """)
+                        .bind("productId", productId)
+                        .mapToMap()
+                        .findOne()
+                        .orElse(null);
+
+                if (product == null) {
+                    return SheetVariantResolution.error("Không tìm thấy sản phẩm đang dùng với mã #" + productId + ".");
+                }
+
+                resolvedProductId = ((Number) product.get("id")).intValue();
+                productPrice = toBigDecimal(product.get("price"));
+            } else {
+                String normalizedProductName = normalize(productName);
+                if (normalizedProductName == null) {
+                    return SheetVariantResolution.error("Tên sản phẩm không được để trống khi tạo sản phẩm mới.");
+                }
+
+                var product = handle.createQuery("""
+                        SELECT id, price
+                        FROM products
+                        WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name))
+                          AND status <> 'Đã xoá'
+                        ORDER BY id DESC
+                        LIMIT 1
+                        """)
+                        .bind("name", normalizedProductName)
+                        .mapToMap()
+                        .findOne()
+                        .orElse(null);
+
+                if (product != null) {
+                    resolvedProductId = ((Number) product.get("id")).intValue();
+                    productPrice = toBigDecimal(product.get("price"));
+                } else {
+                    Integer categoryId = resolveCategoryId(handle, categoryName);
+                    if (categoryId == null) {
+                        return SheetVariantResolution.error("Không tìm thấy danh mục đang dùng: " + safeForError(categoryName) + ".");
+                    }
+
+                    if (sellingPrice == null || sellingPrice.compareTo(BigDecimal.ZERO) <= 0) {
+                        return SheetVariantResolution.error("Giá bán phải lớn hơn 0 khi tạo sản phẩm mới.");
+                    }
+
+                    String image = normalize(thumbnail);
+                    if (image == null) {
+                        image = "img/gau.png";
+                    }
+
+                    resolvedProductId = handle.createUpdate("""
+                            INSERT INTO products(category_id, name, description, price, sale_price, thumbnail, created_at, views, status)
+                            VALUES(:categoryId, :name, :description, :price, 0, :thumbnail, NOW(), 0, 'Đang bán')
+                            """)
+                            .bind("categoryId", categoryId)
+                            .bind("name", normalizedProductName)
+                            .bind("description", normalize(description))
+                            .bind("price", sellingPrice)
+                            .bind("thumbnail", image)
+                            .executeAndReturnGeneratedKeys("id")
+                            .mapTo(int.class)
+                            .one();
+                    productPrice = sellingPrice;
+                    createdProduct = true;
+                }
+            }
+
+            Integer colorId = resolveColorId(handle, colorName);
+            if (colorId == null) {
+                return SheetVariantResolution.error("Không tìm thấy màu đang dùng: " + safeForError(colorName) + ".");
+            }
+
+            Integer sizeId = resolveSizeId(handle, sizeName);
+            if (sizeId == null) {
+                return SheetVariantResolution.error("Không tìm thấy size đang dùng: " + safeForError(sizeName) + ".");
+            }
+
+            Integer existingVariantId = handle.createQuery("""
+                    SELECT id
+                    FROM product_variants
+                    WHERE product_id = :productId
+                      AND color_id = :colorId
+                      AND size_id = :sizeId
+                    ORDER BY id DESC
+                    LIMIT 1
+                    """)
+                    .bind("productId", resolvedProductId)
+                    .bind("colorId", colorId)
+                    .bind("sizeId", sizeId)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElse(null);
+
+            if (existingVariantId != null) {
+                String action = createdProduct ? "Tạo sản phẩm mới và dùng biến thể vừa có" : "Cập nhật tồn kho biến thể đã có theo sản phẩm/màu/size";
+                return SheetVariantResolution.success(existingVariantId, resolvedProductId, action);
+            }
+
+            BigDecimal variantPrice = sellingPrice != null && sellingPrice.compareTo(BigDecimal.ZERO) > 0
+                    ? sellingPrice
+                    : productPrice;
+            if (variantPrice == null || variantPrice.compareTo(BigDecimal.ZERO) <= 0) {
+                return SheetVariantResolution.error("Giá bán phải lớn hơn 0 khi tạo biến thể mới.");
+            }
+
+            int newVariantId = handle.createUpdate("""
+                    INSERT INTO product_variants(product_id, size_id, color_id, stock, price, sale_price, status)
+                    VALUES(:productId, :sizeId, :colorId, 0, :price, 0, 'Đang bán')
+                    """)
+                    .bind("productId", resolvedProductId)
+                    .bind("sizeId", sizeId)
+                    .bind("colorId", colorId)
+                    .bind("price", variantPrice)
+                    .executeAndReturnGeneratedKeys("id")
+                    .mapTo(int.class)
+                    .one();
+
+            String action = createdProduct ? "Tạo sản phẩm mới và biến thể mới" : "Tạo biến thể mới cho sản phẩm đã có";
+            return SheetVariantResolution.success(newVariantId, resolvedProductId, action);
+        });
+    }
+
+    private Integer resolveCategoryId(org.jdbi.v3.core.Handle handle, String categoryName) {
+        String value = normalize(categoryName);
+        if (value == null) {
+            return null;
+        }
+
+        Integer id = parsePositiveInt(value);
+        if (id != null) {
+            return handle.createQuery("""
+                    SELECT id
+                    FROM category_product
+                    WHERE id = :id
+                      AND status = 1
+                    LIMIT 1
+                    """)
+                    .bind("id", id)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElse(null);
+        }
+
+        return handle.createQuery("""
+                SELECT id
+                FROM category_product
+                WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name))
+                  AND status = 1
+                ORDER BY id ASC
+                LIMIT 1
+                """)
+                .bind("name", value)
+                .mapTo(Integer.class)
+                .findOne()
+                .orElse(null);
+    }
+
+    private Integer resolveColorId(org.jdbi.v3.core.Handle handle, String colorName) {
+        String value = normalize(colorName);
+        if (value == null) {
+            return null;
+        }
+
+        Integer id = parsePositiveInt(value);
+        if (id != null) {
+            return handle.createQuery("""
+                    SELECT id
+                    FROM colors
+                    WHERE id = :id
+                    LIMIT 1
+                    """)
+                    .bind("id", id)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElse(null);
+        }
+
+        return handle.createQuery("""
+                SELECT id
+                FROM colors
+                WHERE LOWER(TRIM(name)) = LOWER(TRIM(:name))
+                ORDER BY id ASC
+                LIMIT 1
+                """)
+                .bind("name", value)
+                .mapTo(Integer.class)
+                .findOne()
+                .orElse(null);
+    }
+
+    private Integer resolveSizeId(org.jdbi.v3.core.Handle handle, String sizeName) {
+        String value = normalize(sizeName);
+        if (value == null) {
+            return null;
+        }
+
+        Integer id = parsePositiveInt(value);
+        if (id != null) {
+            return handle.createQuery("""
+                    SELECT id
+                    FROM sizes
+                    WHERE id = :id
+                    LIMIT 1
+                    """)
+                    .bind("id", id)
+                    .mapTo(Integer.class)
+                    .findOne()
+                    .orElse(null);
+        }
+
+        return handle.createQuery("""
+                SELECT id
+                FROM sizes
+                WHERE LOWER(TRIM(code)) = LOWER(TRIM(:code))
+                ORDER BY sort_order ASC, id ASC
+                LIMIT 1
+                """)
+                .bind("code", value)
+                .mapTo(Integer.class)
+                .findOne()
+                .orElse(null);
+    }
+
+    private String normalize(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isBlank() ? null : trimmed;
+    }
+
+    private String safeForError(String value) {
+        String normalized = normalize(value);
+        return normalized == null ? "(trống)" : normalized;
+    }
+
+    private Integer parsePositiveInt(String value) {
+        try {
+            int parsed = Integer.parseInt(value.trim());
+            return parsed > 0 ? parsed : null;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private BigDecimal toBigDecimal(Object value) {
+        if (value == null) {
+            return BigDecimal.ZERO;
+        }
+        if (value instanceof BigDecimal bd) {
+            return bd;
+        }
+        if (value instanceof Number number) {
+            return BigDecimal.valueOf(number.doubleValue());
+        }
+        try {
+            return new BigDecimal(value.toString());
+        } catch (Exception e) {
+            return BigDecimal.ZERO;
+        }
+    }
+
+    public static class SheetVariantResolution {
+        private final boolean success;
+        private final Integer variantId;
+        private final Integer productId;
+        private final String action;
+        private final String message;
+
+        private SheetVariantResolution(boolean success, Integer variantId, Integer productId, String action, String message) {
+            this.success = success;
+            this.variantId = variantId;
+            this.productId = productId;
+            this.action = action;
+            this.message = message;
+        }
+
+        public static SheetVariantResolution success(Integer variantId, Integer productId, String action) {
+            return new SheetVariantResolution(true, variantId, productId, action, "");
+        }
+
+        public static SheetVariantResolution error(String message) {
+            return new SheetVariantResolution(false, null, null, "", message);
+        }
+
+        public boolean isSuccess() {
+            return success;
+        }
+
+        public Integer getVariantId() {
+            return variantId;
+        }
+
+        public Integer getProductId() {
+            return productId;
+        }
+
+        public String getAction() {
+            return action;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+    }
 
     private String buildInventoryOrderBy(String sortField, String sortDir) {
         String direction = "desc".equalsIgnoreCase(sortDir) ? "DESC" : "ASC";

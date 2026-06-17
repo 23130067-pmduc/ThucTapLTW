@@ -31,6 +31,7 @@ public class InventoryGoogleSheetService {
     private static final String DEFAULT_SHEET_NAME = "TonKho";
     private static final String DEFAULT_IMPORT_SHEET_NAME = "NhapKho";
     private static final String DEFAULT_IMPORT_RESULT_SHEET_NAME = "KetQuaNhap";
+    private static final String DEFAULT_TEMPLATE_SHEET_NAME = "Template";
     private static final String DEFAULT_SPREADSHEET_ID = "1H0is6rV0zZ-d3IBhpakRK9YdeJXY4L-xY8ajBBthNnE";
     private static final int LOW_STOCK_THRESHOLD = 10;
 
@@ -62,9 +63,11 @@ public class InventoryGoogleSheetService {
 
         ensureSheetExists(config.spreadsheetId(), importConfig.importSheetName(), accessToken);
         ensureSheetExists(config.spreadsheetId(), importConfig.resultSheetName(), accessToken);
+        ensureSheetExists(config.spreadsheetId(), DEFAULT_TEMPLATE_SHEET_NAME, accessToken);
         ensureImportSheetHeader(config.spreadsheetId(), importConfig.importSheetName(), accessToken);
+        ensureImportTemplateSheet(config.spreadsheetId(), accessToken);
 
-        String readRange = quoteSheetName(importConfig.importSheetName()) + "!A2:E2000";
+        String readRange = quoteSheetName(importConfig.importSheetName()) + "!A2:M2000";
         List<List<Object>> sheetRows = readValues(config.spreadsheetId(), readRange, accessToken);
 
         List<ImportRow> validRows = new ArrayList<>();
@@ -80,10 +83,15 @@ public class InventoryGoogleSheetService {
 
             totalDataRows++;
             ImportRow row = parseImportRow(sheetRow, sheetRowNumber);
-            String validationError = validateImportRow(row);
+            String validationError = validateBasicImportRow(row);
 
             if (validationError == null) {
-                validRows.add(row);
+                VariantResolveResult resolveResult = resolveImportRow(row);
+                if (resolveResult.success()) {
+                    validRows.add(row.withResolvedVariant(resolveResult.variantId(), resolveResult.productId(), resolveResult.action()));
+                } else {
+                    resultRows.add(ImportRowResult.error(row, resolveResult.message()));
+                }
             } else {
                 resultRows.add(ImportRowResult.error(row, validationError));
             }
@@ -100,7 +108,7 @@ public class InventoryGoogleSheetService {
         }
 
         if (!validRows.isEmpty()) {
-            List<Integer> variantIds = validRows.stream().map(ImportRow::variantId).toList();
+            List<Integer> variantIds = validRows.stream().map(ImportRow::resolvedVariantId).toList();
             List<Integer> quantities = validRows.stream().map(ImportRow::quantity).toList();
             List<BigDecimal> unitCosts = validRows.stream().map(ImportRow::unitCost).toList();
 
@@ -121,7 +129,8 @@ public class InventoryGoogleSheetService {
             String status = transactionService.updateStatusIfPending(transactionId, "COMPLETED");
             if ("SUCCESS".equals(status)) {
                 for (ImportRow row : validRows) {
-                    resultRows.add(ImportRowResult.success(row, "Đã nhập kho thành công. Mã phiếu: #" + transactionId));
+                    resultRows.add(ImportRowResult.success(row,
+                            describeAction(row.action()) + ". Đã nhập kho thành công. Mã phiếu: #" + transactionId));
                 }
             } else {
                 for (ImportRow row : validRows) {
@@ -264,25 +273,83 @@ public class InventoryGoogleSheetService {
     }
 
     private void ensureImportSheetHeader(String spreadsheetId, String importSheetName, String accessToken) throws IOException {
-        String headerRange = quoteSheetName(importSheetName) + "!A1:E1";
+        String headerRange = quoteSheetName(importSheetName) + "!A1:M1";
         List<List<Object>> values = readValues(spreadsheetId, headerRange, accessToken);
 
-        if (!values.isEmpty() && !values.get(0).isEmpty()
-                && "Mã biến thể".equalsIgnoreCase(cell(values.get(0), 0))) {
+        boolean hasNewHeader = !values.isEmpty()
+                && values.get(0).size() >= 10
+                && "Mã biến thể".equalsIgnoreCase(cell(values.get(0), 0))
+                && "Mã sản phẩm".equalsIgnoreCase(cell(values.get(0), 1))
+                && "Mã nhà cung cấp".equalsIgnoreCase(cell(values.get(0), 9));
+
+        if (hasNewHeader) {
             return;
         }
 
-        List<List<Object>> header = List.of(List.of(
+        updateValues(spreadsheetId, quoteSheetName(importSheetName) + "!A1", List.of(importHeader()), accessToken);
+    }
+
+    private void ensureImportTemplateSheet(String spreadsheetId, String accessToken) throws IOException {
+        List<List<Object>> rows = new ArrayList<>();
+        rows.add(List.of("MẪU NHẬP KHO HÀNG LOẠT SUNNYBEAR"));
+        rows.add(List.of("Cách dùng:", "Nếu sản phẩm/biến thể đã có, chỉ cần nhập Mã biến thể + Số lượng nhập + Giá nhập + Mã nhà cung cấp."));
+        rows.add(List.of("Cách dùng:", "Nếu sản phẩm chưa có, để trống Mã biến thể và điền Tên sản phẩm, Danh mục, Màu, Size, Giá bán."));
+        rows.add(List.of());
+        rows.add(importHeader());
+        rows.add(List.of("709", "", "", "", "", "", "", "50", "170000", "NCC006", "", "Cập nhật tồn kho biến thể có sẵn", ""));
+        rows.add(List.of("", "", "Áo thun bé trai test import", "Áo bé trai", "Xanh lá", "M", "169000", "20", "101400", "NCC006", "img/gau.png", "Tạo mới sản phẩm và nhập kho", "Sản phẩm tạo từ Google Sheet"));
+
+        clearValues(spreadsheetId, quoteSheetName(DEFAULT_TEMPLATE_SHEET_NAME) + "!A:M", accessToken);
+        updateValues(spreadsheetId, quoteSheetName(DEFAULT_TEMPLATE_SHEET_NAME) + "!A1", rows, accessToken);
+    }
+
+    private List<Object> importHeader() {
+        return List.of(
                 "Mã biến thể",
+                "Mã sản phẩm",
+                "Tên sản phẩm",
+                "Danh mục",
+                "Màu",
+                "Size",
+                "Giá bán",
                 "Số lượng nhập",
                 "Giá nhập",
                 "Mã nhà cung cấp",
-                "Ghi chú"
-        ));
-        updateValues(spreadsheetId, quoteSheetName(importSheetName) + "!A1", header, accessToken);
+                "Ảnh đại diện",
+                "Ghi chú",
+                "Mô tả"
+        );
     }
 
     private ImportRow parseImportRow(List<Object> row, int sheetRowNumber) {
+        if (isOldCompactImportRow(row)) {
+            return new ImportRow(
+                    sheetRowNumber,
+                    cell(row, 0),
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    cell(row, 1),
+                    cell(row, 2),
+                    cell(row, 3),
+                    "",
+                    cell(row, 4),
+                    "",
+                    parseInteger(cell(row, 0)),
+                    null,
+                    parseInteger(cell(row, 1)),
+                    null,
+                    parseMoney(cell(row, 2)),
+                    null,
+                    null,
+                    "Cập nhật tồn kho biến thể có sẵn",
+                    true
+            );
+        }
+
         return new ImportRow(
                 sheetRowNumber,
                 cell(row, 0),
@@ -290,18 +357,48 @@ public class InventoryGoogleSheetService {
                 cell(row, 2),
                 cell(row, 3),
                 cell(row, 4),
+                cell(row, 5),
+                cell(row, 6),
+                cell(row, 7),
+                cell(row, 8),
+                cell(row, 9),
+                cell(row, 10),
+                cell(row, 11),
+                cell(row, 12),
                 parseInteger(cell(row, 0)),
                 parseInteger(cell(row, 1)),
-                parseMoney(cell(row, 2))
+                parseInteger(cell(row, 7)),
+                parseMoney(cell(row, 6)),
+                parseMoney(cell(row, 8)),
+                null,
+                null,
+                "",
+                false
         );
     }
 
-    private String validateImportRow(ImportRow row) {
-        if (row.variantId() == null || row.variantId() <= 0) {
-            return "Mã biến thể không hợp lệ.";
+    private boolean isOldCompactImportRow(List<Object> row) {
+        if (row == null || row.isEmpty()) {
+            return false;
         }
-        if (!inventoryService.isActiveVariantForImport(row.variantId())) {
-            return "Không tìm thấy biến thể đang bán với mã #" + row.variantId() + ".";
+        if (row.size() <= 5) {
+            return true;
+        }
+
+        String maybeSupplier = normalizeSupplierCode(cell(row, 3));
+        return parseInteger(cell(row, 0)) != null
+                && parseInteger(cell(row, 1)) != null
+                && parseMoney(cell(row, 2)) != null
+                && maybeSupplier != null
+                && maybeSupplier.startsWith("NCC");
+    }
+
+    private String validateBasicImportRow(ImportRow row) {
+        if (!row.rawVariantId().isBlank() && row.variantId() == null) {
+            return "Mã biến thể không hợp lệ. Nếu cần tạo sản phẩm mới, hãy để trống mã biến thể.";
+        }
+        if (!row.rawProductId().isBlank() && row.productId() == null) {
+            return "Mã sản phẩm không hợp lệ.";
         }
         if (row.quantity() == null || row.quantity() <= 0) {
             return "Số lượng nhập phải lớn hơn 0.";
@@ -317,7 +414,44 @@ public class InventoryGoogleSheetService {
         if (!inventoryService.isActiveSupplierCode(supplierCode)) {
             return "Không tìm thấy nhà cung cấp đang hoạt động với mã " + supplierCode + ".";
         }
+
+        if (row.variantId() == null) {
+            if (row.productId() == null && row.productName().isBlank()) {
+                return "Tên sản phẩm không được để trống khi mã biến thể trống.";
+            }
+            if (row.colorName().isBlank()) {
+                return "Màu không được để trống khi mã biến thể trống.";
+            }
+            if (row.sizeName().isBlank()) {
+                return "Size không được để trống khi mã biến thể trống.";
+            }
+        }
         return null;
+    }
+
+    private VariantResolveResult resolveImportRow(ImportRow row) {
+        if (row.variantId() != null) {
+            if (!inventoryService.isActiveVariantForImport(row.variantId())) {
+                return VariantResolveResult.error("Không tìm thấy biến thể đang bán với mã #" + row.variantId() + ".");
+            }
+            return VariantResolveResult.success(row.variantId(), null, "Cập nhật tồn kho biến thể có sẵn");
+        }
+
+        InventoryService.SheetVariantResolution resolution = inventoryService.resolveVariantForSheetImport(
+                row.productId(),
+                row.productName(),
+                row.categoryName(),
+                row.colorName(),
+                row.sizeName(),
+                row.sellingPrice(),
+                row.thumbnail(),
+                row.description()
+        );
+
+        if (!resolution.isSuccess()) {
+            return VariantResolveResult.error(resolution.getMessage());
+        }
+        return VariantResolveResult.success(resolution.getVariantId(), resolution.getProductId(), resolution.getAction());
     }
 
     private void writeImportResult(String spreadsheetId, String resultSheetName, String accessToken,
@@ -344,7 +478,12 @@ public class InventoryGoogleSheetService {
         rows.add(List.of(
                 "STT",
                 "Dòng Sheet",
+                "Hành động",
+                "Mã sản phẩm",
                 "Mã biến thể",
+                "Tên sản phẩm",
+                "Màu",
+                "Size",
                 "Số lượng nhập",
                 "Giá nhập",
                 "Mã nhà cung cấp",
@@ -359,7 +498,12 @@ public class InventoryGoogleSheetService {
             rows.add(List.of(
                     index++,
                     row == null ? "" : row.sheetRowNumber(),
-                    row == null ? "" : row.rawVariantId(),
+                    row == null ? "" : safe(row.action()),
+                    row == null ? "" : firstNotBlank(row.rawProductId(), row.resolvedProductId() == null ? "" : String.valueOf(row.resolvedProductId())),
+                    row == null ? "" : firstNotBlank(row.rawVariantId(), row.resolvedVariantId() == null ? "" : String.valueOf(row.resolvedVariantId())),
+                    row == null ? "" : row.productName(),
+                    row == null ? "" : row.colorName(),
+                    row == null ? "" : row.sizeName(),
                     row == null ? "" : row.rawQuantity(),
                     row == null || row.unitCost() == null ? (row == null ? "" : row.rawUnitCost()) : moneyFormat.format(row.unitCost()),
                     row == null ? "" : row.supplierCode(),
@@ -368,7 +512,7 @@ public class InventoryGoogleSheetService {
             ));
         }
 
-        String clearRange = quoteSheetName(resultSheetName) + "!A:H";
+        String clearRange = quoteSheetName(resultSheetName) + "!A:M";
         clearValues(spreadsheetId, clearRange, accessToken);
         updateValues(spreadsheetId, quoteSheetName(resultSheetName) + "!A1", rows, accessToken);
     }
@@ -391,6 +535,10 @@ public class InventoryGoogleSheetService {
             joined = joined.substring(0, 240) + "...";
         }
         return "Google Sheet: " + joined;
+    }
+
+    private String describeAction(String action) {
+        return action == null || action.isBlank() ? "Cập nhật tồn kho" : action;
     }
 
     private boolean isBlankRow(List<Object> row) {
@@ -736,14 +884,55 @@ public class InventoryGoogleSheetService {
     private record ImportRow(
             int sheetRowNumber,
             String rawVariantId,
+            String rawProductId,
+            String productName,
+            String categoryName,
+            String colorName,
+            String sizeName,
+            String rawSellingPrice,
             String rawQuantity,
             String rawUnitCost,
             String supplierCode,
+            String thumbnail,
             String note,
+            String description,
             Integer variantId,
+            Integer productId,
             Integer quantity,
-            BigDecimal unitCost
+            BigDecimal sellingPrice,
+            BigDecimal unitCost,
+            Integer resolvedVariantId,
+            Integer resolvedProductId,
+            String action,
+            boolean oldCompactFormat
     ) {
+        ImportRow withResolvedVariant(Integer resolvedVariantId, Integer resolvedProductId, String action) {
+            return new ImportRow(
+                    sheetRowNumber,
+                    rawVariantId,
+                    rawProductId,
+                    productName,
+                    categoryName,
+                    colorName,
+                    sizeName,
+                    rawSellingPrice,
+                    rawQuantity,
+                    rawUnitCost,
+                    supplierCode,
+                    thumbnail,
+                    note,
+                    description,
+                    variantId,
+                    productId,
+                    quantity,
+                    sellingPrice,
+                    unitCost,
+                    resolvedVariantId,
+                    resolvedProductId,
+                    action,
+                    oldCompactFormat
+            );
+        }
     }
 
     private record ImportRowResult(ImportRow row, String status, String message) {
@@ -757,6 +946,16 @@ public class InventoryGoogleSheetService {
 
         static ImportRowResult info(String message) {
             return new ImportRowResult(null, "Thông tin", message);
+        }
+    }
+
+    private record VariantResolveResult(boolean success, Integer variantId, Integer productId, String action, String message) {
+        static VariantResolveResult success(Integer variantId, Integer productId, String action) {
+            return new VariantResolveResult(true, variantId, productId, action, "");
+        }
+
+        static VariantResolveResult error(String message) {
+            return new VariantResolveResult(false, null, null, "", message);
         }
     }
 
