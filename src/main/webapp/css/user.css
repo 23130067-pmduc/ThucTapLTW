@@ -840,7 +840,31 @@ body, .admin {
 
 .revenue-period-btns {
     display: flex;
+    align-items: center;
     gap: 6px;
+    flex-wrap: wrap;
+}
+
+.date-range-label {
+    color: #666;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.date-picker {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1.5px solid #d9e8c6;
+    background: #fff;
+    color: #333;
+    font-size: 13px;
+    font-weight: 600;
+    outline: none;
+}
+
+.date-picker:focus {
+    border-color: #A9C87D;
+    box-shadow: 0 0 0 3px rgba(169, 200, 125, 0.18);
 }
 
 .period-btn {

@@ -4,7 +4,6 @@ import vn.edu.nlu.fit.thuctapltw.model.Order;
 import vn.edu.nlu.fit.thuctapltw.model.TopSellingProduct;
 
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -91,17 +90,24 @@ public class DashboardDao extends BaseDao {
         );
     }
 
-    public Map<String, Double> getRevenueByDay(int days) {
+    public Map<String, Double> getRevenueByDateRange(LocalDate fromDate, LocalDate toDate) {
+        String startDate = fromDate.toString();
+        String endDate = toDate.plusDays(1).toString();
+
         List<Map<String, Object>> rows = getJdbi().withHandle(h ->
             h.createQuery("""
                 SELECT DATE(o.created_at) AS rev_date, COALESCE(SUM(o.total_price), 0) AS revenue
                 FROM orders o
                 WHERE o.order_status != 'CANCELLED'
                   AND (o.order_status = 'COMPLETED' OR (o.payment_statuses = 'PAID' AND o.payment_methods != 'COD'))
-                  AND o.created_at >= DATE_SUB(CURDATE(), INTERVAL :days DAY)
+                  AND o.created_at >= :startDate
+                  AND o.created_at < :endDate
                 GROUP BY DATE(o.created_at)
                 ORDER BY rev_date ASC
-            """).bind("days", days).mapToMap().list());
+            """).bind("startDate", startDate)
+                    .bind("endDate", endDate)
+                    .mapToMap()
+                    .list());
 
         Map<String, Double> fromDb = new LinkedHashMap<>();
         for (Map<String, Object> row : rows) {
@@ -110,51 +116,12 @@ public class DashboardDao extends BaseDao {
             fromDb.put(dateKey, rev != null ? ((Number) rev).doubleValue() : 0.0);
         }
 
-        DateTimeFormatter labelFmt = DateTimeFormatter.ofPattern("dd/MM");
+        DateTimeFormatter labelFmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         DateTimeFormatter keyFmt   = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate today = LocalDate.now();
         Map<String, Double> result = new LinkedHashMap<>();
-        for (int i = days - 1; i >= 0; i--) {
-            LocalDate date = today.minusDays(i);
+        for (LocalDate date = fromDate; !date.isAfter(toDate); date = date.plusDays(1)) {
             String key   = date.format(keyFmt);
             String label = date.format(labelFmt);
-            result.put(label, fromDb.getOrDefault(key, 0.0));
-        }
-        return result;
-    }
-
-    public Map<String, Double> getRevenueByMonth(int months) {
-        List<Map<String, Object>> rows = getJdbi().withHandle(h ->
-            h.createQuery("""
-                SELECT DATE_FORMAT(o.created_at, '%Y-%m') AS rev_month,
-                       COALESCE(SUM(o.total_price), 0) AS revenue
-                FROM orders o
-                WHERE o.order_status != 'CANCELLED'
-                  AND (
-                    o.order_status = 'COMPLETED'
-                    OR (o.payment_statuses = 'PAID' AND o.payment_methods != 'COD')
-                  )
-                  AND o.created_at >= DATE_SUB(CURDATE(), INTERVAL :months MONTH)
-                GROUP BY rev_month
-                ORDER BY rev_month ASC
-            """).bind("months", months).mapToMap().list()
-        );
-
-        Map<String, Double> fromDb = new LinkedHashMap<>();
-        for (Map<String, Object> row : rows) {
-            String monthKey = row.get("rev_month").toString();
-            Object rev = row.get("revenue");
-            fromDb.put(monthKey, rev != null ? ((Number) rev).doubleValue() : 0.0);
-        }
-
-        DateTimeFormatter labelFmt = DateTimeFormatter.ofPattern("MM/yyyy");
-        DateTimeFormatter keyFmt   = DateTimeFormatter.ofPattern("yyyy-MM");
-        YearMonth current = YearMonth.now();
-        Map<String, Double> result = new LinkedHashMap<>();
-        for (int i = months - 1; i >= 0; i--) {
-            YearMonth ym  = current.minusMonths(i);
-            String key    = ym.format(keyFmt);
-            String label  = ym.format(labelFmt);
             result.put(label, fromDb.getOrDefault(key, 0.0));
         }
         return result;
