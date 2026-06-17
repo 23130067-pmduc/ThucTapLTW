@@ -6,14 +6,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thêm nhà cung cấp</title>
+    <title>${mode == 'edit' ? 'Sửa nhà cung cấp' : 'Thêm nhà cung cấp'}</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user-form.css">
 </head>
 <body>
 <div class="container">
     <div class="form-header">
         <a href="${pageContext.request.contextPath}/supplier-admin" class="btn-back">← Quay lại</a>
-        <h2>Thêm nhà cung cấp</h2>
+        <h2>${mode == 'edit' ? 'Sửa nhà cung cấp' : 'Thêm nhà cung cấp'}</h2>
     </div>
 
     <c:if test="${not empty error}">
@@ -21,8 +21,11 @@
     </c:if>
 
     <form method="post" action="${pageContext.request.contextPath}/supplier-admin">
-        <input type="hidden" name="action" value="create">
-        <input type="hidden" name="mode" value="add">
+        <input type="hidden" name="action" value="${mode == 'edit' ? 'update' : 'create'}">
+        <input type="hidden" name="mode" value="${mode}">
+        <c:if test="${mode == 'edit'}">
+            <input type="hidden" name="id" value="${supplier.id}">
+        </c:if>
 
         <div class="card">
             <h3>Thông tin nhà cung cấp</h3>
@@ -99,7 +102,9 @@
         </div>
 
         <div class="form-footer">
-            <button type="submit" class="btn-primary">Lưu nhà cung cấp</button>
+            <button type="submit" class="btn-primary">
+                ${mode == 'edit' ? 'Cập nhật nhà cung cấp' : 'Lưu nhà cung cấp'}
+            </button>
             <a href="${pageContext.request.contextPath}/supplier-admin" class="btn-secondary">Hủy</a>
         </div>
     </form>

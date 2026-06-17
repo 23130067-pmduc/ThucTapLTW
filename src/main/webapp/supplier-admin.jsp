@@ -137,6 +137,26 @@
                 <i class="fa-solid fa-circle-check"></i> Thêm nhà cung cấp thành công.
             </div>
         </c:if>
+        <c:if test="${param.success == 'update'}">
+            <div class="supplier-alert success">
+                <i class="fa-solid fa-circle-check"></i> Cập nhật nhà cung cấp thành công.
+            </div>
+        </c:if>
+        <c:if test="${param.success == 'lock'}">
+            <div class="supplier-alert success">
+                <i class="fa-solid fa-lock"></i> Đã khóa nhà cung cấp.
+            </div>
+        </c:if>
+        <c:if test="${param.success == 'unlock'}">
+            <div class="supplier-alert success">
+                <i class="fa-solid fa-lock-open"></i> Đã mở khóa nhà cung cấp.
+            </div>
+        </c:if>
+        <c:if test="${param.error == 'not_found'}">
+            <div class="supplier-alert error">
+                <i class="fa-solid fa-triangle-exclamation"></i> Không tìm thấy nhà cung cấp cần xử lý.
+            </div>
+        </c:if>
 
         <section class="supplier-panel">
             <div class="supplier-panel-header">
@@ -178,13 +198,14 @@
                         <th>Địa chỉ</th>
                         <th>Trạng thái</th>
                         <th>Cập nhật</th>
+                        <th>Thao tác</th>
                     </tr>
                     </thead>
                     <tbody>
                     <c:choose>
                         <c:when test="${empty suppliers}">
                             <tr>
-                                <td colspan="8" class="empty-row">Không có nhà cung cấp phù hợp.</td>
+                                <td colspan="9" class="empty-row">Không có nhà cung cấp phù hợp.</td>
                             </tr>
                         </c:when>
                         <c:otherwise>
@@ -207,6 +228,42 @@
                                         </span>
                                     </td>
                                     <td>${empty supplier.updatedAtText ? '-' : supplier.updatedAtText}</td>
+                                    <td>
+                                        <div class="action-group">
+                                            <a href="${pageContext.request.contextPath}/supplier-admin?mode=edit&id=${supplier.id}"
+                                               class="action-btn edit"
+                                               title="Sửa nhà cung cấp">
+                                                <i class="fa-solid fa-pen"></i>
+                                            </a>
+
+                                            <c:choose>
+                                                <c:when test="${supplier.status == 'ACTIVE'}">
+                                                    <form method="post"
+                                                          action="${pageContext.request.contextPath}/supplier-admin"
+                                                          class="inline-action-form"
+                                                          onsubmit="return confirm('Bạn có chắc muốn khóa nhà cung cấp này không?');">
+                                                        <input type="hidden" name="action" value="lock">
+                                                        <input type="hidden" name="id" value="${supplier.id}">
+                                                        <button type="submit" class="action-btn lock" title="Khóa nhà cung cấp">
+                                                            <i class="fa-solid fa-lock"></i>
+                                                        </button>
+                                                    </form>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <form method="post"
+                                                          action="${pageContext.request.contextPath}/supplier-admin"
+                                                          class="inline-action-form"
+                                                          onsubmit="return confirm('Bạn có chắc muốn mở khóa nhà cung cấp này không?');">
+                                                        <input type="hidden" name="action" value="unlock">
+                                                        <input type="hidden" name="id" value="${supplier.id}">
+                                                        <button type="submit" class="action-btn unlock" title="Mở khóa nhà cung cấp">
+                                                            <i class="fa-solid fa-lock-open"></i>
+                                                        </button>
+                                                    </form>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </div>
+                                    </td>
                                 </tr>
                             </c:forEach>
                         </c:otherwise>

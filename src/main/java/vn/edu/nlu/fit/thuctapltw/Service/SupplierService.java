@@ -4,6 +4,7 @@ import vn.edu.nlu.fit.thuctapltw.DAO.SupplierDao;
 import vn.edu.nlu.fit.thuctapltw.model.Supplier;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class SupplierService {
@@ -20,6 +21,10 @@ public class SupplierService {
         return supplierDao.getSuppliersByPage(keyword, status, pageSize, offset);
     }
 
+    public Optional<Supplier> getById(int id) {
+        return supplierDao.getById(id);
+    }
+
     public int countActive() {
         return supplierDao.countByStatus("ACTIVE");
     }
@@ -34,17 +39,58 @@ public class SupplierService {
         supplierDao.create(supplier);
     }
 
+    public void update(Supplier supplier) {
+        normalizeSupplier(supplier);
+        validateForUpdate(supplier);
+        supplierDao.update(supplier);
+    }
+
+    public void lock(int id) {
+        validateExists(id);
+        supplierDao.updateStatus(id, "LOCKED");
+    }
+
+    public void unlock(int id) {
+        validateExists(id);
+        supplierDao.updateStatus(id, "ACTIVE");
+    }
+
     private void validateForCreate(Supplier supplier) {
+        validateCommon(supplier);
+
+        if (supplierDao.existsByCode(supplier.getCode())) {
+            throw new IllegalArgumentException("Mã nhà cung cấp đã tồn tại.");
+        }
+
+        if (!supplier.getEmail().isEmpty() && supplierDao.existsByEmail(supplier.getEmail())) {
+            throw new IllegalArgumentException("Email nhà cung cấp đã tồn tại.");
+        }
+    }
+
+    private void validateForUpdate(Supplier supplier) {
+        if (supplier.getId() <= 0) {
+            throw new IllegalArgumentException("Không tìm thấy nhà cung cấp cần cập nhật.");
+        }
+
+        validateExists(supplier.getId());
+        validateCommon(supplier);
+
+        if (supplierDao.existsByCodeExceptId(supplier.getCode(), supplier.getId())) {
+            throw new IllegalArgumentException("Mã nhà cung cấp đã tồn tại.");
+        }
+
+        if (!supplier.getEmail().isEmpty() && supplierDao.existsByEmailExceptId(supplier.getEmail(), supplier.getId())) {
+            throw new IllegalArgumentException("Email nhà cung cấp đã tồn tại.");
+        }
+    }
+
+    private void validateCommon(Supplier supplier) {
         if (supplier.getCode().isEmpty()) {
             throw new IllegalArgumentException("Mã nhà cung cấp không được để trống.");
         }
 
         if (supplier.getCode().length() > 30) {
             throw new IllegalArgumentException("Mã nhà cung cấp không được vượt quá 30 ký tự.");
-        }
-
-        if (supplierDao.existsByCode(supplier.getCode())) {
-            throw new IllegalArgumentException("Mã nhà cung cấp đã tồn tại.");
         }
 
         if (supplier.getName().isEmpty()) {
@@ -62,9 +108,11 @@ public class SupplierService {
         if (!supplier.getEmail().isEmpty() && !EMAIL_PATTERN.matcher(supplier.getEmail()).matches()) {
             throw new IllegalArgumentException("Email không hợp lệ.");
         }
+    }
 
-        if (!supplier.getEmail().isEmpty() && supplierDao.existsByEmail(supplier.getEmail())) {
-            throw new IllegalArgumentException("Email nhà cung cấp đã tồn tại.");
+    private void validateExists(int id) {
+        if (supplierDao.getById(id).isEmpty()) {
+            throw new IllegalArgumentException("Nhà cung cấp không tồn tại hoặc đã bị xóa.");
         }
     }
 
