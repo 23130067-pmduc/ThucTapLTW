@@ -39,4 +39,8 @@ public class InventoryService {
     public List<InventoryItem> getInventoryItemsForGoogleSheet() {
         return inventoryDao.getInventoryItemsForGoogleSheet();
     }
+
+    public boolean isActiveVariantForImport(int variantId) {
+        return inventoryDao.isActiveVariantForImport(variantId);
+    }
 }

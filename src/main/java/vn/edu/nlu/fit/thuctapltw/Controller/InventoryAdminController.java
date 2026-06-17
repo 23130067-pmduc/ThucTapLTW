@@ -76,6 +76,7 @@ public class InventoryAdminController extends HttpServlet {
         request.setAttribute("sheetError", getValue(request.getParameter("sheetError")));
         request.setAttribute("googleSheetConfigured", googleSheetService.isConfigured(getServletContext()));
         request.setAttribute("googleSheetUrl", googleSheetService.getSheetUrl(getServletContext()));
+        request.setAttribute("googleImportSheetUrl", googleSheetService.getImportSheetUrl(getServletContext()));
 
         request.getRequestDispatcher("/inventory-admin.jsp").forward(request, response);
     }

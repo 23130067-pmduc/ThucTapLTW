@@ -16,6 +16,7 @@ import java.util.Map;
         "/product-admin",
         "/inventory-admin",
         "/inventory-google-sheet",
+        "/inventory-google-sheet-import",
         "/profit-report",
         "/category-admin",
         "/order-admin",
@@ -39,6 +40,7 @@ public class PermissionFilter implements Filter {
         permissionMap.put("/product-admin", "PRODUCT_VIEW");
         permissionMap.put("/inventory-admin", "WAREHOUSE_VIEW");
         permissionMap.put("/inventory-google-sheet", "WAREHOUSE_VIEW");
+        permissionMap.put("/inventory-google-sheet-import", "WAREHOUSE_VIEW");
         permissionMap.put("/profit-report", "REPORT_VIEW");
         permissionMap.put("/category-admin", "CATEGORY_VIEW");
         permissionMap.put("/order-admin", "ORDER_VIEW");
