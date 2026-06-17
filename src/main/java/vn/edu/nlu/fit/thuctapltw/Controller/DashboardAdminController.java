@@ -4,8 +4,12 @@ import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import vn.edu.nlu.fit.thuctapltw.Service.DashboardService;
+import vn.edu.nlu.fit.thuctapltw.Util.DateUtil;
+import vn.edu.nlu.fit.thuctapltw.Util.MapJsonUtil;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Map;
 
 @WebServlet(name = "DashboardAdminController", value = "/dashboard")
 public class DashboardAdminController extends HttpServlet {
@@ -34,6 +38,21 @@ public class DashboardAdminController extends HttpServlet {
         request.setAttribute("newContacts", service.countNewContacts());
         request.setAttribute("lowStockProducts", service.countLowStockProducts());
 
+        LocalDate fromDate = DateUtil.parseDateOrDefault(request.getParameter("fromDate"), LocalDate.now().withDayOfMonth(1));
+        LocalDate toDate = DateUtil.parseDateOrDefault(request.getParameter("toDate"), LocalDate.now());
+        if (fromDate.isAfter(toDate)) {
+            LocalDate temp = fromDate;
+            fromDate = toDate;
+            toDate = temp;
+        }
+        Map<String, Double> revenueByDate = service.getRevenueByDateRange(fromDate, toDate);
+        double selectedPeriodRevenue = revenueByDate.values().stream().mapToDouble(Double::doubleValue).sum();
+
+        request.setAttribute("fromDate", fromDate.toString());
+        request.setAttribute("toDate", toDate.toString());
+        request.setAttribute("selectedPeriodRevenue", selectedPeriodRevenue);
+        request.setAttribute("chartLabelsDate", MapJsonUtil.toJsonLabels(revenueByDate));
+        request.setAttribute("chartValuesDate", MapJsonUtil.toJsonValues(revenueByDate));
 
         request.getRequestDispatcher("/Dashboard.jsp").forward(request, response);
     }

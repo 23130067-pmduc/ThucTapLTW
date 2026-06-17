@@ -12,6 +12,8 @@
   <title>Tổng quan</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/css/user.css?v=20260613-chart">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
 </head>
 <body>
 <div class="user">
@@ -26,12 +28,11 @@
           <i class="fa-solid fa-gauge"></i><span>Tổng quan</span>
         </a>
       </c:if>
-
-      <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
-        <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
-          <i class="fa-solid fa-chart-line"></i><span>Thống kê</span>
-        </a>
-      </c:if>
+            <c:if test="${userlogin.permissions.contains('REPORT_VIEW')}">
+                <a href="${pageContext.request.contextPath}/profit-report" class="nav-item">
+                    <i class="fa-solid fa-chart-line"></i><span>Thống kê</span>
+                </a>
+            </c:if>
 
 
       <c:if test="${userlogin.permissions.contains('PRODUCT_VIEW')}">
@@ -54,7 +55,7 @@
           <i class="fa-solid fa-rotate-left"></i><span>Hoàn hàng</span>
         </a>
       </c:if>
-      <c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
+<c:if test="${userlogin.permissions.contains('CATEGORY_VIEW')}">
         <a href="${pageContext.request.contextPath}/category-admin" class="nav-item">
           <i class="fa-solid fa-list"></i><span>Danh mục</span>
         </a>
@@ -277,6 +278,55 @@
           </div>
         </div>
 
+        <div class="revenue-chart-card">
+          <div class="revenue-chart-header">
+            <div class="revenue-chart-title">
+              <i class="fa-solid fa-chart-line" style="color:#A9C87D;"></i>
+              <span>Biểu đồ doanh thu</span>
+            </div>
+            <div class="revenue-filter-group">
+              <div class="selected-revenue-summary">
+                <span>Tổng doanh thu đã chọn</span>
+                <strong><fmt:formatNumber value="${selectedPeriodRevenue}"/>đ</strong>
+              </div>
+              <form class="revenue-period-btns" method="get" action="${pageContext.request.contextPath}/dashboard">
+                <div class="date-filter-field">
+                  <label for="dashboardFromDate">Từ ngày</label>
+                  <input type="hidden" id="dashboardFromDateValue" name="fromDate" value="${fromDate}">
+                  <div class="date-picker-wrap">
+                    <input class="date-picker js-date-display" id="dashboardFromDate" type="text"
+                           value="${fn:substring(fromDate, 8, 10)}/${fn:substring(fromDate, 5, 7)}/${fn:substring(fromDate, 0, 4)}"
+                           placeholder="dd/MM/yyyy" inputmode="numeric" autocomplete="off"
+                           data-target="dashboardFromDateValue" data-picker="dashboardFromDatePicker">
+                    <input class="native-date-picker js-native-date" id="dashboardFromDatePicker" type="date"
+                           value="${fromDate}" data-display="dashboardFromDate" data-target="dashboardFromDateValue"
+                           aria-label="Chọn từ ngày">
+                  </div>
+                </div>
+                <div class="date-filter-field">
+                  <label for="dashboardToDate">Đến ngày</label>
+                  <input type="hidden" id="dashboardToDateValue" name="toDate" value="${toDate}">
+                  <div class="date-picker-wrap">
+                    <input class="date-picker js-date-display" id="dashboardToDate" type="text"
+                           value="${fn:substring(toDate, 8, 10)}/${fn:substring(toDate, 5, 7)}/${fn:substring(toDate, 0, 4)}"
+                           placeholder="dd/MM/yyyy" inputmode="numeric" autocomplete="off"
+                           data-target="dashboardToDateValue" data-picker="dashboardToDatePicker">
+                    <input class="native-date-picker js-native-date" id="dashboardToDatePicker" type="date"
+                           value="${toDate}" data-display="dashboardToDate" data-target="dashboardToDateValue"
+                           aria-label="Chọn đến ngày">
+                  </div>
+                </div>
+                <button class="period-btn active" type="submit">
+                  <i class="fa-solid fa-filter"></i>
+                  <span>Lọc</span>
+                </button>
+              </form>
+            </div>
+          </div>
+          <div class="revenue-chart-body">
+            <canvas id="revenueChart" height="90"></canvas>
+          </div>
+        </div>
 
         <h2 style="margin-bottom: 12px;">Đơn hàng mới nhất</h2>
 
@@ -367,4 +417,11 @@
 </div>
 </body>
 <script src="${pageContext.request.contextPath}/javaScript/dashboard.js"></script>
+<script>
+  initRevenueChart({
+    labels: ${chartLabelsDate},
+    values: ${chartValuesDate}
+  });
+</script>
+
 </html>
