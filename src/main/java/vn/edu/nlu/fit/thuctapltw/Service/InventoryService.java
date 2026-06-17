@@ -49,6 +49,10 @@ public class InventoryService {
         return inventoryDao.isActiveSupplierCode(supplierCode);
     }
 
+    public boolean isActiveProductForImport(int productId) {
+        return inventoryDao.isActiveProductForImport(productId);
+    }
+
     public SheetVariantResolution resolveVariantForSheetImport(Integer productId,
                                                                String productName,
                                                                String categoryName,

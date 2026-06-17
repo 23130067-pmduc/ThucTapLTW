@@ -334,6 +334,20 @@ public class InventoryDao extends BaseDao {
 
 
 
+    public boolean isActiveProductForImport(int productId) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM products
+                WHERE id = :productId
+                  AND status <> 'Đã xoá'
+                """)
+                .bind("productId", productId)
+                .mapTo(int.class)
+                .one() > 0);
+    }
+
+
+
     public boolean isActiveSupplierCode(String supplierCode) {
         if (supplierCode == null || supplierCode.trim().isBlank()) {
             return false;
