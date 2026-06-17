@@ -10,6 +10,7 @@ import vn.edu.nlu.fit.thuctapltw.model.Supplier;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @WebServlet(name = "SupplierAdminController", value = "/supplier-admin")
 public class SupplierAdminController extends HttpServlet {
@@ -36,6 +37,20 @@ public class SupplierAdminController extends HttpServlet {
             return;
         }
 
+        if ("edit".equalsIgnoreCase(mode)) {
+            int id = parseInt(request.getParameter("id"), 0);
+            Optional<Supplier> supplierOptional = supplierService.getById(id);
+            if (supplierOptional.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/supplier-admin?error=not_found");
+                return;
+            }
+
+            request.setAttribute("mode", "edit");
+            request.setAttribute("supplier", supplierOptional.get());
+            request.getRequestDispatcher("supplier-form.jsp").forward(request, response);
+            return;
+        }
+
         showSupplierList(request, response);
     }
 
@@ -57,6 +72,44 @@ public class SupplierAdminController extends HttpServlet {
                 request.setAttribute("supplier", supplier);
                 request.setAttribute("error", e.getMessage());
                 request.getRequestDispatcher("supplier-form.jsp").forward(request, response);
+            }
+            return;
+        }
+
+        if ("update".equalsIgnoreCase(action)) {
+            Supplier supplier = buildSupplierFromRequest(request);
+            supplier.setId(parseInt(request.getParameter("id"), 0));
+
+            try {
+                supplierService.update(supplier);
+                response.sendRedirect(request.getContextPath() + "/supplier-admin?success=update");
+            } catch (IllegalArgumentException e) {
+                request.setAttribute("mode", "edit");
+                request.setAttribute("supplier", supplier);
+                request.setAttribute("error", e.getMessage());
+                request.getRequestDispatcher("supplier-form.jsp").forward(request, response);
+            }
+            return;
+        }
+
+        if ("lock".equalsIgnoreCase(action)) {
+            int id = parseInt(request.getParameter("id"), 0);
+            try {
+                supplierService.lock(id);
+                response.sendRedirect(request.getContextPath() + "/supplier-admin?success=lock");
+            } catch (IllegalArgumentException e) {
+                response.sendRedirect(request.getContextPath() + "/supplier-admin?error=not_found");
+            }
+            return;
+        }
+
+        if ("unlock".equalsIgnoreCase(action)) {
+            int id = parseInt(request.getParameter("id"), 0);
+            try {
+                supplierService.unlock(id);
+                response.sendRedirect(request.getContextPath() + "/supplier-admin?success=unlock");
+            } catch (IllegalArgumentException e) {
+                response.sendRedirect(request.getContextPath() + "/supplier-admin?error=not_found");
             }
             return;
         }
