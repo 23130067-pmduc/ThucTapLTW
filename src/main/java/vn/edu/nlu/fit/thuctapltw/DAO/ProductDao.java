@@ -238,19 +238,34 @@ public class ProductDao extends BaseDao {
                         .list()
         );
     }
-    public void insert(Product p) {
-        String sql = """
-        INSERT INTO products
-        (category_id, name, price, thumbnail, status)
-        VALUES (:category_id, :name, :price, :thumbnail, 'Đang bán')
-    """;
-
-        getJdbi().withHandle(h ->
-                h.createUpdate(sql)
+    public int insert(Product p) {
+        return getJdbi().withHandle(h ->
+                h.createUpdate("""
+                        INSERT INTO products
+                                (category_id, name, description, price, thumbnail, status)
+                        VALUES (:category_id, :name,:description, :price, :thumbnail, :status)
+                        """)
                         .bind("category_id", p.getCategory_id())
                         .bind("name", p.getName())
+                        .bind("description", p.getDescription())
                         .bind("price", p.getPrice())
                         .bind("thumbnail", p.getThumbnail())
+                        .bind("status", p.getStatus())
+                        .executeAndReturnGeneratedKeys("id")
+                        .mapTo(Integer.class)
+                        .one()
+        );
+    }
+
+    public void updateThumbnail(int productId, String thumbnail) {
+        getJdbi().useHandle(handle ->
+                handle.createUpdate("""
+                UPDATE products
+                SET thumbnail = :thumbnail
+                WHERE id = :productId
+            """)
+                        .bind("thumbnail", thumbnail)
+                        .bind("productId", productId)
                         .execute()
         );
     }
@@ -259,6 +274,7 @@ public class ProductDao extends BaseDao {
         String sql = """
         UPDATE products
         SET name = :name,
+            description = :description,
             price = :price,
             category_id = :category_id,
             thumbnail = :thumbnail,
@@ -270,6 +286,7 @@ public class ProductDao extends BaseDao {
                 h.createUpdate(sql)
                         .bind("id", p.getId())
                         .bind("name", p.getName())
+                        .bind("description", p.getDescription())
                         .bind("price", p.getPrice())
                         .bind("category_id", p.getCategory_id())
                         .bind("thumbnail", p.getThumbnail())

@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import vn.edu.nlu.fit.thuctapltw.DAO.ProductImageDao;
 import vn.edu.nlu.fit.thuctapltw.Service.ProductImageService;
+import vn.edu.nlu.fit.thuctapltw.Util.CloudinaryUtil;
 import vn.edu.nlu.fit.thuctapltw.model.ProductImage;
 
 import java.io.File;
@@ -130,7 +131,7 @@ public class ProductImageAdminController extends HttpServlet {
 
     private void createImage(HttpServletRequest request, HttpServletResponse response, int productId)
             throws ServletException, IOException {
-        String imagePath = handleFileUpload(request, "imageFile");
+        String imagePath = CloudinaryUtil.uploadImage(request.getPart("imageFile"), "sunnybear/products");
         if (imagePath == null || imagePath.isBlank()) {
             response.sendRedirect(REDIRECT_LIST + productId + "&error=no_image");
             return;
@@ -162,7 +163,8 @@ public class ProductImageAdminController extends HttpServlet {
 
         image.setMain(isMainSelected(request));
 
-        String newImagePath = handleFileUpload(request, "imageFile");
+        String newImagePath = CloudinaryUtil.uploadImage(
+                request.getPart("imageFile"), "sunnybear/products");
         if (newImagePath != null && !newImagePath.isBlank()) {
             image.setImageUrl(newImagePath);
         }
@@ -211,42 +213,6 @@ public class ProductImageAdminController extends HttpServlet {
         return value == null ? "" : value.trim();
     }
 
-    private String handleFileUpload(HttpServletRequest request, String fieldName)
-            throws IOException, ServletException {
-        Part filePart = request.getPart(fieldName);
-        if (filePart == null || filePart.getSize() == 0) {
-            return null;
-        }
 
-        String submittedFileName = filePart.getSubmittedFileName();
-        if (submittedFileName == null || submittedFileName.isBlank()) {
-            return null;
-        }
 
-        String extension = extractFileExtension(submittedFileName);
-        String storedFileName = buildStoredFileName(extension);
-
-        String uploadPath = request.getServletContext().getRealPath("") + File.separator + IMAGE_FOLDER;
-        File uploadDirectory = new File(uploadPath);
-        if (!uploadDirectory.exists() && !uploadDirectory.mkdirs()) {
-            throw new IOException("Cannot create upload directory: " + uploadPath);
-        }
-
-        String filePath = uploadPath + File.separator + storedFileName;
-        filePart.write(filePath);
-        return IMAGE_FOLDER + "/" + storedFileName;
-    }
-
-    private String extractFileExtension(String fileName) {
-        int lastDotIndex = fileName.lastIndexOf('.');
-        if (lastDotIndex < 0 || lastDotIndex == fileName.length() - 1) {
-            return "";
-        }
-        return fileName.substring(lastDotIndex).replaceAll("[^a-zA-Z0-9.]", "");
-    }
-
-    private String buildStoredFileName(String extension) {
-        return ("product_img_" + System.currentTimeMillis() + extension)
-                .replaceAll("[^a-zA-Z0-9._-]", "_");
-    }
 }

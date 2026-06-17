@@ -102,4 +102,41 @@ public class ProductImageDao extends BaseDao {
         }
         return STATUS_VISIBLE;
     }
+
+    public void clearMainByProduct(int productId) {
+        getJdbi().useHandle(handle -> handle.createUpdate("""
+            UPDATE product_images
+            SET is_main = 0
+            WHERE product_id = :productId
+            """)
+                .bind("productId", productId)
+                .execute());
+    }
+
+    public void updateMain(int imageId, boolean main) {
+        getJdbi().useHandle(handle -> handle.createUpdate("""
+            UPDATE product_images
+            SET is_main = :main
+            WHERE id = :imageId
+            """)
+                .bind("main", main)
+                .bind("imageId", imageId)
+                .execute());
+    }
+
+    public ProductImage getFirstVisibleImageByProduct(int productId) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+            SELECT id, product_id, image_url, is_main AS main, status
+            FROM product_images
+            WHERE product_id = :productId
+              AND status = :status
+            ORDER BY id DESC
+            LIMIT 1
+            """)
+                .bind("productId", productId)
+                .bind("status", STATUS_VISIBLE)
+                .mapToBean(ProductImage.class)
+                .findOne()
+                .orElse(null));
+    }
 }

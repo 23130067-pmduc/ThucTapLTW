@@ -13,11 +13,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import vn.edu.nlu.fit.thuctapltw.DAO.CategoryDao;
 import vn.edu.nlu.fit.thuctapltw.DAO.ProductDao;
+import vn.edu.nlu.fit.thuctapltw.DAO.ProductImageDao;
+import vn.edu.nlu.fit.thuctapltw.Service.ProductImageService;
 import vn.edu.nlu.fit.thuctapltw.Service.ProductService;
+import vn.edu.nlu.fit.thuctapltw.Util.CloudinaryUtil;
 import vn.edu.nlu.fit.thuctapltw.model.Category;
 import vn.edu.nlu.fit.thuctapltw.model.Product;
+import vn.edu.nlu.fit.thuctapltw.model.ProductImage;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -27,19 +30,21 @@ import java.util.Map;
 @WebServlet(name = "ProductAdminController", value = "/product-admin")
 @MultipartConfig(
         maxFileSize = 10 * 1024 * 1024,
-        maxRequestSize = 20 * 1024 * 1024
+        maxRequestSize = 60 * 1024 * 1024
 )
 public class ProductAdminController extends HttpServlet {
 
     private ProductDao productDao;
     private CategoryDao categoryDao;
     private ProductService productService;
+    private ProductImageService productImageService;
 
     @Override
     public void init() {
         productDao = new ProductDao();
         categoryDao = new CategoryDao();
         productService = new ProductService();
+        productImageService = new ProductImageService();
     }
 
     @Override
@@ -226,6 +231,7 @@ public class ProductAdminController extends HttpServlet {
         String action = request.getParameter("action");
 
         String name = request.getParameter("name");
+        String description = request.getParameter("description");
         String priceRaw = request.getParameter("price");
         String categoryIdRaw = request.getParameter("category_id");
         String status = request.getParameter("status");
@@ -241,19 +247,58 @@ public class ProductAdminController extends HttpServlet {
             return;
         }
 
-        if ("create".equals(action)) {
+        if ("create".equals(action) || "add".equals(action)) {
             Product product = new Product();
             product.setName(name);
             product.setPrice(price);
+            product.setDescription(description);
             product.setCategory_id(categoryId);
             product.setStatus(status);
 
-            String imagePath = handleFileUpload(request, "imageFile");
-            if (imagePath != null && !imagePath.isEmpty()) {
-                product.setThumbnail(imagePath);
+            String imageUrl = CloudinaryUtil.uploadImage(
+                    request.getPart("imageFile"),
+                    "sunnybear/products"
+            );
+
+            if (imageUrl != null && !imageUrl.isBlank()) {
+                product.setThumbnail(imageUrl);
             }
 
-            productDao.insert(product);
+            int productId = productDao.insert(product);
+
+            if (imageUrl != null && !imageUrl.isBlank()) {
+                ProductImage productImage = new ProductImage();
+                productImage.setProductId(productId);
+                productImage.setImageUrl(imageUrl);
+                productImage.setMain(true);
+                productImage.setStatus(ProductImageDao.STATUS_VISIBLE);
+
+                productImageService.createImage(productImage);
+            }
+
+            for (Part part : request.getParts()) {
+                if (!"subImageFiles".equals(part.getName())) {
+                    continue;
+                }
+
+                if (part.getSubmittedFileName() == null
+                        || part.getSubmittedFileName().isBlank()
+                        || part.getSize() == 0) {
+                    continue;
+                }
+
+                String subImageUrl = CloudinaryUtil.uploadImage(part, "sunnybear/products");
+
+                if (subImageUrl != null && !subImageUrl.isBlank()) {
+                    ProductImage subImage = new ProductImage();
+                    subImage.setProductId(productId);
+                    subImage.setImageUrl(subImageUrl);
+                    subImage.setMain(false);
+                    subImage.setStatus(ProductImageDao.STATUS_VISIBLE);
+
+                    productImageService.createImage(subImage);
+                }
+            }
 
             response.sendRedirect("product-admin");
             return;
@@ -272,9 +317,13 @@ public class ProductAdminController extends HttpServlet {
                 product.setCategory_id(categoryId);
                 product.setStatus(status);
 
-                String imagePath = handleFileUpload(request, "imageFile");
-                if (imagePath != null && !imagePath.isEmpty()) {
-                    product.setThumbnail(imagePath);
+                String imageUrl = CloudinaryUtil.uploadImage(
+                        request.getPart("imageFile"),
+                        "sunnybear/products"
+                );
+
+                if (imageUrl != null && !imageUrl.isBlank()) {
+                    product.setThumbnail(imageUrl);
                 } else {
                     Product oldProduct = productDao.findById(id);
                     if (oldProduct != null) {
@@ -283,6 +332,16 @@ public class ProductAdminController extends HttpServlet {
                 }
 
                 productDao.update(product);
+
+                if (imageUrl != null && !imageUrl.isBlank()) {
+                    ProductImage productImage = new ProductImage();
+                    productImage.setProductId(id);
+                    productImage.setImageUrl(imageUrl);
+                    productImage.setMain(true);
+                    productImage.setStatus(ProductImageDao.STATUS_VISIBLE);
+
+                    productImageService.createImage(productImage);
+                }
             }
 
             response.sendRedirect("product-admin");
@@ -290,37 +349,4 @@ public class ProductAdminController extends HttpServlet {
         }
     }
 
-    private String handleFileUpload(HttpServletRequest request, String fieldName)
-            throws IOException, ServletException {
-
-        Part filePart = request.getPart(fieldName);
-        if (filePart == null || filePart.getSize() == 0) {
-            return null;
-        }
-
-        String fileName = filePart.getSubmittedFileName();
-        if (fileName == null || fileName.isEmpty()) {
-            return null;
-        }
-
-        String extension = "";
-        int lastDotIndex = fileName.lastIndexOf(".");
-        if (lastDotIndex > 0) {
-            extension = fileName.substring(lastDotIndex);
-        }
-
-        String uniqueFileName = "product_" + System.currentTimeMillis() + extension;
-        uniqueFileName = uniqueFileName.replaceAll("[^a-zA-Z0-9._-]", "_");
-
-        String uploadPath = request.getServletContext().getRealPath("") + File.separator + "img";
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) {
-            uploadDir.mkdirs();
-        }
-
-        String filePath = uploadPath + File.separator + uniqueFileName;
-        filePart.write(filePath);
-
-        return "img/" + uniqueFileName;
-    }
 }
