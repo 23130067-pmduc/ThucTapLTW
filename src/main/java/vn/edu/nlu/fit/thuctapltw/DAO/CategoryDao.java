@@ -150,4 +150,16 @@ public class CategoryDao extends BaseDao {
                 .mapToBean(Category.class)
                 .list());
     }
+
+    public void updateStatus(int id, int status) {
+        getJdbi().withHandle(handle -> handle.createUpdate("""
+                UPDATE category_product 
+                SET status = :status
+                WHERE id = :id
+                """)
+                .bind("id", id)
+                .bind("status", status)
+                .execute());
+
+    }
 }

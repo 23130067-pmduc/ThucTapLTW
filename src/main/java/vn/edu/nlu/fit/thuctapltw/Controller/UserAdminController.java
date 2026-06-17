@@ -268,11 +268,12 @@ public class UserAdminController extends HttpServlet {
             return;
         }
 
-        if ("block".equals(action)){
+        if ("changeStatus".equals(action)) {
 
             int id = Integer.parseInt(request.getParameter("id"));
+            String status = request.getParameter("status");
 
-            userService.blockUser(id);
+            userService.changeStatus(id, status);
 
             response.sendRedirect("user-admin");
             return;

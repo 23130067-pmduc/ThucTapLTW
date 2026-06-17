@@ -247,3 +247,51 @@ button, .btn-primary, .btn-secondary {
     color: #c62828;
     border: 1px solid #f5c6cb;
 }
+
+.form-textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+}
+
+.form-textarea:focus {
+    border-color: #4caf50;
+}
+
+.image-preview-container {
+    margin-top: 10px;
+}
+
+.product-image-preview {
+    display: none;
+    max-width: 300px;
+    max-height: 300px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    margin-top: 10px;
+    object-fit: cover;
+}
+
+.product-image-preview.show {
+    display: block;
+}
+
+.sub-images-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.sub-image-preview-item {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}

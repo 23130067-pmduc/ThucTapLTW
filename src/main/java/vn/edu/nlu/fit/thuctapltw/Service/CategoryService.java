@@ -52,4 +52,8 @@ public class CategoryService {
     public List<Category> searchCategoryByPage(String keyword, int pageSize, int offset) {
         return categoryDao.searchCategoryByPage(keyword,pageSize,offset);
     }
+
+    public void updateStatus(int id, int status) {
+        categoryDao.updateStatus(id, status);
+    }
 }

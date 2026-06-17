@@ -8,10 +8,10 @@ function initRevenueChart(chartData) {
     const revenueChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: chartData['7day'].labels,
+            labels: chartData.labels,
             datasets: [{
                 label: 'Doanh thu (đ)',
-                data: chartData['7day'].values,
+                data: chartData.values,
                 borderColor: '#A9C87D',
                 backgroundColor: gradient,
                 borderWidth: 2.5,
@@ -62,15 +62,4 @@ function initRevenueChart(chartData) {
     });
 
     window._revenueChart = revenueChart;
-    window._revenueChartData = chartData;
-}
-
-function switchPeriod(period, btn) {
-    document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    const d = window._revenueChartData[period];
-    window._revenueChart.data.labels = d.labels;
-    window._revenueChart.data.datasets[0].data = d.values;
-    window._revenueChart.update('active');
 }
