@@ -66,6 +66,48 @@ public class SupplierDao extends BaseDao {
                 .one());
     }
 
+    public void create(Supplier supplier) {
+        getJdbi().useHandle(handle -> handle.createUpdate("""
+                INSERT INTO suppliers (code, name, phone, email, address, note, status, created_at, updated_at)
+                VALUES (:code, :name, :phone, :email, :address, :note, :status, NOW(), NOW())
+                """)
+                .bind("code", normalize(supplier.getCode()))
+                .bind("name", normalize(supplier.getName()))
+                .bind("phone", normalize(supplier.getPhone()))
+                .bind("email", normalize(supplier.getEmail()))
+                .bind("address", normalize(supplier.getAddress()))
+                .bind("note", normalize(supplier.getNote()))
+                .bind("status", normalize(supplier.getStatus()))
+                .execute());
+    }
+
+    public boolean existsByCode(String code) {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM suppliers
+                WHERE code = :code
+                """)
+                .bind("code", normalize(code))
+                .mapTo(Integer.class)
+                .one()) > 0;
+    }
+
+    public boolean existsByEmail(String email) {
+        String normalizedEmail = normalize(email);
+        if (normalizedEmail.isEmpty()) {
+            return false;
+        }
+
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT COUNT(*)
+                FROM suppliers
+                WHERE email = :email
+                """)
+                .bind("email", normalizedEmail)
+                .mapTo(Integer.class)
+                .one()) > 0;
+    }
+
     private String normalize(String value) {
         return value == null ? "" : value.trim();
     }
