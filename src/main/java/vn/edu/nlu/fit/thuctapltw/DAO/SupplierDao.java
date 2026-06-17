@@ -76,6 +76,26 @@ public class SupplierDao extends BaseDao {
                 .findOne());
     }
 
+    public List<Supplier> getActiveSuppliersForSelect() {
+        return getJdbi().withHandle(handle -> handle.createQuery("""
+                SELECT id,
+                       code,
+                       name,
+                       phone,
+                       email,
+                       address,
+                       note,
+                       status,
+                       DATE_FORMAT(created_at, '%d/%m/%Y %H:%i') AS created_at_text,
+                       DATE_FORMAT(updated_at, '%d/%m/%Y %H:%i') AS updated_at_text
+                FROM suppliers
+                WHERE status = 'ACTIVE'
+                ORDER BY name ASC, id DESC
+                """)
+                .mapToBean(Supplier.class)
+                .list());
+    }
+
     public int countByStatus(String status) {
         return getJdbi().withHandle(handle -> handle.createQuery("""
                 SELECT COUNT(*)
